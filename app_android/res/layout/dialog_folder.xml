@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:minHeight="1000dp"
+    android:minWidth="1000dp" >
+
+    <RelativeLayout
+        android:id="@+id/pnlDlgHeader"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:gravity="bottom"
+        tools:ignore="UseCompoundDrawables" >
+
+        <ImageView
+            android:id="@+id/imgDlgHeader"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_margin="4dp"
+            android:src="@drawable/ic_folder" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/imgDlgHeader"
+            android:layout_toRightOf="@+id/imgDlgHeader"
+            android:text="@string/select_folder_dlg_header"
+            android:textSize="25sp" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dip"
+            android:layout_below="@+id/imgDlgHeader"
+            android:background="?attr/dividerVertical" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/pnlContent"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_above="@+id/pnlButtons"
+        android:layout_below="@+id/pnlDlgHeader"
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin" >
+
+        <Spinner
+            android:id="@+id/cmbConnection"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginLeft="0dp"
+            tools:listitem="@android:layout/simple_spinner_dropdown_item" />
+
+        <LinearLayout
+            android:id="@+id/pnlWorkingSet"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/cmbConnection"
+            android:layout_marginBottom="10dp"
+            android:orientation="vertical" >
+
+            <Spinner
+                android:id="@+id/cmbWorkingSet"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:layout_marginLeft="0dp"
+                tools:listitem="@android:layout/simple_spinner_dropdown_item" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/pnlFolders"
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent"
+            android:layout_below="@+id/pnlWorkingSet"
+            android:orientation="vertical" >
+
+            <ExpandableListView
+                android:id="@+id/elvFolders"
+                android:layout_width="match_parent"
+                android:layout_height="fill_parent"
+                android:layout_gravity="top"
+                android:layout_marginLeft="0dp" >
+            </ExpandableListView>
+        </LinearLayout>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/pnlButtons"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_alignParentBottom="true" >
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dip"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="4dip"
+            android:layout_marginRight="4dip"
+            android:background="?attr/dividerVertical" />
+
+        <View
+            android:id="@+id/ViewColorPickerHelper"
+            android:layout_width="1dip"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="4dip"
+            android:layout_marginTop="4dip"
+            android:background="?attr/dividerVertical" />
+
+        <Button
+            android:id="@+id/btnCancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_toLeftOf="@id/ViewColorPickerHelper"
+            android:background="?attr/selectableItemBackground"
+            android:text="@android:string/cancel" />
+
+        <Button
+            android:id="@+id/btnSetLocal"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:layout_toRightOf="@id/ViewColorPickerHelper"
+            android:background="?attr/selectableItemBackground"
+            android:text="@string/set_local" />
+    </RelativeLayout>
+
+</RelativeLayout>

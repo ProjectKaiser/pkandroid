@@ -1,0 +1,20 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <ListPreference
+        android:defaultValue="5"
+        android:entries="@array/pref_sync_frequency_titles"
+        android:entryValues="@array/pref_sync_frequency_values"
+        android:key="sync_frequency"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null"
+        android:title="@string/pref_title_sync_frequency" />
+
+    
+    <Preference android:title="@string/prefs_accounts" android:summary="@string/prefs_accounts_summary" >
+        <intent
+             android:action="android.intent.action.VIEW"
+             android:targetPackage="com.projectkaiser.app_android"
+             android:targetClass="com.projectkaiser.app_android.AccountsMgmtActivity" />
+    </Preference>
+
+</PreferenceScreen>

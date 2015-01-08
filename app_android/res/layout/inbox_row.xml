@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal" >
+
+    <TextView
+        android:id="@+id/lblInboxRowPriority"
+        android:layout_width="4pt"
+        android:layout_height="match_parent"
+        android:layout_marginRight="4dp"
+        android:text="" >
+    </TextView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            tools:ignore="UseCompoundDrawables" >
+
+            <ImageView
+                android:id="@+id/imgNonSynced"
+                style="@style/NonSyncedImag2e"
+                android:layout_marginRight="6dp"
+                android:contentDescription="TODO" />
+
+            <ImageView
+                android:id="@+id/imgSyncFailure"
+                style="@style/SyncFailureImage"
+                android:layout_marginRight="6dp"
+                android:contentDescription="TODO" />
+            
+            <TextView
+                android:id="@+id/lblInboxRowTaskName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="issue"
+                android:textSize="20sp" >
+            </TextView>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal" >
+
+            <TextView
+                android:id="@+id/lblInboxRowTaskDueDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#888888"
+                android:text="@string/issue_due_date"
+                android:layout_marginRight="12dp"
+                android:textSize="12sp" >
+            </TextView>
+            
+            <TextView
+                android:id="@+id/lblInboxRowTaskStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Not started"
+                android:textColor="#888888"
+                android:textSize="12sp"
+                tools:ignore="HardcodedText" >
+
+            </TextView>
+
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>

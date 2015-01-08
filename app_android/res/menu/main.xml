@@ -1,0 +1,41 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.projectkaiser.app_android.MainActivity" >
+
+    <item
+        android:id="@+id/action_settings"
+        android:orderInCategory="100"
+        android:title="@string/title_activity_settings"
+        app:showAsAction="never"/>
+    
+    <item
+        android:id="@+id/action_new_task"
+        android:enabled="true"
+        android:icon="@drawable/ic_addtask"
+        app:showAsAction="ifRoom|withText"
+        android:title="@string/action_newtask"
+        android:titleCondensed="@string/action_newtask"
+        android:visible="true">
+    </item>
+
+    <item
+        android:id="@+id/action_sync"
+        android:enabled="true"
+        android:icon="@drawable/ic_sync"
+        app:showAsAction="ifRoom|withText"
+        android:title="@string/action_sync"
+        android:titleCondensed="@string/action_sync"
+        android:visible="true">
+    </item>
+    
+    <item
+        android:id="@+id/action_about"
+        android:enabled="true"
+        app:showAsAction="never"
+        android:title="@string/action_about"
+        android:titleCondensed="@string/action_about"
+        android:visible="true">
+    </item>
+    
+</menu>

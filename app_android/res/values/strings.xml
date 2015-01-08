@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--  General ****************************************************************** -->
+    <string name="app_name">Project Kaiser</string>
+    <string name="ok">OK</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="cancel">Cancel</string>
+    <string name="save">Save</string>
+    
+    <!--  Format ****************************************************************** -->
+    <string name="short_date">dd.MM.yyyy</string>
+    <string name="short_date_time">dd.MM.yyyy hh:mm</string>
+    <string name="hrs_pattern">%d h</string>
+    <string name="mins_pattern">%d min</string>
+    
+    <!--  Main Activity ****************************************************************** -->
+    <string name="action_newtask">New Task</string>
+    <string name="action_sync">Sync</string>
+    <string name="action_about">About</string>
+    <string name="tab_inbox_not_configured">Inbox</string>
+    <string name="tab_local">Local Tasks</string>
+    <string name="no_local_issues">No local issues. Create new tasks with \"+\" button on Action Bar</string>
+    <string name="no_remote_issues">You have no issues assigned</string>
+    <string name="connection_not_configured">Not configured!</string>
+    <string name="connection_not_configured_hint">Click "Configure" to setup synchronization with Project Kaiser server</string>
+    <string name="btn_configure">Configure</string>
+    <string name="filter_active">Active</string>
+    <string name="filter_closed">Closed</string>
+    
+    <!--  Inbox Issue Tabs ****************************************************************** -->
+    <string name="tab_details">Details</string>
+    <string name="tab_comments">Comments</string>
+       
+    <!--  Tasks State Buttons & Menu Actions ****************************************************************** -->
+    <string name="completed">Completed</string>
+    <string name="resume">Resume</string>
+    <string name="delete">Delete</string>
+    
+    <!--  Priorities ****************************************************************** -->
+    <string name="priority_blocker">Blocker</string>
+    <string name="priority_high">High</string>
+    <string name="priority_normal">Normal</string>
+    <string name="priority_low">Low</string>
+
+    <!--  View / Edit Issue  ****************************************************************** -->
+    <string name="assignee_not_specified">Assignee not specified</string>
+    <string name="responsible_not_specified">Responsible not specified</string>
+    <string name="due_date_short_label">Due:</string>    
+    <string name="issue_priority">%s Priority</string>
+    <string name="issue_due_date">Due %s</string>
+    <string name="issue_due_date_label">Due Date</string>
+    <string name="issue_click_to_assign_due_date">Assign Due Date</string>
+    <string name="issue_clear_due_date">Clear</string>
+    <string name="issue_budget">Budget: %s</string>
+    <string name="issue_budget_label">Budget</string>
+    <string name="issue_hours">Hours</string>
+    <string name="issue_mins">Mins</string>
+    <string name="issue_assignee">Assignee: %s</string>
+    <string name="issue_assignee_label">Assignee</string>
+    <string name="issue_responsible">Responsible %s</string>
+    <string name="issue_responsible_label">Responsible</string>
+    <string name="issue_description_label">Description</string>
+    <string name="more_settings_label">More settings</string>
+    <string name="cancel_creating_task_confirm">Cancel creating this task?</string>
+    <string name="cancel_editing_task_confirm">Cancel editing?</string>
+    <string name="resume_task_confirm">Resume this task?</string>    
+    <string name="close_task_confirm">Complete this task?</string>
+    <string name="delete_task_confirm">Delete this task?</string>    
+    <string name="sync_error">Last sync error: %s</string>
+    
+    <!--  Comments Tab ****************************************************************** -->
+    <string name="your_comment">Add comment</string>
+    <string name="add_comment">OK</string>
+    
+    <!--  Select Folder Dialog ****************************************************************** -->
+    <string name="all_projects">All Projects</string>    
+    <string name="set_local">Local Task</string>    
+    <string name="select_folder_dlg_header">Select Folder</string>
+    
+    <!--  Select User Dialog ****************************************************************** -->
+    <string name="select_user_dlg_header">Select User</string>
+    <string name="search_users">Search</string>
+    <string name="select_me">Select Me</string>
+    <string name="select_nobody">Nobody</string>
+        
+    <!--  Notifications ****************************************************************** -->
+    <string name="notification_new_tasks">And other %d tasks</string>
+    
+    <!--  Sign In Dialog ****************************************************************** -->
+    <string name="login_with_google">Sign in using my Google account</string>
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password</string>
+    <string name="prompt_server">Server URL</string>
+    <string name="server_cloud">Project Kaiser Cloud</string>
+    <string name="server_custom">Custom Server</string>
+    <string name="server_cloud_url">http://www.projectkaiser.com/online</string>
+    <string name="action_sign_in">Sign in</string>
+    <string name="action_forgot_password">Recover lost password</string>
+    <string name="google_authentication_progress">Authentication in Google&#8230;</string>
+    <string name="login_progress_signing_in">Signing in&#8230;</string>    
+    <string name="error_invalid_email">This email address is invalid</string>
+    <string name="error_incorrect_email_or_password">Incorrect e-mail or password</string>
+    
+    <!--  Settings Activity ****************************************************************** -->    
+    <string name="title_activity_settings">Settings</string>
+    <string name="add_account">Add Account</string>
+    <string name="delete_account_confirm">Delete account?</string>
+    <string name="pref_header_general">General</string>
+    <string name="prefs_accounts">Accounts</string>
+    <string name="prefs_accounts_summary">Add or remove PK accounts</string>
+    
+    <string name="pref_title_sync_frequency">Sync interval</string>
+
+    <string-array name="pref_sync_frequency_titles">
+        <item>1 minute</item>
+        <item>5 minutes</item>
+        <item>15 minutes</item>
+        <item>30 minutes</item>
+        <item>1 hour</item>
+        <item>3 hours</item>
+        <item>6 hours</item>
+        <item>Disabled</item>
+    </string-array>
+    <string-array name="pref_sync_frequency_values">
+        <item>1</item>
+        <item>5</item>
+        <item>15</item>
+        <item>30</item>
+        <item>60</item>
+        <item>180</item>
+        <item>360</item>
+        <item>-1</item>
+    </string-array>
+    
+    <!--  About Activity ****************************************************************** -->    
+    <string name="version">Version: %s</string>
+    <string name="website">Web: http://projectkaiser.com</string>
+    <string name="last_sync">Synced: %s</string>
+    
+    <!--  Errors ****************************************************************** -->
+    <string name="authentication_failed">Authentication failed</string>
+    <string name="network_error">Network error</string>    
+    <string name="project_not_found">Project not found!</string>
+    <string name="folder_not_found">Folder not found!</string>
+    <string name="user_not_found">User not found!</string>
+    <string name="error_field_required">This field is required</string>
+</resources>

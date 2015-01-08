@@ -1,0 +1,40 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.projectkaiser.app_android.IssueActivity" >
+
+    <item
+        android:id="@+id/action_task_delete"
+        android:enabled="true"
+        android:icon="@drawable/ic_delete"
+        android:title="@string/delete"
+        android:titleCondensed="@string/delete"
+        android:visible="true"
+        app:showAsAction="ifRoom|withText"/>
+    <item
+        android:id="@+id/action_cancel"
+        android:enabled="true"
+        android:icon="@drawable/ic_action_cancel"
+        android:title="@string/cancel"
+        android:titleCondensed="@string/cancel"
+        android:visible="true"
+        app:showAsAction="always|withText"/>
+    <item
+        android:id="@+id/action_ok"
+        android:enabled="true"
+        android:icon="@drawable/ic_action_ok"
+        android:title="@string/ok"
+        android:titleCondensed="@string/ok"
+        android:visible="true"
+        app:showAsAction="always|withText"/>
+    
+    <item
+        android:id="@+id/action_task_resume"
+        android:enabled="true"
+        android:icon="@drawable/ic_complete"
+        android:title="@string/resume"
+        android:titleCondensed="@string/resume"
+        android:visible="true"
+        app:showAsAction="never"/>
+    
+</menu>

@@ -1,0 +1,227 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    tools:context="com.projectkaiser.app_android.EditIssueActivity" >
+
+    <ScrollView
+        android:id="@+id/scrollView1"
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent"
+        android:layout_above="@+id/pnlButtons"
+        android:layout_alignParentTop="true"
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+            
+            <TextView
+                android:id="@+id/lblSyncError"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Small Text"
+                android:textColor="#ff0000"
+                android:visibility="gone"
+                android:textAppearance="?android:attr/textAppearanceSmall" />
+
+            <LinearLayout
+    			android:focusable="true" android:focusableInTouchMode="true"
+    			android:layout_width="0px" android:layout_height="0px"/>
+
+            <EditText
+                android:id="@+id/edtIssueName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:ems="10"
+                android:inputType="text"
+                android:nextFocusUp="@id/edtIssueName"
+                android:nextFocusLeft="@id/edtIssueName"
+                android:nextFocusDown="@+id/cmbFolder"
+                android:selectAllOnFocus="true" />
+
+            <Spinner
+                android:id="@+id/cmbFolder"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:nextFocusDown="@+id/cmbPriority"
+                android:nextFocusUp="@+id/cmbFolder"
+                tools:listitem="@android:layout/simple_spinner_dropdown_item" />
+
+            <Spinner
+                android:id="@+id/cmbPriority"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                tools:listitem="@android:layout/simple_spinner_dropdown_item" />
+
+            <RelativeLayout
+                android:id="@+id/pnlDueDate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:visibility="gone" >
+
+                <TextView
+                    android:id="@+id/lblDue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBaseline="@+id/btnClearDueDate"
+                    android:layout_alignBottom="@+id/btnClearDueDate"
+                    android:layout_alignParentBottom="false"
+                    android:layout_alignParentLeft="true"
+                    android:layout_marginLeft="8dp"
+                    android:text="@string/due_date_short_label"
+                    android:textSize="16sp" />
+
+                <Spinner
+                    android:id="@+id/cmbDueDate"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_toLeftOf="@+id/btnClearDueDate"
+                    android:layout_toRightOf="@+id/lblDue"
+                    tools:listitem="@android:layout/simple_spinner_dropdown_item" />
+
+                <Button
+                    android:id="@+id/btnClearDueDate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginLeft="8dp"
+                    android:text="@string/issue_clear_due_date"
+                    android:textSize="14sp" />
+            </RelativeLayout>
+
+            <LinearLayout
+                android:id="@+id/pnlBudget"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:orientation="horizontal"
+                android:visibility="gone" >
+
+                <EditText
+                    android:id="@+id/edtHours"
+                    android:layout_width="88dp"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:inputType="number"
+                    android:nextFocusDown="@+id/edtMinutes"
+                    android:nextFocusUp="@+id/cmbPriority" >
+                </EditText>
+
+                <TextView
+                    android:id="@+id/lblHours"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/issue_hours" />
+
+                <EditText
+                    android:id="@+id/edtMinutes"
+                    android:layout_width="88dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="16dp"
+                    android:ems="10"
+                    android:inputType="number"
+                    android:nextFocusUp="@+id/edtHours" >
+                </EditText>
+
+                <TextView
+                    android:id="@+id/lblMinutes"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/issue_mins" />
+            </LinearLayout>
+
+            <Spinner
+                android:id="@+id/cmbAssignee"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:visibility="gone"
+                tools:listitem="@android:layout/simple_spinner_dropdown_item" />
+
+            <Spinner
+                android:id="@+id/cmbResponsible"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:visibility="gone"
+                tools:listitem="@android:layout/simple_spinner_dropdown_item" />
+
+            <EditText
+                android:id="@+id/edtDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:ems="10"
+                android:inputType="textMultiLine"
+                android:visibility="gone" >
+            </EditText>
+
+            <Spinner
+                android:id="@+id/cmbMoreSettings"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:visibility="gone"
+                tools:listitem="@android:layout/simple_spinner_dropdown_item" />
+        </LinearLayout>
+    </ScrollView>
+
+    <RelativeLayout
+        android:id="@+id/pnlButtons"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_alignParentBottom="true" >
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dip"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="4dip"
+            android:layout_marginRight="4dip"
+            android:background="?attr/dividerVertical" />
+
+        <View
+            android:id="@+id/ViewColorPickerHelper"
+            android:layout_width="1dip"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="4dip"
+            android:layout_marginTop="4dip"
+            android:background="?attr/dividerVertical" />
+
+        <Button
+            android:id="@+id/btnButton1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_toLeftOf="@id/ViewColorPickerHelper"
+            android:background="?attr/selectableItemBackground"
+            android:text="@android:string/cancel" />
+
+        <Button
+            android:id="@+id/btnButton2"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:layout_toRightOf="@id/ViewColorPickerHelper"
+            android:background="?attr/selectableItemBackground"
+            android:text="@string/ok" />
+    </RelativeLayout>
+
+</RelativeLayout>
