@@ -18,11 +18,17 @@ public class AppAndroid extends Application {
 
         final LogConfigurator logConfigurator = new LogConfigurator();
 
-        File logdir = new File(getApplicationContext().getExternalFilesDir(null).getAbsolutePath());
+        File logdir = null;
+        if (getApplicationContext().getExternalFilesDir(null)==null){
+            logdir = new File(getApplicationContext().getFilesDir().getAbsolutePath());
+        } else {
+            logdir = new File(getApplicationContext().getExternalFilesDir(null).getAbsolutePath());
+        }
         if (!logdir.canWrite()){
     		// TODO: write to log 
         	System.out.println("Can't write.");		
-        }
+        } 
+        
         if (!logdir.exists()){ 
         	logdir.mkdirs();
         }	
