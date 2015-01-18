@@ -38,4 +38,12 @@
         android:visible="true">
     </item>
     
+    <item
+        android:id="@+id/action_send_log"
+        android:enabled="true"
+        app:showAsAction="never"
+        android:title="@string/action_send_log"
+        android:titleCondensed="@string/action_send_log"
+        android:visible="true">
+    </item>
 </menu>

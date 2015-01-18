@@ -15,7 +15,6 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.View;
@@ -92,7 +91,8 @@ public class SigninActivity extends Activity implements ConnectionCallbacks,
 
 		mPlusClient = new PlusClient.Builder(this, this, this).setScopes(
 				Scopes.PLUS_LOGIN, Scopes.PROFILE).build();
-
+		
+	
 		mConnectionProgressDialog = new ProgressDialog(this);
 		mConnectionProgressDialog
 				.setMessage(getString(R.string.google_authentication_progress));
@@ -277,7 +277,6 @@ public class SigninActivity extends Activity implements ConnectionCallbacks,
 		mPlusClient.clearDefaultAccount();
 		mPlusClient.disconnect();
 
-		final String TAG = "MYAPP";
 		AsyncTask<Void, Void, String> task = new AsyncTask<Void, Void, String>() {
 			@Override
 			protected String doInBackground(Void... params) {
@@ -302,7 +301,7 @@ public class SigninActivity extends Activity implements ConnectionCallbacks,
 				} catch (GoogleAuthException authEx) {
 					log.error(authEx);
 					Toast.makeText(SigninActivity.this,
-							getString(R.string.authentication_failed),
+							getString(R.string.authentication_failed)  ,
 							Toast.LENGTH_LONG).show();
 				}
 

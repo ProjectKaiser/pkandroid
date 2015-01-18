@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.webkit.WebView;
 
 import com.projectkaiser.app_android.R;
 import com.projectkaiser.app_android.bl.obj.MRemoteNotSyncedIssue;
@@ -23,7 +24,10 @@ import com.projectkaiser.mobile.sync.MIssue;
 import com.projectkaiser.mobile.sync.MMyProject;
 import com.projectkaiser.mobile.sync.MRemoteIssue;
 import com.projectkaiser.mobile.sync.MTeamMember;
-
+import com.triniforce.document.render.*;
+import com.triniforce.document.elements.*;
+import com.triniforce.dom.*;
+import com.triniforce.wiki.*;
 
 public class IssueDetailsFragment extends Fragment implements ITaskDetailsListener {
 	/**
@@ -183,9 +187,40 @@ public class IssueDetailsFragment extends Fragment implements ITaskDetailsListen
 		//  Description
 		TextView lblDescription = (TextView)m_rootView.findViewById(R.id.lblDescription); 
 		if (details.getDescription() != null) {
-			lblDescription.setText(details.getDescription());
-		} else 
+//			lblDescription.setText(details.getDescription());
+			/*								
+			TicketDef ticket = getTicket(details.getDescription());
+			ViewRenderer rr = new ViewRenderer(null, conf);
+			ConvertParameters p = new ConvertParameters();
+			p.setAppBaseURL("http://www.prokjectkaiser.com/online"); // URL of the PK app, used for generating link and image URLs
+			
+			BaseRendererConfig config = new BaseRendererConfig();      
+			
+			p.setFileId(currentFileID); // used for generating links to attachments
+			rr.render(ticket, search, p);
+			*/
+			WebView webView1 = (WebView)m_rootView.findViewById(R.id.webView1);
+			String summary = "<h1>About W3Schools</h1><p title='About W3Schools'>" + 
+					"</br>W3Schools is a web developer's site.</br>It provides tutorials and references covering" + 
+					"many aspects of web programming," + 
+					"including HTML, CSS, JavaScript, XML, SQL, PHP, ASP, etc. "  +
+					"</p>" + 
+					"<p><b>" +
+					"If you move the mouse over the paragraph above, " + 
+					"the title will display as a tooltip. " + 
+					"</b></p>";
+			webView1.loadData(summary, "text/html", null);		 
 			m_rootView.findViewById(R.id.pnlDescription).setVisibility(View.GONE);
+			
+		}	
 		
 	}
+	/*
+	private TicketDef getTicket(String wiki) {
+	    DOMGenerator gen = new DOMGenerator();
+	    WikiParser parser = new WikiParser();
+	    parser.registerListener(gen);
+	    parser.parse(wiki);
+	    return gen.getTicket();
+	}*/
 }

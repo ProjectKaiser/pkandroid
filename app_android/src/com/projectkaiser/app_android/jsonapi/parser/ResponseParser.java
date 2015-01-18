@@ -8,8 +8,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.util.Log;
-
 import com.projectkaiser.app_android.bl.obj.MRemoteSyncedIssue;
 import com.projectkaiser.app_android.jsonrpc.errors.EJsonException;
 import com.projectkaiser.app_android.settings.SessionManager;

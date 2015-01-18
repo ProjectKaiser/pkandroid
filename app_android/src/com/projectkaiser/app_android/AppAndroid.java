@@ -2,12 +2,9 @@ package com.projectkaiser.app_android;
 
 import org.apache.log4j.Level;
 import android.app.Application;
-import android.os.Environment;
 import java.io.File;
 import java.io.IOException;
-
 import com.projectkaiser.app_android.misc.ErrorReporter;
-
 import de.mindpipe.android.logging.log4j.LogConfigurator;
 
 public class AppAndroid extends Application {
@@ -46,7 +43,6 @@ public class AppAndroid extends Application {
         logConfigurator.setLevel("org.apache", Level.ERROR);
         logConfigurator.setFilePattern("%d - [%p::%c] - %m%n");
         logConfigurator.configure();
-	
 		
     	ErrorReporter.bindReporter(getApplicationContext());
 		super.onCreate();

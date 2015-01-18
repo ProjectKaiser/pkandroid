@@ -19,6 +19,7 @@
     <string name="action_newtask">Создать</string>
     <string name="action_sync">Синхронизация</string>
     <string name="action_about">О программе</string>
+    <string name="action_send_log">Отправить журнал ошибок</string>
     <string name="tab_inbox_not_configured">Входящие</string>
     <string name="tab_local">Локальные</string>
     <string name="no_local_issues">Ни одной локальной задачи.\nСоздайте задачу, используя иконку \"+\" на панели управления</string>
@@ -28,6 +29,10 @@
     <string name="btn_configure">Настроить</string>
     <string name="filter_active">Активные</string>
     <string name="filter_closed">Закрытые</string>
+    <string name="action_errorlog_sent">Журнал ошибок успешно отослан</string>
+    <string name="action_errorlog_sending">Отсылается... </string>
+    <string name="action_errorlog_caption">Отсылка журнала ошибок</string>
+    <string name="action_errorlog_error">Ошибка отсылки журнала</string>
     
     <!--  Inbox Issue Tabs ****************************************************************** -->
     <string name="tab_details">Подробности</string>
