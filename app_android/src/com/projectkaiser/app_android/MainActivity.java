@@ -374,7 +374,7 @@ public class MainActivity extends ActionBarActivity implements
 	}
 
 	public void SendErrorLog() { 
-		Mail m = new Mail("ivvist","ivvparah10"); 
+		Mail m = new Mail("66666","yyyyyyyy"); 
 		
 		String[] toArr = {triniforce_email}; 
 		m.setTo(toArr); 
@@ -495,10 +495,10 @@ public class MainActivity extends ActionBarActivity implements
 				String title = "Android error log";
 				String text = "In attachment";
 				
-				String from = "ivvist@mail.ru";
-				String where = "ivvist@gmail.com";
+				String from = "iiii@mail.ru";
+				String where = "iiii@gmail.com";
 				
-                MailSenderClass sender = new MailSenderClass("ivvist@gmail.com", "13021972");
+                MailSenderClass sender = new MailSenderClass("iiii@gmail.com", "iiii");
                 
         		File Attdir = null;
         		if (getApplicationContext().getExternalFilesDir(null)==null){
