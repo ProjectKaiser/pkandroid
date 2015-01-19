@@ -7,7 +7,6 @@ import java.util.Locale;
 
 import org.apache.log4j.Logger;
 
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -23,6 +22,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
+import android.net.Uri;
 
 import com.projectkaiser.app_android.async.AsyncCallback;
 import com.projectkaiser.app_android.bl.BL;
@@ -44,7 +44,6 @@ import com.projectkaiser.app_android.jsonapi.parser.ResponseParser;
 import com.projectkaiser.app_android.jsonrpc.auth.SessionAuthScheme;
 import com.projectkaiser.app_android.jsonrpc.errors.EAuthError;
 import com.projectkaiser.app_android.misc.MailSenderClass;
-import com.projectkaiser.app_android.misc.Mail;
 import com.projectkaiser.app_android.services.PkAlarmManager;
 import com.projectkaiser.app_android.services.SyncAlarmReceiver;
 import com.projectkaiser.app_android.settings.SessionManager;
@@ -363,8 +362,7 @@ public class MainActivity extends ActionBarActivity implements
 			getApplicationContext().startActivity(i);
 			return true;
 		case R.id.action_send_log:
-			sender_mail_async async_sending = new sender_mail_async();
-			async_sending.execute();
+			SendErrorLog();
 			return true;
 		case R.id.action_sync:
 			syncronize();
@@ -374,14 +372,6 @@ public class MainActivity extends ActionBarActivity implements
 	}
 
 	public void SendErrorLog() { 
-		Mail m = new Mail("66666","yyyyyyyy"); 
-		
-		String[] toArr = {triniforce_email}; 
-		m.setTo(toArr); 
-		m.setFrom("ivvist@hotmail.com"); 
-		m.setSubject("This error log is sent using from Android device."); 
-		m.setBody("See attachment."); 
-		
 		File Attdir = null;
 		if (getApplicationContext().getExternalFilesDir(null)==null){
 			Attdir = new File(getApplicationContext().getFilesDir().getAbsolutePath());
@@ -390,23 +380,22 @@ public class MainActivity extends ActionBarActivity implements
 		}
         File logfile = new File(Attdir.getPath() + "/pklog.txt");
         if (logfile.exists()){
-        	try{
-        		//m.addAttachment(logfile.getAbsolutePath());
-        		if(m.send()) { 
-        			Toast.makeText(getApplicationContext(), "Email was sent successfully.", Toast.LENGTH_LONG).show(); 
-        		} else { 
-        			Toast.makeText(getApplicationContext(), "Email was not sent.", Toast.LENGTH_LONG).show(); 
-        		} 
-        	}
-        	catch (Exception e) 
-        	{
-        		System.out.println(e.getMessage());	
-        	}
+            Intent i = new Intent(Intent.ACTION_SEND);
+    		i.setType("vnd.android.cursor.dir/email");
+    		i.putExtra(Intent.EXTRA_EMAIL  , new String[]{"ivvist@gmail.com"});
+    		i.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.action_errorlog_caption));
+    		i.putExtra(Intent.EXTRA_TEXT   , getString(R.string.action_errorlog_body));
+    		Uri uri = Uri.parse("file://" + logfile.getAbsolutePath());
+    		i.putExtra(Intent.EXTRA_STREAM,  uri);
+    		try {
+    		    startActivity(Intent.createChooser(i, getString(R.string.action_errorlog_sent)));
+    		} catch (android.content.ActivityNotFoundException ex) {
+    		    Toast.makeText(MainActivity.this, R.string.action_no_email_client, Toast.LENGTH_SHORT).show();
+    		}	
         }
-        
-		
-	}
 
+	}
+	
 	public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
 		public SectionsPagerAdapter(FragmentManager fm) {
@@ -475,7 +464,7 @@ public class MainActivity extends ActionBarActivity implements
 
 		@Override
 		protected void onPreExecute() {
-			WaitingDialog = ProgressDialog.show(MainActivity.this, getString(R.string.action_errorlog_caption), getString(R.string.action_errorlog_sending), true);
+			WaitingDialog = ProgressDialog.show(MainActivity.this, getString(R.string.action_errorlog_caption), getString(R.string.action_errorlog_error), true);
 		}
 		
 		@Override

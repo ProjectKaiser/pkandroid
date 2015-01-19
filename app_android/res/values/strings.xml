@@ -29,11 +29,12 @@
     <string name="btn_configure">Configure</string>
     <string name="filter_active">Active</string>
     <string name="filter_closed">Closed</string>
-    <string name="action_errorlog_sent">Error log sent</string>
-    <string name="action_errorlog_sending">Sending...</string>
-    <string name="action_errorlog_caption">Error log</string>
+    <string name="action_errorlog_sent">Sending error log...</string>
+    <string name="action_errorlog_body">In attachment</string>
+    <string name="action_errorlog_caption">PK android error log</string>
     <string name="action_errorlog_error">Error sending mail</string>
-
+    <string name="action_no_email_client">There are no email clients installed</string>
+    
     <!-- Inbox Issue Tabs ****************************************************************** -->
     <string name="tab_details">Details</string>
     <string name="tab_comments">Comments</string>

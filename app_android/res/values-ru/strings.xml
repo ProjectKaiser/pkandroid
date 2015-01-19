@@ -29,10 +29,11 @@
     <string name="btn_configure">Настроить</string>
     <string name="filter_active">Активные</string>
     <string name="filter_closed">Закрытые</string>
-    <string name="action_errorlog_sent">Журнал ошибок успешно отослан</string>
-    <string name="action_errorlog_sending">Отсылается... </string>
-    <string name="action_errorlog_caption">Отсылка журнала ошибок</string>
+    <string name="action_errorlog_sent">Отсылка журнала ошибок</string>
+    <string name="action_errorlog_body">Во вложении</string>
+    <string name="action_errorlog_caption">Журнал ошибок Project Kaiser</string>
     <string name="action_errorlog_error">Ошибка отсылки журнала</string>
+    <string name="action_no_email_client">Нет установленных email клиентов</string>
     
     <!--  Inbox Issue Tabs ****************************************************************** -->
     <string name="tab_details">Подробности</string>
