@@ -25,8 +25,11 @@ import com.projectkaiser.mobile.sync.MMyProject;
 import com.projectkaiser.mobile.sync.MRemoteIssue;
 import com.projectkaiser.mobile.sync.MTeamMember;
 import com.triniforce.document.render.*;
+import com.triniforce.document.render.data.*;
 import com.triniforce.document.elements.*;
+import com.projectkaiser.app_android.misc.*;
 import com.triniforce.dom.*;
+import com.triniforce.dom.EWikiError;
 import com.triniforce.wiki.*;
 
 public class IssueDetailsFragment extends Fragment implements ITaskDetailsListener {
@@ -185,42 +188,35 @@ public class IssueDetailsFragment extends Fragment implements ITaskDetailsListen
 
 		/////////////////////////////////////////////////////
 		//  Description
-		TextView lblDescription = (TextView)m_rootView.findViewById(R.id.lblDescription); 
+//		TextView lblDescription = (TextView)m_rootView.findViewById(R.id.lblDescription);
 		if (details.getDescription() != null) {
-//			lblDescription.setText(details.getDescription());
-			/*								
+					
+			Locale locale = Locale.getDefault();
+			IssueRendererConfig conf = new IssueRendererConfig(locale, null) {      
+				public String m_result = "";
+			    @Override
+			    public void onTicketComplete(TicketItem item) {
+			        super.onTicketComplete(item);
+			        m_result = getContent();
+					WebView webView1 = (WebView)m_rootView.findViewById(R.id.webView1);
+					webView1.loadData(m_result, "text/html", null);		 
+					m_rootView.findViewById(R.id.pnlDescription).setVisibility(View.GONE);
+			    }
+			};
 			TicketDef ticket = getTicket(details.getDescription());
 			ViewRenderer rr = new ViewRenderer(null, conf);
 			ConvertParameters p = new ConvertParameters();
-			p.setAppBaseURL("http://www.prokjectkaiser.com/online"); // URL of the PK app, used for generating link and image URLs
-			
-			BaseRendererConfig config = new BaseRendererConfig();      
-			
-			p.setFileId(currentFileID); // used for generating links to attachments
-			rr.render(ticket, search, p);
-			*/
-			WebView webView1 = (WebView)m_rootView.findViewById(R.id.webView1);
-			String summary = "<h1>About W3Schools</h1><p title='About W3Schools'>" + 
-					"</br>W3Schools is a web developer's site.</br>It provides tutorials and references covering" + 
-					"many aspects of web programming," + 
-					"including HTML, CSS, JavaScript, XML, SQL, PHP, ASP, etc. "  +
-					"</p>" + 
-					"<p><b>" +
-					"If you move the mouse over the paragraph above, " + 
-					"the title will display as a tooltip. " + 
-					"</b></p>";
-			webView1.loadData(summary, "text/html", null);		 
-			m_rootView.findViewById(R.id.pnlDescription).setVisibility(View.GONE);
-			
+			rr.render(ticket, null, p);
 		}	
 		
 	}
-	/*
+	
 	private TicketDef getTicket(String wiki) {
 	    DOMGenerator gen = new DOMGenerator();
 	    WikiParser parser = new WikiParser();
 	    parser.registerListener(gen);
-	    parser.parse(wiki);
+	    //parser.parse(wiki);
 	    return gen.getTicket();
-	}*/
+	}
+	
 }

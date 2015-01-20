@@ -7,9 +7,7 @@ import java.util.Locale;
 
 import org.apache.log4j.Logger;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -43,7 +41,6 @@ import com.projectkaiser.app_android.fragments.main.NoConnectionFragment;
 import com.projectkaiser.app_android.jsonapi.parser.ResponseParser;
 import com.projectkaiser.app_android.jsonrpc.auth.SessionAuthScheme;
 import com.projectkaiser.app_android.jsonrpc.errors.EAuthError;
-import com.projectkaiser.app_android.misc.MailSenderClass;
 import com.projectkaiser.app_android.services.PkAlarmManager;
 import com.projectkaiser.app_android.services.SyncAlarmReceiver;
 import com.projectkaiser.app_android.settings.SessionManager;
@@ -258,7 +255,6 @@ public class MainActivity extends ActionBarActivity implements
 		cr.setNewComments(newComments);
 		cr.setNewIssues(newTasks);
 		
-		
 		BatchRequest batch = new BatchRequest();
 		batch.setCreateRequest(cr);
 		batch.setSyncRequest(request);
@@ -457,57 +453,6 @@ public class MainActivity extends ActionBarActivity implements
 	@Override
 	public void syncRequested() {
 		syncronize();		
-	}
-	
-    private class sender_mail_async extends AsyncTask<Object, String, Boolean> {
-    	ProgressDialog WaitingDialog;
-
-		@Override
-		protected void onPreExecute() {
-			WaitingDialog = ProgressDialog.show(MainActivity.this, getString(R.string.action_errorlog_caption), getString(R.string.action_errorlog_error), true);
-		}
-		
-		@Override
-		protected void onPostExecute(Boolean result) {
-			WaitingDialog.dismiss();
-			if (result) {
-			  Toast.makeText(MainActivity.this, getString(R.string.action_errorlog_sent), Toast.LENGTH_LONG).show();
-			} else {
-			  Toast.makeText(MainActivity.this, getString(R.string.action_errorlog_error), Toast.LENGTH_LONG).show();
-			}
-		}
-
-		@Override
-		protected Boolean doInBackground(Object... params) {
-
-			try {
-				String title = "Android error log";
-				String text = "In attachment";
-				
-				String from = "iiii@mail.ru";
-				String where = "iiii@gmail.com";
-				
-                MailSenderClass sender = new MailSenderClass("iiii@gmail.com", "iiii");
-                
-        		File Attdir = null;
-        		if (getApplicationContext().getExternalFilesDir(null)==null){
-        			Attdir = new File(getApplicationContext().getFilesDir().getAbsolutePath());
-        		} else {
-        			Attdir = new File(getApplicationContext().getExternalFilesDir(null).getAbsolutePath());
-        		}
-                File logfile = new File(Attdir.getPath() + "/pklog.txt");
-                if (logfile.exists()){
-                	
-                  sender.sendMail(title, text, from, where, logfile.getAbsolutePath());
-                }
-    			return true;
-                
-			} catch (Exception e) {
-				Toast.makeText(MainActivity.this, getString(R.string.action_errorlog_error), Toast.LENGTH_SHORT).show();
-			}
-			
-			return false;
-		}
 	}
 	
 }

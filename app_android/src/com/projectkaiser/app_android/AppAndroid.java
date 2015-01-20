@@ -37,10 +37,12 @@ public class AppAndroid extends Application {
   		     e.printStackTrace();
 	    }}
 
-        logConfigurator.setFileName(logfile.getPath());
-        logConfigurator.setRootLevel(Level.DEBUG);
         // 	Set log level of a specific logger
+        logConfigurator.setFileName(logfile.getPath());
         logConfigurator.setLevel("org.apache", Level.ERROR);
+        logConfigurator.setRootLevel(Level.DEBUG);
+        logConfigurator.setMaxFileSize(1024 * 1024 * 5);
+        logConfigurator.setImmediateFlush(true);
         logConfigurator.setFilePattern("%d - [%p::%c] - %m%n");
         logConfigurator.configure();
 		
