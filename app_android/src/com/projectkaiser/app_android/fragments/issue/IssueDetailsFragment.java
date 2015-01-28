@@ -18,18 +18,16 @@ import com.projectkaiser.app_android.consts.Priority;
 import com.projectkaiser.app_android.fragments.issue.intf.ITaskDetailsListener;
 import com.projectkaiser.app_android.fragments.issue.intf.ITaskDetailsProvider;
 import com.projectkaiser.app_android.misc.Time;
+import com.projectkaiser.app_android.settings.SessionManager;
 import com.projectkaiser.mobile.sync.MDataHelper;
 import com.projectkaiser.mobile.sync.MFolder;
 import com.projectkaiser.mobile.sync.MIssue;
 import com.projectkaiser.mobile.sync.MMyProject;
 import com.projectkaiser.mobile.sync.MRemoteIssue;
 import com.projectkaiser.mobile.sync.MTeamMember;
-import com.triniforce.document.render.*;
-import com.triniforce.document.render.data.*;
 import com.triniforce.document.elements.*;
-import com.projectkaiser.app_android.misc.*;
 import com.triniforce.dom.*;
-import com.triniforce.dom.EWikiError;
+import com.triniforce.dom.dom2html.*;
 import com.triniforce.wiki.*;
 
 public class IssueDetailsFragment extends Fragment implements ITaskDetailsListener {
@@ -190,32 +188,42 @@ public class IssueDetailsFragment extends Fragment implements ITaskDetailsListen
 		//  Description
 //		TextView lblDescription = (TextView)m_rootView.findViewById(R.id.lblDescription);
 		if (details.getDescription() != null) {
-					
-			Locale locale = Locale.getDefault();
-			IssueRendererConfig conf = new IssueRendererConfig(locale, null) {      
-				public String m_result = "";
-			    @Override
-			    public void onTicketComplete(TicketItem item) {
-			        super.onTicketComplete(item);
-			        m_result = getContent();
-					WebView webView1 = (WebView)m_rootView.findViewById(R.id.webView1);
-					webView1.loadData(m_result, "text/html", null);		 
-					m_rootView.findViewById(R.id.pnlDescription).setVisibility(View.GONE);
-			    }
-			};
-			TicketDef ticket = getTicket(details.getDescription());
-			ViewRenderer rr = new ViewRenderer(null, conf);
-			ConvertParameters p = new ConvertParameters();
-			rr.render(ticket, null, p);
+			MRemoteIssue ri = (MRemoteIssue)details;
+	//		String connId = ri.
+			long fileId = ri.getId();
+			
+						TicketDef ticket = getTicket(details.getDescription());
+
+			IssueURLEncoder encoder = new IssueURLEncoder();
+			
+			final SessionManager sm = getSessionManager();
+			String sUrl = sm.getServerUrl("");
+			
+			ConvertParameters params = new ConvertParameters();
+			params.setAppBaseURL(sUrl); // CUrrent server URL
+			params.setFileId(fileId); // Current file ID
+			DOM2HtmlConverter m_conv = new DOM2HtmlConverter(params, encoder , 0);
+			String html = m_conv.convert(ticket);			
+
+			WebView webView1 = (WebView)m_rootView.findViewById(R.id.webView1);
+			webView1.loadData(html, "text/html", null);		 
+			m_rootView.findViewById(R.id.pnlDescription).setVisibility(View.GONE);		
 		}	
 		
 	}
 	
+	private SessionManager getSessionManager() {
+		return SessionManager.get(this.getActivity());
+	}
 	private TicketDef getTicket(String wiki) {
 	    DOMGenerator gen = new DOMGenerator();
 	    WikiParser parser = new WikiParser();
 	    parser.registerListener(gen);
-	    //parser.parse(wiki);
+	    try{
+		    parser.parse(wiki);
+	    }
+	    catch (Exception e) {
+	    }
 	    return gen.getTicket();
 	}
 	

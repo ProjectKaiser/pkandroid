@@ -138,7 +138,6 @@ public class MainActivity extends ActionBarActivity implements
 					if (m_connectionIds.get(i).equals(alarmIssue.getSrvConnId())) {
 
 						actionBar.setSelectedNavigationItem(i);					
-
 						Intent openIssueIntent = new Intent(getApplicationContext(), ViewIssueActivity.class);
 						openIssueIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 						openIssueIntent.putExtra(MIssue.class.getName(),  alarmIssue);
