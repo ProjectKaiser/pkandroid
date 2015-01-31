@@ -14,6 +14,7 @@ import android.webkit.WebView;
 
 import com.projectkaiser.app_android.R;
 import com.projectkaiser.app_android.bl.obj.MRemoteNotSyncedIssue;
+import com.projectkaiser.app_android.bl.obj.MRemoteSyncedIssue;
 import com.projectkaiser.app_android.consts.Priority;
 import com.projectkaiser.app_android.fragments.issue.intf.ITaskDetailsListener;
 import com.projectkaiser.app_android.fragments.issue.intf.ITaskDetailsProvider;
@@ -25,7 +26,7 @@ import com.projectkaiser.mobile.sync.MIssue;
 import com.projectkaiser.mobile.sync.MMyProject;
 import com.projectkaiser.mobile.sync.MRemoteIssue;
 import com.projectkaiser.mobile.sync.MTeamMember;
-import com.triniforce.document.elements.*;
+import com.triniforce.document.elements.TicketDef;
 import com.triniforce.dom.*;
 import com.triniforce.dom.dom2html.*;
 import com.triniforce.wiki.*;
@@ -188,17 +189,16 @@ public class IssueDetailsFragment extends Fragment implements ITaskDetailsListen
 		//  Description
 //		TextView lblDescription = (TextView)m_rootView.findViewById(R.id.lblDescription);
 		if (details.getDescription() != null) {
-			MRemoteIssue ri = (MRemoteIssue)details;
-	//		String connId = ri.
+			MRemoteSyncedIssue ri = (MRemoteSyncedIssue)details;
+			String connId = ri.getSrvConnId();
 			long fileId = ri.getId();
 			
-						TicketDef ticket = getTicket(details.getDescription());
+			TicketDef ticket = getTicket(details.getDescription());
 
 			IssueURLEncoder encoder = new IssueURLEncoder();
 			
 			final SessionManager sm = getSessionManager();
-			String sUrl = sm.getServerUrl("");
-			
+			String sUrl = sm.getServerUrl(sm.getServerUrl(connId));
 			ConvertParameters params = new ConvertParameters();
 			params.setAppBaseURL(sUrl); // CUrrent server URL
 			params.setFileId(fileId); // Current file ID
@@ -209,21 +209,21 @@ public class IssueDetailsFragment extends Fragment implements ITaskDetailsListen
 			webView1.loadData(html, "text/html", null);		 
 			m_rootView.findViewById(R.id.pnlDescription).setVisibility(View.GONE);		
 		}	
-		
 	}
 	
 	private SessionManager getSessionManager() {
 		return SessionManager.get(this.getActivity());
 	}
-	private TicketDef getTicket(String wiki) {
+	private TicketDef getTicket(String wiki){
 	    DOMGenerator gen = new DOMGenerator();
-	    WikiParser parser = new WikiParser();
-	    parser.registerListener(gen);
-	    try{
-		    parser.parse(wiki);
-	    }
-	    catch (Exception e) {
-	    }
+	    WikiParser wparser = new WikiParser();
+	    wparser.registerListener(gen);
+	    try {
+			wparser.parse(wiki);
+		} catch (EWikiError e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	    return gen.getTicket();
 	}
 	
