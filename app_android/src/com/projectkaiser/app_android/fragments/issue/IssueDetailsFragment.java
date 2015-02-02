@@ -205,8 +205,10 @@ public class IssueDetailsFragment extends Fragment implements ITaskDetailsListen
 			DOM2HtmlConverter m_conv = new DOM2HtmlConverter(params, encoder , 0);
 			String html = m_conv.convert(ticket);			
 
+//			String langCode  = "<?xml version=""1.0"" encoding=""UTF-8"" ?>";
 			WebView webView1 = (WebView)m_rootView.findViewById(R.id.webView1);
-			webView1.loadData(html, "text/html", null);		 
+			webView1.loadDataWithBaseURL(null, html,"text/html", "UTF-8", null);		
+//			webView1.loadData(langCode + html, "text/html", null);		 
 			m_rootView.findViewById(R.id.pnlDescription).setVisibility(View.GONE);		
 		}	
 	}
