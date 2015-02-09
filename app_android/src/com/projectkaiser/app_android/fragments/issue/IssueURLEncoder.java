@@ -11,6 +11,12 @@ public class IssueURLEncoder implements IUrlEncoder {
 	public String urlEncode(String str){
 		String s = str;
 		try{
+			
+			 if (str.contains("/att?name")) {
+				 m_encoded = true;
+				 return str;
+			 }
+			 
 			 s = java.net.URLEncoder.encode(str, "UTF-8");
 			 m_encoded = true;
 		} catch (Exception e){

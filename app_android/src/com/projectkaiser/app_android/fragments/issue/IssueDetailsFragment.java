@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -20,13 +21,27 @@ import com.projectkaiser.app_android.fragments.issue.intf.ITaskDetailsListener;
 import com.projectkaiser.app_android.fragments.issue.intf.ITaskDetailsProvider;
 import com.projectkaiser.app_android.misc.Time;
 import com.projectkaiser.app_android.settings.SessionManager;
+import com.projectkaiser.app_android.settings.SrvConnectionId;
 import com.projectkaiser.mobile.sync.MDataHelper;
 import com.projectkaiser.mobile.sync.MFolder;
 import com.projectkaiser.mobile.sync.MIssue;
 import com.projectkaiser.mobile.sync.MMyProject;
 import com.projectkaiser.mobile.sync.MRemoteIssue;
 import com.projectkaiser.mobile.sync.MTeamMember;
+import com.projectkaiser.mobile.sync.MAttachment;
+import com.projectkaiser.app_android.jsonapi.parser.ResponseParser;
+
+import java.io.IOException;
+//import android.webkit.CookieManager;
+import java.net.CookieHandler;
+import java.net.CookieManager;
+import java.net.URISyntaxException;
+
 import com.triniforce.document.elements.TicketDef;
+import java.util.*;
+import java.net.HttpCookie;
+import java.net.URI;
+
 import com.triniforce.dom.*;
 import com.triniforce.dom.dom2html.*;
 import com.triniforce.wiki.*;
@@ -198,19 +213,51 @@ public class IssueDetailsFragment extends Fragment implements ITaskDetailsListen
 			IssueURLEncoder encoder = new IssueURLEncoder();
 			
 			final SessionManager sm = getSessionManager();
-			String sUrl = sm.getServerUrl(sm.getServerUrl(connId));
+			String sUrl = sm.getServerUrl(connId);
 			ConvertParameters params = new ConvertParameters();
 			params.setAppBaseURL(sUrl); // CUrrent server URL
 			params.setFileId(fileId); // Current file ID
 			DOM2HtmlConverter m_conv = new DOM2HtmlConverter(params, encoder , 0);
 			String html = m_conv.convert(ticket);			
 
-//			String langCode  = "<?xml version=""1.0"" encoding=""UTF-8"" ?>";
 			WebView webView1 = (WebView)m_rootView.findViewById(R.id.webView1);
-			webView1.loadDataWithBaseURL(null, html,"text/html", "UTF-8", null);		
-//			webView1.loadData(langCode + html, "text/html", null);		 
-			m_rootView.findViewById(R.id.pnlDescription).setVisibility(View.GONE);		
-		}	
+		    
+//			CookieSyncManager cookieSyncMngr=CookieSyncManager.createInstance(getActivity().getApplicationContext());
+//			CookieManager webCookieManager = CookieManager.getInstance();
+//			webCookieManager.setAcceptCookie(true);
+			    // Get cookie manager for HttpURLConnection
+//		    webCookieManager.setCookie(sUrl, "SESSION_ID=" + connId );
+			CookieManager cookieManager = new CookieManager();
+			CookieHandler.setDefault(cookieManager);
+			Map<String, List<String>> mp = new HashMap<String, List<String>>();
+			mp.put("SESSION_ID", Arrays.asList(connId.toString()));
+			try {
+				cookieManager.put(new URI(sUrl), mp );
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (URISyntaxException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+			//webView1.loadUrl("http://upload.wikimedia.org/wikipedia/commons/thumb/a/a8/Tettsted_Drammen_2005.jpg/450px-Tettsted_Drammen_2005.jpg");
+			webView1.loadDataWithBaseURL(null, html,"text/html", "UTF-8", null);
+			m_rootView.findViewById(R.id.pnlDescription).setVisibility(View.GONE);
+			
+			/////////////////////////////////////////////////////
+			//  Attachments
+			// Search in body if images exist, if yes, download them by url
+			/*			
+				SharedPreferences pref;
+				SrvConnectionId id = new SrvConnectionId(connId);
+				String json = pref.getString(id.prefixed(KEY_ISSUES_ATTACHMENT), null);
+					return ResponseParser.getAttachment(json, connId, fileId);
+			 */							
+			
+		}
+		
+		
 	}
 	
 	private SessionManager getSessionManager() {

@@ -55,6 +55,8 @@ public class SessionManager {
     private static final String KEY_LAST_SYNC_DATE = "last_sync_date";
 
     public static final String KEY_SYNC_INTERVAL = "sync_frequency";
+    
+    public static final String KEY_ISSUES_ATTACHMENT = "issue_attachment";
 
     protected SessionManager(Context context) {
         this._context = context;

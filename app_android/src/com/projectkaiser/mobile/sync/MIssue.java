@@ -55,6 +55,7 @@ public class MIssue extends MNamedFile implements Serializable {
 	}
 
 	List<MComment> m_comments = new ArrayList<MComment>();
+	List<MAttachment> m_attachments = new ArrayList<MAttachment>();
 	
 	public String getDescription() {
 		return m_description;
@@ -96,4 +97,11 @@ public class MIssue extends MNamedFile implements Serializable {
 		m_comments = comments;
 	}
 	
+	public List<MAttachment> getAttachments() {
+		return m_attachments;
+	}
+
+	public void setAttachments(List<MAttachment> Attachments) {
+		m_attachments = Attachments;
+	}
 }

@@ -16,6 +16,7 @@ import com.projectkaiser.mobile.sync.MComment;
 import com.projectkaiser.mobile.sync.MDigestedArray;
 import com.projectkaiser.mobile.sync.MFolder;
 import com.projectkaiser.mobile.sync.MMyProject;
+import com.projectkaiser.mobile.sync.MAttachment;
 import com.projectkaiser.mobile.sync.MTeamMember;
 import com.projectkaiser.mobile.sync.MWorkingSet;
 import com.projectkaiser.mobile.sync.MWorkingSets;
@@ -125,6 +126,15 @@ public class ResponseParser extends AbstractJsonParser {
 		return items;
 	}
 	
+	public static MAttachment parseAttachment(JSONObject o, String srvConnId) throws JSONException {
+		MAttachment attachment = new MAttachment();
+		
+		attachment.setId(_rlong(o, "id"));
+		attachment.setName(_rstring(o, "name"));
+		attachment.setCreated(_rlong(o, "created"));
+		return attachment;
+	}
+
 	public static SrvConnectionBaseData getBase(String json) {
 		SrvConnectionBaseData base = new SrvConnectionBaseData();
 		try {
@@ -210,4 +220,17 @@ public class ResponseParser extends AbstractJsonParser {
 		}
 	}
 		
+	public static MAttachment getAttachment(String json, String srvConnId, long fileId, long attachmentId) {
+		try {
+			MAttachment attachment = new MAttachment();
+			if (json != null && json.trim().length()>0) {
+				JSONObject j = new JSONObject(json);	
+				attachment.setName("sss"); 
+			}
+			return attachment;
+		} catch (JSONException e) {
+			(new ResponseParser()).log.error("Unable to parse json", e);
+			throw new EJsonException(e);
+		}
+	}
 }
