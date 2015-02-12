@@ -11,8 +11,9 @@ public class IssueURLEncoder implements IUrlEncoder {
 	public String urlEncode(String str){
 		String s = str;
 		try{
-			
+						
 			 if (str.contains("/att?name")) {
+				 str = "{/-" + str + "-/}";
 				 m_encoded = true;
 				 return str;
 			 }

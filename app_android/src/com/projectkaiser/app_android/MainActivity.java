@@ -377,9 +377,15 @@ public class MainActivity extends ActionBarActivity implements
         if (logfile.exists()){
             Intent i = new Intent(Intent.ACTION_SEND);
     		i.setType("vnd.android.cursor.dir/email");
-    		i.putExtra(Intent.EXTRA_EMAIL  , new String[]{"ivvist@gmail.com"});
-    		i.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.action_errorlog_caption));
-    		i.putExtra(Intent.EXTRA_TEXT   , getString(R.string.action_errorlog_body));
+    		i.putExtra(Intent.EXTRA_EMAIL  , new String[]{triniforce_email});
+    		i.putExtra(Intent.EXTRA_SUBJECT, "");
+    		StringBuilder sb = new StringBuilder();
+    		sb.append("Brand: " + android.os.Build.BRAND);
+    		sb.append("Device: " + android.os.Build.DEVICE);
+    		sb.append("Manufactirer: " + android.os.Build.MANUFACTURER);
+    		sb.append("Model: " + android.os.Build.MODEL);
+    		i.putExtra(Intent.EXTRA_TEXT   , getString(R.string.action_errorlog_caption));
+    		i.putExtra(Intent.EXTRA_TEXT   , sb.toString());
     		Uri uri = Uri.parse("file://" + logfile.getAbsolutePath());
     		i.putExtra(Intent.EXTRA_STREAM,  uri);
     		try {

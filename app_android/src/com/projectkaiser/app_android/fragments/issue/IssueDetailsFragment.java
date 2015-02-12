@@ -242,6 +242,7 @@ public class IssueDetailsFragment extends Fragment implements ITaskDetailsListen
 			}
 
 			//webView1.loadUrl("http://upload.wikimedia.org/wikipedia/commons/thumb/a/a8/Tettsted_Drammen_2005.jpg/450px-Tettsted_Drammen_2005.jpg");
+			html = ParsePictures(html);
 			webView1.loadDataWithBaseURL(null, html,"text/html", "UTF-8", null);
 			m_rootView.findViewById(R.id.pnlDescription).setVisibility(View.GONE);
 			
@@ -260,6 +261,11 @@ public class IssueDetailsFragment extends Fragment implements ITaskDetailsListen
 		
 	}
 	
+	private String ParsePictures(String strHTML){
+		strHTML = strHTML.replace("<IMG src=\"{/-", "<a href='" );
+		strHTML = strHTML.replace("-/}\" _pk_ue=\"UTF-8\" style=\"border:none;\" />","'>Load Image</a>" );
+		return strHTML;
+	}
 	private SessionManager getSessionManager() {
 		return SessionManager.get(this.getActivity());
 	}
