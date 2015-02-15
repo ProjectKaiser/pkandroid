@@ -68,6 +68,7 @@
     <string name="issue_responsible">Ответственный: %s</string>
     <string name="issue_responsible_label">Ответственный</string>
     <string name="issue_description_label">Описание</string>
+    <string name="issue_load_image">Загрузи меня</string>
     <string name="more_settings_label">Еще свойства</string>
     <string name="cancel_creating_task_confirm">Отменить создание задачи?</string>
     <string name="cancel_editing_task_confirm">Отменить редктирование?</string>

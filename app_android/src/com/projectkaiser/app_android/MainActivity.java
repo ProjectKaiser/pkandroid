@@ -381,9 +381,13 @@ public class MainActivity extends ActionBarActivity implements
     		i.putExtra(Intent.EXTRA_SUBJECT, "");
     		StringBuilder sb = new StringBuilder();
     		sb.append("Brand: " + android.os.Build.BRAND);
+    		sb.append("\n");
     		sb.append("Device: " + android.os.Build.DEVICE);
+    		sb.append("\n");
     		sb.append("Manufactirer: " + android.os.Build.MANUFACTURER);
+    		sb.append("\n");
     		sb.append("Model: " + android.os.Build.MODEL);
+    		sb.append("\n");
     		i.putExtra(Intent.EXTRA_TEXT   , getString(R.string.action_errorlog_caption));
     		i.putExtra(Intent.EXTRA_TEXT   , sb.toString());
     		Uri uri = Uri.parse("file://" + logfile.getAbsolutePath());

@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.webkit.WebView;
+import android.webkit.CookieSyncManager;
 
 import com.projectkaiser.app_android.R;
 import com.projectkaiser.app_android.bl.obj.MRemoteNotSyncedIssue;
@@ -32,9 +33,7 @@ import com.projectkaiser.mobile.sync.MAttachment;
 import com.projectkaiser.app_android.jsonapi.parser.ResponseParser;
 
 import java.io.IOException;
-//import android.webkit.CookieManager;
-import java.net.CookieHandler;
-import java.net.CookieManager;
+import android.webkit.CookieManager;
 import java.net.URISyntaxException;
 
 import com.triniforce.document.elements.TicketDef;
@@ -221,28 +220,28 @@ public class IssueDetailsFragment extends Fragment implements ITaskDetailsListen
 			String html = m_conv.convert(ticket);			
 
 			WebView webView1 = (WebView)m_rootView.findViewById(R.id.webView1);
-		    
-//			CookieSyncManager cookieSyncMngr=CookieSyncManager.createInstance(getActivity().getApplicationContext());
-//			CookieManager webCookieManager = CookieManager.getInstance();
-//			webCookieManager.setAcceptCookie(true);
-			    // Get cookie manager for HttpURLConnection
-//		    webCookieManager.setCookie(sUrl, "SESSION_ID=" + connId );
-			CookieManager cookieManager = new CookieManager();
-			CookieHandler.setDefault(cookieManager);
-			Map<String, List<String>> mp = new HashMap<String, List<String>>();
-			mp.put("SESSION_ID", Arrays.asList(connId.toString()));
-			try {
-				cookieManager.put(new URI(sUrl), mp );
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (URISyntaxException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
 
-			//webView1.loadUrl("http://upload.wikimedia.org/wikipedia/commons/thumb/a/a8/Tettsted_Drammen_2005.jpg/450px-Tettsted_Drammen_2005.jpg");
-			html = ParsePictures(html);
+			CookieSyncManager.createInstance(this.getActivity());
+			CookieManager webCookieManager = CookieManager.getInstance();
+			webCookieManager.removeAllCookie();
+			webCookieManager.setAcceptCookie(true);
+		    webCookieManager.setCookie(sUrl, "SESSION_ID=" + sm.getBaseData(connId).getSessionId() );
+		    webCookieManager.setCookie(sUrl, "SID=" + sm.getBaseData(connId).getSessionId() );
+		    CookieSyncManager.getInstance().sync();
+		    
+		    webView1.getSettings().setJavaScriptEnabled(true);
+		    webView1.getSettings().setDomStorageEnabled(true);
+		    webView1.getSettings().setAllowContentAccess(true);
+		    webView1.getSettings().setAllowFileAccessFromFileURLs(true);
+		    webView1.getSettings().setAppCacheEnabled(true);
+		    webView1.getSettings().setBlockNetworkImage(false);
+		    webView1.getSettings().setBlockNetworkLoads(false);
+		    webView1.getSettings().setLoadsImagesAutomatically(true);
+		    
+		    html = ParsePictures(html);
+			html = GetImageShowScript() + html;
+			html = html + webCookieManager.getCookie(sUrl );
+			html= html + "<img src = 'http://www.projectkaiser.com/online/att?name=x_0ce078d8%20(1).jpg&parentId=3064168'>";
 			webView1.loadDataWithBaseURL(null, html,"text/html", "UTF-8", null);
 			m_rootView.findViewById(R.id.pnlDescription).setVisibility(View.GONE);
 			
@@ -257,13 +256,43 @@ public class IssueDetailsFragment extends Fragment implements ITaskDetailsListen
 			 */							
 			
 		}
-		
-		
+	
 	}
 	
+	private String GetImageShowScript(){
+		StringBuilder sb  = new StringBuilder();
+		sb.append("<script type=\"text/javascript\">");
+		sb.append("function toggle(divElem, imgElem, sUrl) {");
+		sb.append("if(imgElem) {");
+		sb.append("imgElem.src = sUrl;");
+//		sb.append("imgElem.src = 'http://fisherdiary.saasmaker.com/UserUpload/ByCompany/6f8eb46b-e33e-4eff-8c62-029c06c56feb/Logo/FisherDiaryLogoEnM.png';");
+		sb.append("imgElem.style.visibility='visible';");
+		sb.append("}");
+		sb.append("if(divElem) {");
+		sb.append("divElem.style.visibility='hidden';");
+		sb.append("}");
+		sb.append("}");
+		sb.append("</script>");
+		return sb.toString();
+	}
+	
+	private String GetEmptyImageFrom(int idx, String strURL){
+		StringBuilder sb = new StringBuilder();
+		sb.append("<img id=\"img"+ idx + "\" src=\"\" style='visibility:hidden'>");
+		sb.append("<div onclick=\"toggle(this,document.getElementById('img" + idx + "'), '" + strURL +"'"
+			+ ")\" style=\"height:30px; text-align: center; vertical-align: bottom-text; border: 1px solid; border-radius: 5px; border-color:Grey; cursor: pointer; cursor: hand\">"
+			+ getString(R.string.issue_load_image) + "</div>");
+		return sb.toString();
+	}
+
 	private String ParsePictures(String strHTML){
-		strHTML = strHTML.replace("<IMG src=\"{/-", "<a href='" );
-		strHTML = strHTML.replace("-/}\" _pk_ue=\"UTF-8\" style=\"border:none;\" />","'>Load Image</a>" );
+		int idx = 0;
+		while(strHTML.indexOf("<IMG src=\"{/-")>0){
+			String strURL = strHTML.substring(strHTML.indexOf("<IMG src=\"{/-") + 13, strHTML.indexOf("-/}")); 
+			strHTML = strHTML.replace("<IMG src=\"{/-" + strURL + "-/}\" _pk_ue=\"UTF-8\" style=\"border:none;\" />", 
+					GetEmptyImageFrom(idx, strURL) );
+			idx =+1;
+		}
 		return strHTML;
 	}
 	private SessionManager getSessionManager() {
