@@ -40,11 +40,23 @@ import com.triniforce.document.elements.TicketDef;
 import java.util.*;
 import java.net.HttpCookie;
 import java.net.URI;
-
 import com.triniforce.dom.*;
 import com.triniforce.dom.dom2html.*;
 import com.triniforce.wiki.*;
 
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.CookieStore;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.BasicCookieStore;
+import org.apache.http.impl.cookie.BasicClientCookie;
+import org.apache.http.cookie.Cookie;
+import org.apache.http.protocol.HttpContext;
+import org.apache.http.protocol.BasicHttpContext;
+import org.apache.http.client.protocol.ClientContext;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.HttpResponse;
+import org.apache.http.protocol.HttpRequestHandler;
 public class IssueDetailsFragment extends Fragment implements ITaskDetailsListener {
 	/**
 	 * Returns a new instance of this fragment for the given section number.
@@ -202,6 +214,7 @@ public class IssueDetailsFragment extends Fragment implements ITaskDetailsListen
 		/////////////////////////////////////////////////////
 		//  Description
 //		TextView lblDescription = (TextView)m_rootView.findViewById(R.id.lblDescription);
+		
 		if (details.getDescription() != null) {
 			MRemoteSyncedIssue ri = (MRemoteSyncedIssue)details;
 			String connId = ri.getSrvConnId();
@@ -220,19 +233,59 @@ public class IssueDetailsFragment extends Fragment implements ITaskDetailsListen
 			String html = m_conv.convert(ticket);			
 
 			WebView webView1 = (WebView)m_rootView.findViewById(R.id.webView1);
+			/*
+			java.net.CookieManager ckman = new java.net.CookieManager();
+			java.net.CookieStore ckStore = ckman.getCookieStore();
+			HttpCookie ck  = new HttpCookie("SID",sm.getBaseData(connId).getSessionId());
+			try {
+				ckStore.add(new URI(sUrl), ck );
+			} catch (URISyntaxException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			ck  = new HttpCookie("session_id",sm.getBaseData(connId).getSessionId());
+			try {
+				ckStore.add(new URI(sUrl), ck );
+			} catch (URISyntaxException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			*/
+			
 
 			CookieSyncManager.createInstance(this.getActivity());
 			CookieManager webCookieManager = CookieManager.getInstance();
 			webCookieManager.removeAllCookie();
 			webCookieManager.setAcceptCookie(true);
-		    webCookieManager.setCookie(sUrl, "SESSION_ID=" + sm.getBaseData(connId).getSessionId() );
-		    webCookieManager.setCookie(sUrl, "SID=" + sm.getBaseData(connId).getSessionId() );
+		    webCookieManager.setCookie(sUrl, "sid = " + sm.getBaseData(connId).getSessionId() );
 		    CookieSyncManager.getInstance().sync();
-		    
+
+			
+			/*
+			HttpClient httpClient = new DefaultHttpClient();
+			CookieStore cookieStore=RequestHandler.httpClient.getCookieStore();
+			
+			//parse name/value from mCookies[0]. If you have more than one cookie, a for cycle is needed.
+			CookieStore cookieStore = new BasicCookieStore();
+			Cookie cookie = new BasicClientCookie("session_id", sm.getBaseData(connId).getSessionId());
+			cookieStore.addCookie(cookie);
+			cookie = new BasicClientCookie("sid", sm.getBaseData(connId).getSessionId());
+			cookieStore.addCookie(cookie);
+			HttpContext localContext = new BasicHttpContext();
+			localContext.setAttribute(ClientContext.COOKIE_STORE, cookieStore);		    
+			HttpGet httpGet = new HttpGet(sUrl); 
+			try {
+				HttpResponse response = httpClient.execute(httpGet, localContext);
+			} catch (ClientProtocolException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+*/			
 		    webView1.getSettings().setJavaScriptEnabled(true);
 		    webView1.getSettings().setDomStorageEnabled(true);
-		    webView1.getSettings().setAllowContentAccess(true);
-		    webView1.getSettings().setAllowFileAccessFromFileURLs(true);
 		    webView1.getSettings().setAppCacheEnabled(true);
 		    webView1.getSettings().setBlockNetworkImage(false);
 		    webView1.getSettings().setBlockNetworkLoads(false);
@@ -240,9 +293,7 @@ public class IssueDetailsFragment extends Fragment implements ITaskDetailsListen
 		    
 		    html = ParsePictures(html);
 			html = GetImageShowScript() + html;
-			html = html + webCookieManager.getCookie(sUrl );
-			html= html + "<img src = 'http://www.projectkaiser.com/online/att?name=x_0ce078d8%20(1).jpg&parentId=3064168'>";
-			webView1.loadDataWithBaseURL(null, html,"text/html", "UTF-8", null);
+			webView1.loadDataWithBaseURL(sUrl, html,"text/html", "UTF-8", null);
 			m_rootView.findViewById(R.id.pnlDescription).setVisibility(View.GONE);
 			
 			/////////////////////////////////////////////////////
@@ -265,7 +316,6 @@ public class IssueDetailsFragment extends Fragment implements ITaskDetailsListen
 		sb.append("function toggle(divElem, imgElem, sUrl) {");
 		sb.append("if(imgElem) {");
 		sb.append("imgElem.src = sUrl;");
-//		sb.append("imgElem.src = 'http://fisherdiary.saasmaker.com/UserUpload/ByCompany/6f8eb46b-e33e-4eff-8c62-029c06c56feb/Logo/FisherDiaryLogoEnM.png';");
 		sb.append("imgElem.style.visibility='visible';");
 		sb.append("}");
 		sb.append("if(divElem) {");
