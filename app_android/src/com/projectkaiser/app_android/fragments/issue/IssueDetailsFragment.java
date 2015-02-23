@@ -17,6 +17,9 @@ import android.widget.Toast;
 import android.webkit.WebView;
 import android.webkit.CookieSyncManager;
 import android.webkit.WebViewClient;
+import android.webkit.URLUtil;
+import android.webkit.MimeTypeMap;
+import android.webkit.WebSettings.*;
 
 import com.google.android.gms.auth.GoogleAuthException;
 import com.google.android.gms.auth.GoogleAuthUtil;
@@ -277,7 +280,8 @@ public class IssueDetailsFragment extends Fragment implements ITaskDetailsListen
 	        	@Override
 			    public void onLoadResource(WebView  view, String  url){
 		    		imgUrl = url;
-			        if( url.contains("/att?name") ){
+			        if( !url.contains("file:///") )
+			        {
 			           // save into local file
 			        	imgdir = GetImageDir();
 			            if (!imgdir.canWrite()){
@@ -299,6 +303,8 @@ public class IssueDetailsFragment extends Fragment implements ITaskDetailsListen
 			    }
 			};
 			webView1.setWebViewClient(myWebClient);
+
+			
 		    html = ParsePictures(html);
 			html = GetImageShowScript() + html;
 			
@@ -339,12 +345,16 @@ public class IssueDetailsFragment extends Fragment implements ITaskDetailsListen
 	private String GetImageNameFromURL(String url){
 		int idxStart = 0; 
 		int idxEnd = 0; 
+		
 		if (url.contains("/att?name")) {
 			idxStart = url.indexOf("/att?name") + 10; 
 			idxEnd   = url.indexOf("&", idxStart);
 			if (idxEnd>idxStart + 3){
 				return url.substring(idxStart, idxEnd);
 			}
+		} else if (!url.contains("file:///")) {
+			String fileExtenstion = MimeTypeMap.getFileExtensionFromUrl(url);
+			return URLUtil.guessFileName(url, null, fileExtenstion);			
 		}
 		return url;
 	}
@@ -367,7 +377,7 @@ public class IssueDetailsFragment extends Fragment implements ITaskDetailsListen
         	StringBuilder sb = new StringBuilder();
         	sb.append("<img id=\"img"+ idx + "\" src=\"\" style='visibility:hidden'>");
         	sb.append("<div onclick=\"toggle(this,document.getElementById('img" + idx + "'), '" + strURL +"'"
-        			+ ")\" style=\"height:30px; text-align: center; vertical-align: bottom-text; border: 1px solid; border-radius: 5px; border-color:Grey; cursor: pointer; cursor: hand\">"
+        			+ ")\" style=\"height:30px; text-align: center; vertical-align: bottom-text; border: 1px solid; border-radius: 8px; border-color:Grey; cursor: pointer; cursor: hand\">"
         			+ getString(R.string.issue_load_image) + "</div>");
     		return sb.toString();
         }

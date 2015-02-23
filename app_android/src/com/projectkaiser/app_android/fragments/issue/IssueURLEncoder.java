@@ -16,7 +16,7 @@ public class IssueURLEncoder implements IUrlEncoder {
 				 return str;
 			 }
 			 
-			 s = str;
+			 s = "{/-" + str + "-/}";
 		} catch (Exception e){
 		}
 		return s;
