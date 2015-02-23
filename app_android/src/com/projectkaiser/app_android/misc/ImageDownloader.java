@@ -11,7 +11,7 @@ import java.net.URLConnection;
 import org.apache.http.util.ByteArrayBuffer;
  
 import android.util.Log;
- 
+
 public class ImageDownloader {
  
         private String m_FileDir;
@@ -20,23 +20,30 @@ public class ImageDownloader {
         	m_FileDir = downloadFilesDir;
         }
         
-        public void DownloadFromUrl(String imageURL, String fileName) {  
+        public void DownloadFromUrl(String imageURL, String fileName, String S_ID) {  
         	File fDir = new File(m_FileDir);
-        	if (fDir.exists()){
+        	
+        	if (!fDir.exists()){
         		return;
         	}
-            File fullFn = new File(m_FileDir + "/" + fileName);
+        	
+            File fullFn = new File(m_FileDir + "/" + fileName.replace("%20", " "));
                 try {
-                        URL url = new URL(imageURL); 
                         File file = new File(fullFn.getAbsolutePath());
  
                         long startTime = System.currentTimeMillis();
                         /* Open a connection to that URL. */
-                        URLConnection ucon = url.openConnection();
+                        URL url = new URL(imageURL);
                         /*
                          * Define InputStreams to read from the URLConnection.
                          */
-                        InputStream is = ucon.getInputStream();
+                        
+                        URLConnection c = url.openConnection();
+                        c.setRequestProperty("Cookie","sid=" + S_ID);
+                        // set the connection timeout to 5 seconds
+                        c.setConnectTimeout(1000);
+                    
+                        InputStream is = c.getInputStream();
                         BufferedInputStream bis = new BufferedInputStream(is);
  
                         /*

@@ -4,17 +4,26 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.webkit.WebView;
 import android.webkit.CookieSyncManager;
+import android.webkit.WebViewClient;
 
+import com.google.android.gms.auth.GoogleAuthException;
+import com.google.android.gms.auth.GoogleAuthUtil;
+import com.google.android.gms.auth.UserRecoverableAuthException;
+import com.google.android.gms.common.Scopes;
 import com.projectkaiser.app_android.R;
+import com.projectkaiser.app_android.SigninActivity;
 import com.projectkaiser.app_android.bl.obj.MRemoteNotSyncedIssue;
 import com.projectkaiser.app_android.bl.obj.MRemoteSyncedIssue;
 import com.projectkaiser.app_android.consts.Priority;
@@ -31,7 +40,9 @@ import com.projectkaiser.mobile.sync.MRemoteIssue;
 import com.projectkaiser.mobile.sync.MTeamMember;
 import com.projectkaiser.mobile.sync.MAttachment;
 import com.projectkaiser.app_android.jsonapi.parser.ResponseParser;
+import com.projectkaiser.app_android.misc.*;
 
+import java.io.File;
 import java.io.IOException;
 import android.webkit.CookieManager;
 import java.net.URISyntaxException;
@@ -57,10 +68,14 @@ import org.apache.http.client.protocol.ClientContext;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.HttpResponse;
 import org.apache.http.protocol.HttpRequestHandler;
+
 public class IssueDetailsFragment extends Fragment implements ITaskDetailsListener {
 	/**
 	 * Returns a new instance of this fragment for the given section number.
 	 */
+	private MIssue myDetails = null;
+	private String sessionID = null;
+	private CookieManager webCookieManager = CookieManager.getInstance();
 	public static IssueDetailsFragment newInstance() {
 		IssueDetailsFragment fragment = new IssueDetailsFragment();
 		return fragment;
@@ -91,7 +106,7 @@ public class IssueDetailsFragment extends Fragment implements ITaskDetailsListen
 	@Override
 	public void taskLoaded(MIssue details) {
 
-		
+		myDetails = details;
 		/////////////////////////////////////////////////////
 		//  Folder Name
 		TextView vFolderName = (TextView)m_rootView.findViewById(R.id.lblFolder);
@@ -233,57 +248,14 @@ public class IssueDetailsFragment extends Fragment implements ITaskDetailsListen
 			String html = m_conv.convert(ticket);			
 
 			WebView webView1 = (WebView)m_rootView.findViewById(R.id.webView1);
-			/*
-			java.net.CookieManager ckman = new java.net.CookieManager();
-			java.net.CookieStore ckStore = ckman.getCookieStore();
-			HttpCookie ck  = new HttpCookie("SID",sm.getBaseData(connId).getSessionId());
-			try {
-				ckStore.add(new URI(sUrl), ck );
-			} catch (URISyntaxException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			ck  = new HttpCookie("session_id",sm.getBaseData(connId).getSessionId());
-			try {
-				ckStore.add(new URI(sUrl), ck );
-			} catch (URISyntaxException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			*/
-			
-
 			CookieSyncManager.createInstance(this.getActivity());
-			CookieManager webCookieManager = CookieManager.getInstance();
+			webCookieManager = CookieManager.getInstance();
 			webCookieManager.removeAllCookie();
 			webCookieManager.setAcceptCookie(true);
-		    webCookieManager.setCookie(sUrl, "sid = " + sm.getBaseData(connId).getSessionId() );
+			sessionID = sm.getBaseData(connId).getSessionId();
+		    webCookieManager.setCookie(sUrl, "sid = " + sessionID );
 		    CookieSyncManager.getInstance().sync();
 
-			
-			/*
-			HttpClient httpClient = new DefaultHttpClient();
-			CookieStore cookieStore=RequestHandler.httpClient.getCookieStore();
-			
-			//parse name/value from mCookies[0]. If you have more than one cookie, a for cycle is needed.
-			CookieStore cookieStore = new BasicCookieStore();
-			Cookie cookie = new BasicClientCookie("session_id", sm.getBaseData(connId).getSessionId());
-			cookieStore.addCookie(cookie);
-			cookie = new BasicClientCookie("sid", sm.getBaseData(connId).getSessionId());
-			cookieStore.addCookie(cookie);
-			HttpContext localContext = new BasicHttpContext();
-			localContext.setAttribute(ClientContext.COOKIE_STORE, cookieStore);		    
-			HttpGet httpGet = new HttpGet(sUrl); 
-			try {
-				HttpResponse response = httpClient.execute(httpGet, localContext);
-			} catch (ClientProtocolException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-*/			
 		    webView1.getSettings().setJavaScriptEnabled(true);
 		    webView1.getSettings().setDomStorageEnabled(true);
 		    webView1.getSettings().setAppCacheEnabled(true);
@@ -291,25 +263,63 @@ public class IssueDetailsFragment extends Fragment implements ITaskDetailsListen
 		    webView1.getSettings().setBlockNetworkLoads(false);
 		    webView1.getSettings().setLoadsImagesAutomatically(true);
 		    
+			WebViewClient myWebClient = new WebViewClient()
+			{
+	            String imgUrl = "";
+			    // I tell the webclient you want to catch when a url is about to load
+			    @Override
+			    public boolean shouldOverrideUrlLoading(WebView  view, String  url){
+			        return true;
+			    }
+			    // here you execute an action when the URL you want is about to load
+
+			    File imgdir = null;
+	        	@Override
+			    public void onLoadResource(WebView  view, String  url){
+		    		imgUrl = url;
+			        if( url.contains("/att?name") ){
+			           // save into local file
+			        	imgdir = GetImageDir();
+			            if (!imgdir.canWrite()){
+			        		// TODO: write to log 
+			            	return;		
+			            } 
+			            
+			            AsyncTask<Void, Void, Void> myTask = new AsyncTask<Void, Void, Void >() {
+			    			@Override
+			    			protected Void  doInBackground(Void... params) {
+					        	ImageDownloader imDownloader = new ImageDownloader(imgdir.getAbsolutePath());
+					    		String imFileName = myDetails.getId().toString() + "_" + GetImageNameFromURL(imgUrl);
+					        	imDownloader.DownloadFromUrl(imgUrl, imFileName, sessionID);
+					        	return null;
+			    			}
+			    		};
+                       	myTask.execute();
+			        }
+			    }
+			};
+			webView1.setWebViewClient(myWebClient);
 		    html = ParsePictures(html);
 			html = GetImageShowScript() + html;
-			webView1.loadDataWithBaseURL(sUrl, html,"text/html", "UTF-8", null);
+			
+           	webView1.loadDataWithBaseURL(sUrl, html,"text/html", "UTF-8", null);
 			m_rootView.findViewById(R.id.pnlDescription).setVisibility(View.GONE);
-			
-			/////////////////////////////////////////////////////
-			//  Attachments
-			// Search in body if images exist, if yes, download them by url
-			/*			
-				SharedPreferences pref;
-				SrvConnectionId id = new SrvConnectionId(connId);
-				String json = pref.getString(id.prefixed(KEY_ISSUES_ATTACHMENT), null);
-					return ResponseParser.getAttachment(json, connId, fileId);
-			 */							
-			
 		}
 	
 	}
-	
+	    
+	private File GetImageDir(){
+		File imdir = null;
+        if (getActivity().getApplicationContext().getExternalFilesDir(null)==null){
+        	imdir = new File(getActivity().getApplicationContext().getFilesDir().getAbsolutePath());
+        } else {
+        	imdir = new File(getActivity().getApplicationContext().getExternalFilesDir(null).getAbsolutePath());
+        }
+        if (!imdir.exists()){ 
+        	imdir.mkdirs();
+        }	
+        return imdir;
+	}
 	private String GetImageShowScript(){
 		StringBuilder sb  = new StringBuilder();
 		sb.append("<script type=\"text/javascript\">");
@@ -326,20 +336,48 @@ public class IssueDetailsFragment extends Fragment implements ITaskDetailsListen
 		return sb.toString();
 	}
 	
+	private String GetImageNameFromURL(String url){
+		int idxStart = 0; 
+		int idxEnd = 0; 
+		if (url.contains("/att?name")) {
+			idxStart = url.indexOf("/att?name") + 10; 
+			idxEnd   = url.indexOf("&", idxStart);
+			if (idxEnd>idxStart + 3){
+				return url.substring(idxStart, idxEnd);
+			}
+		}
+		return url;
+	}
+	
 	private String GetEmptyImageFrom(int idx, String strURL){
-		StringBuilder sb = new StringBuilder();
-		sb.append("<img id=\"img"+ idx + "\" src=\"\" style='visibility:hidden'>");
-		sb.append("<div onclick=\"toggle(this,document.getElementById('img" + idx + "'), '" + strURL +"'"
-			+ ")\" style=\"height:30px; text-align: center; vertical-align: bottom-text; border: 1px solid; border-radius: 5px; border-color:Grey; cursor: pointer; cursor: hand\">"
-			+ getString(R.string.issue_load_image) + "</div>");
-		return sb.toString();
+		
+		String imFileName = myDetails.getId().toString() + "_" + GetImageNameFromURL(strURL);
+		boolean bneedscript = false;
+		File imgdir = GetImageDir();
+		if (imgdir==null){bneedscript = true;};
+		File imgfile = null;
+		if (!bneedscript){
+			imgfile = new File(imgdir.getAbsolutePath() + "/" + imFileName);
+	        if (!imgfile.exists()) {bneedscript = true;}
+		}
+		if (!bneedscript){
+        	return "<IMG src=\"file://" + imgfile.getAbsolutePath() +  "\""; 
+        } else {
+        	
+        	StringBuilder sb = new StringBuilder();
+        	sb.append("<img id=\"img"+ idx + "\" src=\"\" style='visibility:hidden'>");
+        	sb.append("<div onclick=\"toggle(this,document.getElementById('img" + idx + "'), '" + strURL +"'"
+        			+ ")\" style=\"height:30px; text-align: center; vertical-align: bottom-text; border: 1px solid; border-radius: 5px; border-color:Grey; cursor: pointer; cursor: hand\">"
+        			+ getString(R.string.issue_load_image) + "</div>");
+    		return sb.toString();
+        }
 	}
 
 	private String ParsePictures(String strHTML){
 		int idx = 0;
 		while(strHTML.indexOf("<IMG src=\"{/-")>0){
 			String strURL = strHTML.substring(strHTML.indexOf("<IMG src=\"{/-") + 13, strHTML.indexOf("-/}")); 
-			strHTML = strHTML.replace("<IMG src=\"{/-" + strURL + "-/}\" _pk_ue=\"UTF-8\" style=\"border:none;\" />", 
+	        strHTML = strHTML.replace("<IMG src=\"{/-" + strURL + "-/}\" _pk_ue=\"UTF-8\" style=\"border:none;\" />", 
 					GetEmptyImageFrom(idx, strURL) );
 			idx =+1;
 		}

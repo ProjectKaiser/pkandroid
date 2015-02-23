@@ -16,7 +16,7 @@ public class IssueURLEncoder implements IUrlEncoder {
 				 return str;
 			 }
 			 
-			 s = java.net.URLEncoder.encode(str, "UTF-8");
+			 s = str;
 		} catch (Exception e){
 		}
 		return s;
