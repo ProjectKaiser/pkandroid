@@ -77,14 +77,6 @@
                 android:layout_height="1dip"
                 android:background="?attr/dividerVertical" />
 
-            <TextView
-                android:id="@+id/lblDescription"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="@string/issue_description_label"
-                android:textAppearance="@style/DescriptionLabel"
-                android:textSize="18sp" />
         </LinearLayout>
 
         <WebView

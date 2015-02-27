@@ -51,6 +51,9 @@ import android.webkit.CookieManager;
 import java.net.URISyntaxException;
 
 import com.triniforce.document.elements.TicketDef;
+import com.triniforce.document.elements.macros.def.*;
+import com.triniforce.document.elements.macros.def.intf.*;
+import com.triniforce.document.elements.macros.def.container.*;
 import java.util.*;
 import java.net.HttpCookie;
 import java.net.URI;
@@ -104,6 +107,22 @@ public class IssueDetailsFragment extends Fragment implements ITaskDetailsListen
         }	
 
         return m_rootView;
+	}
+	
+	public class IssueTicketCloakMacroDef extends TicketCloakMacroDef {
+	    @Override
+	    public int getWikiOptions() {
+	        return WikiOptions.BREAKS_PARAGRAPH | WikiOptions.BR_BEFORE_STARTTAG | WikiOptions.BR_AFTER_ENDTAG;
+	    }
+	 
+	    @Override
+	    public DOMOptions getDOMOptions(ITicketMacro instance) {
+	        DOMOptions options = new DOMOptions();
+	        options.setCustomHtmlTag("details");
+	        options.setPreContentCode("<summary>%name%</summary>");
+	        return options;
+	    }
+	     
 	}
 	
 	@Override
@@ -231,7 +250,6 @@ public class IssueDetailsFragment extends Fragment implements ITaskDetailsListen
 
 		/////////////////////////////////////////////////////
 		//  Description
-//		TextView lblDescription = (TextView)m_rootView.findViewById(R.id.lblDescription);
 		
 		if (details.getDescription() != null) {
 			MRemoteSyncedIssue ri = (MRemoteSyncedIssue)details;
@@ -239,7 +257,6 @@ public class IssueDetailsFragment extends Fragment implements ITaskDetailsListen
 			long fileId = ri.getId();
 			
 			TicketDef ticket = getTicket(details.getDescription());
-
 			IssueURLEncoder encoder = new IssueURLEncoder();
 			
 			final SessionManager sm = getSessionManager();
@@ -247,68 +264,78 @@ public class IssueDetailsFragment extends Fragment implements ITaskDetailsListen
 			ConvertParameters params = new ConvertParameters();
 			params.setAppBaseURL(sUrl); // CUrrent server URL
 			params.setFileId(fileId); // Current file ID
+		    RegisteredMacros.setInstaller(new SystemMacrosInstaller()); // Installs default macros
+		    RegisteredMacros.put(new IssueTicketCloakMacroDef()); 
+
 			DOM2HtmlConverter m_conv = new DOM2HtmlConverter(params, encoder , 0);
-			String html = m_conv.convert(ticket);			
+			
+		    
+			String html = m_conv.convert(ticket);
 
 			WebView webView1 = (WebView)m_rootView.findViewById(R.id.webView1);
-			CookieSyncManager.createInstance(this.getActivity());
-			webCookieManager = CookieManager.getInstance();
-			webCookieManager.removeAllCookie();
-			webCookieManager.setAcceptCookie(true);
-			sessionID = sm.getBaseData(connId).getSessionId();
-		    webCookieManager.setCookie(sUrl, "sid = " + sessionID );
-		    CookieSyncManager.getInstance().sync();
+			if (html.trim()==""){
+				webView1.setVisibility(0);
+			} else {
+				CookieSyncManager.createInstance(this.getActivity());
+				webCookieManager = CookieManager.getInstance();
+				webCookieManager.removeAllCookie();
+				webCookieManager.setAcceptCookie(true);
+				sessionID = sm.getBaseData(connId).getSessionId();
+				webCookieManager.setCookie(sUrl, "sid = " + sessionID );
+				CookieSyncManager.getInstance().sync();
 
-		    webView1.getSettings().setJavaScriptEnabled(true);
-		    webView1.getSettings().setDomStorageEnabled(true);
-		    webView1.getSettings().setAppCacheEnabled(true);
-		    webView1.getSettings().setBlockNetworkImage(false);
-		    webView1.getSettings().setBlockNetworkLoads(false);
-		    webView1.getSettings().setLoadsImagesAutomatically(true);
+				webView1.getSettings().setJavaScriptEnabled(true);
+				webView1.getSettings().setDomStorageEnabled(true);
+				webView1.getSettings().setAppCacheEnabled(true);
+				webView1.getSettings().setBlockNetworkImage(false);
+				webView1.getSettings().setBlockNetworkLoads(false);
+				webView1.getSettings().setLoadsImagesAutomatically(true);
 		    
-			WebViewClient myWebClient = new WebViewClient()
-			{
-	            String imgUrl = "";
-			    // I tell the webclient you want to catch when a url is about to load
-			    @Override
-			    public boolean shouldOverrideUrlLoading(WebView  view, String  url){
-			        return true;
-			    }
-			    // here you execute an action when the URL you want is about to load
-
-			    File imgdir = null;
-	        	@Override
-			    public void onLoadResource(WebView  view, String  url){
-		    		imgUrl = url;
-			        if( !url.contains("file:///") )
-			        {
-			           // save into local file
-			        	imgdir = GetImageDir();
-			            if (!imgdir.canWrite()){
-			        		// TODO: write to log 
-			            	return;		
-			            } 
+				WebViewClient myWebClient = new WebViewClient()
+				{	
+					String imgUrl = "";
+					// 	I tell the webclient you want to catch when a url is about to load
+					@Override
+					public boolean shouldOverrideUrlLoading(WebView  view, String  url){
+						return true;
+					}
+					// here you execute an action when the URL you want is about to load
+					
+					File imgdir = null;
+					@Override
+					public void onLoadResource(WebView  view, String  url)
+					{
+						imgUrl = url;
+						if( !url.contains("file:///") )
+						{
+							// 	save into local file
+							imgdir = GetImageDir();
+							if (!imgdir.canWrite()){
+								// TODO: write to log 
+								return;		
+							} 
 			            
-			            AsyncTask<Void, Void, Void> myTask = new AsyncTask<Void, Void, Void >() {
-			    			@Override
-			    			protected Void  doInBackground(Void... params) {
-					        	ImageDownloader imDownloader = new ImageDownloader(imgdir.getAbsolutePath());
-					    		String imFileName = myDetails.getId().toString() + "_" + GetImageNameFromURL(imgUrl);
-					        	imDownloader.DownloadFromUrl(imgUrl, imFileName, sessionID);
-					        	return null;
-			    			}
-			    		};
-                       	myTask.execute();
-			        }
-			    }
-			};
-			webView1.setWebViewClient(myWebClient);
+							AsyncTask<Void, Void, Void> myTask = new AsyncTask<Void, Void, Void >() 
+							{
+								@Override
+								protected Void  doInBackground(Void... params) {
+									ImageDownloader imDownloader = new ImageDownloader(imgdir.getAbsolutePath());
+									String imFileName = myDetails.getId().toString() + "_" + GetImageNameFromURL(imgUrl);
+									imDownloader.DownloadFromUrl(imgUrl, imFileName, sessionID);
+									return null;
+								}
+							};
+                       		myTask.execute();
+						}
+					}
+				};
 
-			
-		    html = ParsePictures(html);
-			html = GetImageShowScript() + html;
-			
-           	webView1.loadDataWithBaseURL(sUrl, html,"text/html", "UTF-8", null);
+				webView1.setWebViewClient(myWebClient);
+		    	html = ParsePictures(html);
+				html = GetImageShowScript() + html;
+
+				webView1.loadDataWithBaseURL(sUrl, html,"text/html", "UTF-8", null);
+			}
 			m_rootView.findViewById(R.id.pnlDescription).setVisibility(View.GONE);
 		}
 	
@@ -396,6 +423,7 @@ public class IssueDetailsFragment extends Fragment implements ITaskDetailsListen
 	private SessionManager getSessionManager() {
 		return SessionManager.get(this.getActivity());
 	}
+	
 	private TicketDef getTicket(String wiki){
 	    DOMGenerator gen = new DOMGenerator();
 	    WikiParser wparser = new WikiParser();

@@ -45,11 +45,12 @@
             <RadioGroup
                 android:id="@+id/radioGroup1"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" >
+                android:layout_height="wrap_content"
+                android:orientation="horizontal" >
 
                 <RadioButton
                     android:id="@+id/rbnPKSaas"
-                    android:layout_width="wrap_content"
+                    android:layout_width="156dp"
                     android:layout_height="wrap_content"
                     android:checked="true"
                     android:onClick="rbnServerChanged"
@@ -74,20 +75,12 @@
                 <requestFocus />
             </EditText>
 
-            <CheckBox
-                android:id="@+id/chbUseGoogleAuth"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:checked="true"
-                android:text="@string/login_with_google" />
-
             <LinearLayout
                 android:id="@+id/pnlPlainAuth"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:visibility="gone"
-                android:orientation="vertical" >
+                android:orientation="vertical"
+                android:visibility="gone" >
 
                 <EditText
                     android:id="@+id/email"
@@ -110,6 +103,14 @@
                     android:maxLines="1"
                     android:singleLine="true" />
             </LinearLayout>
+            <CheckBox
+                android:id="@+id/chbUseGoogleAuth"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:checked="true"
+                android:text="@string/login_with_google" />
+
         </LinearLayout>
 
         <RelativeLayout

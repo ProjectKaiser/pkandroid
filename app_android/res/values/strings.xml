@@ -65,7 +65,7 @@
     <string name="issue_mins">Mins</string>
     <string name="issue_assignee">Assignee: %s</string>
     <string name="issue_assignee_label">Assignee</string>
-    <string name="issue_responsible">Responsible %s</string>
+    <string name="issue_responsible">Responsible: %s</string>
     <string name="issue_responsible_label">Responsible</string>
     <string name="issue_description_label">Description</string>
     <string name="issue_load_image">Load me</string>
@@ -100,7 +100,7 @@
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password</string>
     <string name="prompt_server">Server URL</string>
-    <string name="server_cloud">Project Kaiser Cloud</string>
+    <string name="server_cloud">PK Cloud</string>
     <string name="server_custom">Custom Server</string>
     <string name="server_cloud_url">http://www.projectkaiser.com/online</string>
     <string name="action_sign_in">Sign in</string>
