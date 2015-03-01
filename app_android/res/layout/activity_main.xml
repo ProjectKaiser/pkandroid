@@ -10,6 +10,16 @@
         android:id="@+id/pager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context="com.projectkaiser.app_android.MainActivity" />
+        tools:context="com.projectkaiser.app_android.MainActivity" >
+    </android.support.v4.view.ViewPager>
+
+    <ListView
+        android:id="@+id/left_drawer"
+        android:layout_width="262dp"
+        android:layout_height="match_parent"
+        android:background="#111"
+        android:choiceMode="singleChoice"
+        android:divider="@android:color/transparent"
+        android:dividerHeight="0dp" />
 
 </LinearLayout>

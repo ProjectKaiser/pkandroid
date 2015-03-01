@@ -4,8 +4,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -13,20 +11,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.webkit.WebView;
 import android.webkit.CookieSyncManager;
 import android.webkit.WebViewClient;
 import android.webkit.URLUtil;
 import android.webkit.MimeTypeMap;
-import android.webkit.WebSettings.*;
 
-import com.google.android.gms.auth.GoogleAuthException;
-import com.google.android.gms.auth.GoogleAuthUtil;
-import com.google.android.gms.auth.UserRecoverableAuthException;
-import com.google.android.gms.common.Scopes;
 import com.projectkaiser.app_android.R;
-import com.projectkaiser.app_android.SigninActivity;
 import com.projectkaiser.app_android.bl.obj.MRemoteNotSyncedIssue;
 import com.projectkaiser.app_android.bl.obj.MRemoteSyncedIssue;
 import com.projectkaiser.app_android.consts.Priority;
@@ -34,46 +25,24 @@ import com.projectkaiser.app_android.fragments.issue.intf.ITaskDetailsListener;
 import com.projectkaiser.app_android.fragments.issue.intf.ITaskDetailsProvider;
 import com.projectkaiser.app_android.misc.Time;
 import com.projectkaiser.app_android.settings.SessionManager;
-import com.projectkaiser.app_android.settings.SrvConnectionId;
 import com.projectkaiser.mobile.sync.MDataHelper;
 import com.projectkaiser.mobile.sync.MFolder;
 import com.projectkaiser.mobile.sync.MIssue;
 import com.projectkaiser.mobile.sync.MMyProject;
 import com.projectkaiser.mobile.sync.MRemoteIssue;
 import com.projectkaiser.mobile.sync.MTeamMember;
-import com.projectkaiser.mobile.sync.MAttachment;
-import com.projectkaiser.app_android.jsonapi.parser.ResponseParser;
 import com.projectkaiser.app_android.misc.*;
 
 import java.io.File;
-import java.io.IOException;
 import android.webkit.CookieManager;
-import java.net.URISyntaxException;
 
 import com.triniforce.document.elements.TicketDef;
 import com.triniforce.document.elements.macros.def.*;
 import com.triniforce.document.elements.macros.def.intf.*;
 import com.triniforce.document.elements.macros.def.container.*;
-import java.util.*;
-import java.net.HttpCookie;
-import java.net.URI;
 import com.triniforce.dom.*;
 import com.triniforce.dom.dom2html.*;
 import com.triniforce.wiki.*;
-
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.CookieStore;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.impl.client.BasicCookieStore;
-import org.apache.http.impl.cookie.BasicClientCookie;
-import org.apache.http.cookie.Cookie;
-import org.apache.http.protocol.HttpContext;
-import org.apache.http.protocol.BasicHttpContext;
-import org.apache.http.client.protocol.ClientContext;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.HttpResponse;
-import org.apache.http.protocol.HttpRequestHandler;
 
 public class IssueDetailsFragment extends Fragment implements ITaskDetailsListener {
 	/**

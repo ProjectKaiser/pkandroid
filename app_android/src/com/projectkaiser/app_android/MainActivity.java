@@ -13,14 +13,19 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBar.Tab;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.ContextThemeWrapper;
+import android.widget.ListView;
 import android.widget.Toast;
 import android.net.Uri;
+
 
 import com.projectkaiser.app_android.async.AsyncCallback;
 import com.projectkaiser.app_android.bl.BL;
@@ -58,11 +63,8 @@ public class MainActivity extends ActionBarActivity implements
 	private final Logger log = Logger.getLogger(MainActivity.class);
 
 	public static final String ALARM_TASK = "com.projectkaiser.app_android.ALARM_TASK";
-
 	private static final String ID_LOCAL = "local";
-
 	private static final String ID_NOT_CONFIGURED = "not_configured";
-
 	private static final String triniforce_email = "ivvist@gmail.com";
 	
 	SectionsPagerAdapter mSectionsPagerAdapter;
@@ -70,9 +72,7 @@ public class MainActivity extends ActionBarActivity implements
 	ArrayList<IGlobalAppEventsListener> m_eventListeners = new ArrayList<IGlobalAppEventsListener>();
 	
 	List<String> m_connectionIds = new ArrayList<String>();
-
 	List<String> m_tabNames = new ArrayList<String>();
-	
 	SessionManager m_sessionManager;
 	
 	private void addTab(String conId, String tabName) {
@@ -192,13 +192,21 @@ public class MainActivity extends ActionBarActivity implements
 		super.onStop();
 	}
 
+	private String[] mDrawerTitles = getResources().getStringArray(R.array.server_items);	
+	private DrawerLayout mDrawerLayout;
+	private ListView mDrawerList;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
 		m_sessionManager = SessionManager.get(this);
 	
-		SyncAlarmReceiver receiver = new SyncAlarmReceiver();
+		// set a custom shadow that overlays the main content when the drawer opens
+        mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
+        mDrawerList = (ListView) findViewById(R.id.left_drawer);
+        
+        SyncAlarmReceiver receiver = new SyncAlarmReceiver();
 		if (m_sessionManager.getSyncIntervalMin() > -1) { 
 			if (!receiver.isAlarmEnabled(getApplicationContext()))
 				receiver.setAlarm(getApplicationContext());

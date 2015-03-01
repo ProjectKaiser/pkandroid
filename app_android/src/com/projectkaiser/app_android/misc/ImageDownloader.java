@@ -54,11 +54,13 @@ public class ImageDownloader {
                         while ((current = bis.read()) != -1) {
                                 baf.append((byte) current);
                         }
- 
+                        bis.close();
+                        is.close();
                         /* Convert the Bytes read to a String. */
                         FileOutputStream fos = new FileOutputStream(file);
                         fos.write(baf.toByteArray());
                         fos.close();
+                        
                         Log.d("ImageManager", "download ready in"
                                         + ((System.currentTimeMillis() - startTime) / 1000)
                                         + " sec");

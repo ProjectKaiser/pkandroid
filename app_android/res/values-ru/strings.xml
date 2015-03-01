@@ -120,6 +120,12 @@
     <string name="prefs_accounts_summary">Управление учетными записями</string>
     <string name="pref_title_sync_frequency">Интервал синхронизации</string>
 
+    <string-array name="server_items">
+        <item>Локальные задачи</item>
+        <item>Настройки</item>
+        <item>О программе Project Kaiser</item>
+    </string-array>
+    
     <string-array name="pref_sync_frequency_titles">
         <item>1 минута</item>
         <item>5 минут</item>
