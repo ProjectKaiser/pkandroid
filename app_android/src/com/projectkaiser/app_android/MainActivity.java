@@ -8,6 +8,7 @@ import java.util.Locale;
 import org.apache.log4j.Logger;
 
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -15,17 +16,19 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBar.Tab;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.ContextThemeWrapper;
 import android.widget.ListView;
+import android.widget.ArrayAdapter;
+import android.widget.AdapterView;
+import android.view.View;
 import android.widget.Toast;
 import android.net.Uri;
-
 
 import com.projectkaiser.app_android.async.AsyncCallback;
 import com.projectkaiser.app_android.bl.BL;
@@ -67,8 +70,8 @@ public class MainActivity extends ActionBarActivity implements
 	private static final String ID_NOT_CONFIGURED = "not_configured";
 	private static final String triniforce_email = "ivvist@gmail.com";
 	
-	SectionsPagerAdapter mSectionsPagerAdapter;
-	ViewPager mViewPager;
+	//SectionsPagerAdapter mSectionsPagerAdapter;
+	//ViewPager mViewPager;
 	ArrayList<IGlobalAppEventsListener> m_eventListeners = new ArrayList<IGlobalAppEventsListener>();
 	
 	List<String> m_connectionIds = new ArrayList<String>();
@@ -82,7 +85,7 @@ public class MainActivity extends ActionBarActivity implements
 //		m_fragments.add(fragment);		
 		final ActionBar actionBar = getSupportActionBar();
 		Tab tab = actionBar.newTab().setText(tabName).setTabListener(m_tabListener);
-		mSectionsPagerAdapter.notifyDataSetChanged();
+		//mSectionsPagerAdapter.notifyDataSetChanged();
 		actionBar.addTab(tab);
 	}
 
@@ -91,7 +94,7 @@ public class MainActivity extends ActionBarActivity implements
 		m_tabNames.clear();
 
 		final ActionBar actionBar = getSupportActionBar();
-		mSectionsPagerAdapter.notifyDataSetChanged();
+		//mSectionsPagerAdapter.notifyDataSetChanged();
 		actionBar.removeAllTabs();
 
 		addTab(ID_LOCAL, getString(R.string.tab_local));
@@ -115,7 +118,7 @@ public class MainActivity extends ActionBarActivity implements
 
 		@Override
 		public void onTabSelected(Tab tab, FragmentTransaction arg1) {
-			mViewPager.setCurrentItem(tab.getPosition());
+			//mViewPager.setCurrentItem(tab.getPosition());
 		}
 
 		@Override
@@ -150,6 +153,17 @@ public class MainActivity extends ActionBarActivity implements
 		}
 	};
 
+	private class DrawerItemClickListener implements ListView.OnItemClickListener {
+	    @Override
+	    public void onItemClick(AdapterView parent, View view, int position, long id) {
+	        selectItem(position);
+	    }
+	}
+	
+	/** Swaps fragments in the main content view */
+	private void selectItem(int position) {
+	}
+	
 	private void createUi() {
 		setContentView(R.layout.activity_main);
 
@@ -160,6 +174,7 @@ public class MainActivity extends ActionBarActivity implements
 
 		// Create the adapter that will return a fragment for each of the three
 		// primary sections of the activity.
+/*		
 		mSectionsPagerAdapter = new SectionsPagerAdapter(
 				getSupportFragmentManager());
 
@@ -175,7 +190,7 @@ public class MainActivity extends ActionBarActivity implements
 						actionBar.setSelectedNavigationItem(position);
 					}
 				});
-
+*/
 		createConnections();
 		
 	}
@@ -192,9 +207,11 @@ public class MainActivity extends ActionBarActivity implements
 		super.onStop();
 	}
 
-	private String[] mDrawerTitles = getResources().getStringArray(R.array.server_items);	
+	
+	private ArrayList<String> mDrawerTitles = new ArrayList<String>();	
 	private DrawerLayout mDrawerLayout;
 	private ListView mDrawerList;
+	private ActionBarDrawerToggle mDrawerToggle;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -203,9 +220,10 @@ public class MainActivity extends ActionBarActivity implements
 		m_sessionManager = SessionManager.get(this);
 	
 		// set a custom shadow that overlays the main content when the drawer opens
-        mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
-        mDrawerList = (ListView) findViewById(R.id.left_drawer);
-        
+  	    mDrawerTitles.add(getString(R.string.tab_local));	
+  	    mDrawerTitles.add(getString(R.string.title_activity_settings));	
+  	    mDrawerTitles.add(getString(R.string.action_about));	
+              
         SyncAlarmReceiver receiver = new SyncAlarmReceiver();
 		if (m_sessionManager.getSyncIntervalMin() > -1) { 
 			if (!receiver.isAlarmEnabled(getApplicationContext()))
@@ -213,15 +231,64 @@ public class MainActivity extends ActionBarActivity implements
 		} else
 			receiver.cancelAlarm(getApplicationContext());
 
-		// Thread.setDefaultUncaughtExceptionHandler(new
-		// ErrorHandler(getApplicationContext(), getLocalClassName()));
 		createUi();
 		
-		if (getIntent()!=null)
-			onNewIntent(getIntent()); // we need to call this for the case when Activity is started for the first time 
+  	    mDrawerLayout = (DrawerLayout) findViewById(R.id.activity_main);
+        mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
+        mDrawerList = (ListView) findViewById(R.id.left_drawer);
+        
+        ArrayAdapter<String> ldp = new ArrayAdapter<String>(this, R.layout.drawer_list_item, mDrawerTitles); 
+        mDrawerList.setAdapter(ldp);
+        if (getIntent()!=null)
+			onNewIntent(getIntent()); // we need to call this for the case when Activity is started for the first time
+        
+        mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
+
+        // enable ActionBar app icon to behave as action to toggle nav drawer
+        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getActionBar().setHomeButtonEnabled(true);
+
+        mDrawerToggle = new ActionBarDrawerToggle(
+                this,                  /* host Activity */
+                mDrawerLayout,         /* DrawerLayout object */
+                R.drawable.ic_drawer,  /* nav drawer icon to replace 'Up' caret */
+                0,  /* "open drawer" description */
+                0  /* "close drawer" description */
+                ) {
+
+            /** Called when a drawer has settled in a completely closed state. */
+            public void onDrawerClosed(View view) {
+                super.onDrawerClosed(view);
+            }
+
+            /** Called when a drawer has settled in a completely open state. */
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+            }
+        };
+
+        mDrawerLayout.setDrawerListener(mDrawerToggle);
+        
+        if (savedInstanceState == null) {
+            selectItem(0);
+        }
 	}
 
 	@Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        // Sync the toggle state after onRestoreInstanceState has occurred.
+        mDrawerToggle.syncState();
+    }
+	
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        // Pass any configuration change to the drawer toggles
+        mDrawerToggle.onConfigurationChanged(newConfig);
+    }
+
+    @Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 
 		// Inflate the menu; this adds items to the action bar if it is present.
@@ -312,7 +379,7 @@ public class MainActivity extends ActionBarActivity implements
 				
 				@Override
 				public void onFailure(Throwable e) {
-					log.error(e);
+					//log.error(e);
 					syncFinishedForCon(connId);
 					if (e instanceof EAuthError) 
 						Toast.makeText(getApplicationContext(), getString(R.string.authentication_failed) , Toast.LENGTH_LONG).show();
@@ -343,6 +410,10 @@ public class MainActivity extends ActionBarActivity implements
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
+		if (mDrawerToggle.onOptionsItemSelected(item)) {
+            return true;
+        }
+		
 		switch (item.getItemId()) {
 		case R.id.action_new_task:
 			Intent i = new Intent(getApplicationContext(),
@@ -408,7 +479,7 @@ public class MainActivity extends ActionBarActivity implements
         }
 
 	}
-	
+/*	
 	public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
 		public SectionsPagerAdapter(FragmentManager fm) {
@@ -441,7 +512,7 @@ public class MainActivity extends ActionBarActivity implements
 			return m_tabNames.get(position);
 		}
 	}
-
+*/
 	@Override
 	public void register(IGlobalAppEventsListener listener) {
 		m_eventListeners.add(listener);

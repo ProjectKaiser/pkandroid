@@ -124,7 +124,6 @@
         <item>Settings</item>
         <item>About Project Kaiser</item>
     </string-array>
-    
     <string-array name="pref_sync_frequency_titles">
         <item>1 minute</item>
         <item>5 minutes</item>
