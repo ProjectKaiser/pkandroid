@@ -1,16 +1,14 @@
+# Java class files
+*.class
+
 # built application files
 *.apk
 *.ap_
 *.jar
  
-# lint folder
-lint
- 
 # files for the dex VM
 *.dex
  
-# Java class files
-*.class
  
 # generated files
 bin/

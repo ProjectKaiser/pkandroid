@@ -3,32 +3,27 @@ package com.projectkaiser.app_android;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
-
 import org.apache.log4j.Logger;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
-import android.support.v4.view.ViewPager;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBar.Tab;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ListView;
-import android.widget.ArrayAdapter;
-import android.widget.AdapterView;
+import android.widget.*;
 import android.view.View;
-import android.widget.Toast;
+import android.view.ViewGroup;
+import android.view.LayoutInflater;
 import android.net.Uri;
+import android.graphics.Color;
 
 import com.projectkaiser.app_android.async.AsyncCallback;
 import com.projectkaiser.app_android.bl.BL;
@@ -75,57 +70,24 @@ public class MainActivity extends ActionBarActivity implements
 	ArrayList<IGlobalAppEventsListener> m_eventListeners = new ArrayList<IGlobalAppEventsListener>();
 	
 	List<String> m_connectionIds = new ArrayList<String>();
-	List<String> m_tabNames = new ArrayList<String>();
 	SessionManager m_sessionManager;
 	
-	private void addTab(String conId, String tabName) {
-		Locale l = Locale.getDefault();
-		m_connectionIds.add(conId); 
-		m_tabNames.add(tabName.toUpperCase(l));
-//		m_fragments.add(fragment);		
-		final ActionBar actionBar = getSupportActionBar();
-		Tab tab = actionBar.newTab().setText(tabName).setTabListener(m_tabListener);
-		//mSectionsPagerAdapter.notifyDataSetChanged();
-		actionBar.addTab(tab);
-	}
-
 	private void createConnections() {
 		m_connectionIds.clear();
-		m_tabNames.clear();
-
-		final ActionBar actionBar = getSupportActionBar();
-		//mSectionsPagerAdapter.notifyDataSetChanged();
-		actionBar.removeAllTabs();
-
-		addTab(ID_LOCAL, getString(R.string.tab_local));
-		
+		m_connectionIds.add(ID_LOCAL);
+  	    mDrawerServers.add(getString(R.string.tab_local));	
 		List<String> connections = m_sessionManager.getConnections();
 		
 		for (String conId: connections) {
 			SrvConnectionBaseData bd = m_sessionManager.getBaseData(conId);
-			addTab(conId, bd.getServerName());
+			m_connectionIds.add(conId);
+	  	    mDrawerServers.add(bd.getServerName());	
 		}
 		
 		if (connections.size() == 0) 
-			addTab(ID_NOT_CONFIGURED, getString(R.string.tab_inbox_not_configured));
+	  	    mDrawerServers.add(getString(R.string.tab_inbox_not_configured));	
+		m_connectionIds.add(ID_NOT_CONFIGURED);
 	}
-	
-	ActionBar.TabListener m_tabListener = new ActionBar.TabListener() {
-		@Override
-		public void onTabReselected(Tab arg0, FragmentTransaction arg1) {
-			// Ignore this event
-		}
-
-		@Override
-		public void onTabSelected(Tab tab, FragmentTransaction arg1) {
-			//mViewPager.setCurrentItem(tab.getPosition());
-		}
-
-		@Override
-		public void onTabUnselected(Tab arg0, FragmentTransaction arg1) {
-			// Ignore this event
-		}
-	};  
 	
 	protected void onResume() {
 		super.onResume();
@@ -147,8 +109,6 @@ public class MainActivity extends ActionBarActivity implements
 				        getApplicationContext().startActivity(openIssueIntent);
 					}
 				}
-				// open remote tab
-				// open issue
 			}
 		}
 	};
@@ -156,43 +116,56 @@ public class MainActivity extends ActionBarActivity implements
 	private class DrawerItemClickListener implements ListView.OnItemClickListener {
 	    @Override
 	    public void onItemClick(AdapterView parent, View view, int position, long id) {
-	        selectItem(position);
+	      selectItem(position);
 	    }
 	}
 	
 	/** Swaps fragments in the main content view */
 	private void selectItem(int position) {
+		Intent i = null;
+		if (position < mDrawerServers.size()-3) {
+			mDrawerServerList.setItemChecked(position, true);
+			
+			Fragment fragment = null;
+			String connectionId = m_connectionIds.get(position);
+			if (ID_LOCAL.equals(connectionId))
+				fragment = LocalTasksFragment.newInstance();
+			else if (ID_NOT_CONFIGURED.equals(connectionId)) {
+				fragment = new NoConnectionFragment();
+			} else {
+				InboxFragment f = new InboxFragment();
+				Bundle args = new Bundle();
+				args.putString(SrvConnectionId.ARG, connectionId);
+				f.setArguments(args);
+				fragment = f;
+			} 
+			if (fragment==null){
+				return;
+			}
+			
+			FragmentManager fragmentManager = getSupportFragmentManager(); 
+	        fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();			
+		} else if (position == mDrawerServers.size()-2) {
+			i = new Intent(getApplicationContext(),	SettingsActivity.class);
+		    i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+		    i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+			getApplicationContext().startActivity(i);	
+		} else if (position == mDrawerServers.size()-1) {
+			i = new Intent(getApplicationContext(),InfoActivity.class);
+			
+	        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+	        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+			getApplicationContext().startActivity(i);
+		}
+        mDrawerLayout.closeDrawer(mDrawerServerList);
 	}
-	
 	private void createUi() {
 		setContentView(R.layout.activity_main);
 
-		final ActionBar actionBar = getSupportActionBar();
-		actionBar.setHomeButtonEnabled(false);
-		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-		actionBar.setDisplayShowTitleEnabled(true);
-
-		// Create the adapter that will return a fragment for each of the three
-		// primary sections of the activity.
-/*		
-		mSectionsPagerAdapter = new SectionsPagerAdapter(
-				getSupportFragmentManager());
-
-		// Set up the ViewPager with the sections adapter.
-		mViewPager = (ViewPager) findViewById(R.id.pager);
-		mViewPager.setAdapter(mSectionsPagerAdapter);
-		mViewPager
-				.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
-					@Override
-					public void onPageSelected(int position) {
-						// When swiping between pages, select the
-						// corresponding tab.
-						actionBar.setSelectedNavigationItem(position);
-					}
-				});
-*/
 		createConnections();
-		
+  	    mDrawerServers.add("-");	
+  	    mDrawerServers.add(getString(R.string.title_activity_settings));	
+  	    mDrawerServers.add(getString(R.string.action_about));	
 	}
 	
 	@Override
@@ -207,12 +180,16 @@ public class MainActivity extends ActionBarActivity implements
 		super.onStop();
 	}
 
-	
-	private ArrayList<String> mDrawerTitles = new ArrayList<String>();	
+	private ArrayList<String> mDrawerServers = new ArrayList<String>();	
 	private DrawerLayout mDrawerLayout;
-	private ListView mDrawerList;
+	public ListView mDrawerServerList;
 	private ActionBarDrawerToggle mDrawerToggle;
+    private LayoutInflater mInflater;
 	
+	public class ViewHolder {
+        public TextView textView;
+    }        	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -220,10 +197,6 @@ public class MainActivity extends ActionBarActivity implements
 		m_sessionManager = SessionManager.get(this);
 	
 		// set a custom shadow that overlays the main content when the drawer opens
-  	    mDrawerTitles.add(getString(R.string.tab_local));	
-  	    mDrawerTitles.add(getString(R.string.title_activity_settings));	
-  	    mDrawerTitles.add(getString(R.string.action_about));	
-              
         SyncAlarmReceiver receiver = new SyncAlarmReceiver();
 		if (m_sessionManager.getSyncIntervalMin() > -1) { 
 			if (!receiver.isAlarmEnabled(getApplicationContext()))
@@ -235,36 +208,53 @@ public class MainActivity extends ActionBarActivity implements
 		
   	    mDrawerLayout = (DrawerLayout) findViewById(R.id.activity_main);
         mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
-        mDrawerList = (ListView) findViewById(R.id.left_drawer);
         
-        ArrayAdapter<String> ldp = new ArrayAdapter<String>(this, R.layout.drawer_list_item, mDrawerTitles); 
-        mDrawerList.setAdapter(ldp);
+        mInflater = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        mDrawerServerList = (ListView) findViewById(R.id.left_drawer_servers);
+        ArrayAdapter<String> ldp = new ArrayAdapter<String>(this, R.layout.drawer_list_item, mDrawerServers){
+        	@Override
+        	public View getView(int position, View convertView, ViewGroup parent){
+     			ViewHolder holder = null;
+        		if (convertView == null) {
+          			 holder = new ViewHolder();
+         			 if (position==mDrawerServers.size()-3){
+           			    convertView = mInflater.inflate(R.layout.drawer_list_sep, null);
+            			holder.textView = (TextView)convertView.findViewById(R.id.textDrawerView);
+            			holder.textView.setText("");
+            			holder.textView.setHeight(1);
+             			convertView.setBackgroundColor(Color.DKGRAY);
+            		} else {
+           			    convertView = mInflater.inflate(R.layout.drawer_list_item, null);
+            			holder.textView = (TextView)convertView.findViewById(R.id.textDrawerView);
+            		}
+         			convertView.setTag(holder);
+        		} else {
+                     holder = (ViewHolder)convertView.getTag();
+                }    	
+                holder.textView.setText(mDrawerServers.get(position));
+        		return convertView;
+        	}
+        };
+        
+        mDrawerServerList.setAdapter(ldp);
+        
         if (getIntent()!=null)
 			onNewIntent(getIntent()); // we need to call this for the case when Activity is started for the first time
         
-        mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
+        mDrawerServerList.setOnItemClickListener(new DrawerItemClickListener());
 
         // enable ActionBar app icon to behave as action to toggle nav drawer
         getActionBar().setDisplayHomeAsUpEnabled(true);
         getActionBar().setHomeButtonEnabled(true);
-
+        
         mDrawerToggle = new ActionBarDrawerToggle(
-                this,                  /* host Activity */
-                mDrawerLayout,         /* DrawerLayout object */
-                R.drawable.ic_drawer,  /* nav drawer icon to replace 'Up' caret */
-                0,  /* "open drawer" description */
-                0  /* "close drawer" description */
+                this,                  
+                mDrawerLayout,         
+                R.drawable.ic_drawer,  
+                0,  
+                0  
                 ) {
-
-            /** Called when a drawer has settled in a completely closed state. */
-            public void onDrawerClosed(View view) {
-                super.onDrawerClosed(view);
-            }
-
-            /** Called when a drawer has settled in a completely open state. */
-            public void onDrawerOpened(View drawerView) {
-                super.onDrawerOpened(drawerView);
-            }
+         
         };
 
         mDrawerLayout.setDrawerListener(mDrawerToggle);
@@ -479,40 +469,6 @@ public class MainActivity extends ActionBarActivity implements
         }
 
 	}
-/*	
-	public class SectionsPagerAdapter extends FragmentPagerAdapter {
-
-		public SectionsPagerAdapter(FragmentManager fm) {
-			super(fm);
-		}
-
-		@Override
-		public Fragment getItem(int position) {
-			String connectionId = m_connectionIds.get(position);
-			if (ID_LOCAL.equals(connectionId))
-				return LocalTasksFragment.newInstance();
-			else if (ID_NOT_CONFIGURED.equals(connectionId)) {
-				return new NoConnectionFragment();
-			} else {
-				InboxFragment f = new InboxFragment();
-				Bundle args = new Bundle();
-				args.putString(SrvConnectionId.ARG, connectionId);
-				f.setArguments(args);
-				return f;
-			}
-		}
-
-		@Override
-		public int getCount() {
-			return m_connectionIds.size();
-		}
-
-		@Override
-		public CharSequence getPageTitle(int position) {
-			return m_tabNames.get(position);
-		}
-	}
-*/
 	@Override
 	public void register(IGlobalAppEventsListener listener) {
 		m_eventListeners.add(listener);

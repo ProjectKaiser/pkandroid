@@ -12,9 +12,11 @@ import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
+import android.view.MenuItem;
 
 import com.projectkaiser.app_android.services.SyncAlarmReceiver;
 import com.projectkaiser.app_android.settings.SessionManager;
+
 
 /**
  * A {@link PreferenceActivity} that presents a set of application settings. On
@@ -39,8 +41,10 @@ public class SettingsActivity extends PreferenceActivity {
 	@Override
 	protected void onPostCreate(Bundle savedInstanceState) {
 		super.onPostCreate(savedInstanceState);
-
 		setupSimplePreferencesScreen();
+		
+        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getActionBar().setHomeButtonEnabled(true);		
 	}
 
 	/**
@@ -190,6 +194,15 @@ public class SettingsActivity extends PreferenceActivity {
 		}
 	}
 
+	 @Override
+     public boolean onOptionsItemSelected(MenuItem item) {
+             switch (item.getItemId()) {
+             case android.R.id.home:
+            	 onBackPressed();  
+             }
+             return true;
+     }
+	
 	@Override
 	public void onBackPressed() {
     	Intent i = new Intent(getApplicationContext(), MainActivity.class);
