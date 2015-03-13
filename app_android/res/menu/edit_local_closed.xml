@@ -17,7 +17,7 @@
         android:icon="@drawable/ic_action_cancel"
         android:title="@string/cancel"
         android:titleCondensed="@string/cancel"
-        android:visible="true"
+        android:visible="false"
         app:showAsAction="always|withText"/>
     <item
         android:id="@+id/action_ok"
@@ -25,7 +25,7 @@
         android:icon="@drawable/ic_action_ok"
         android:title="@string/ok"
         android:titleCondensed="@string/ok"
-        android:visible="true"
+        android:visible="false"
         app:showAsAction="always|withText"/>
     
     <item

@@ -9,6 +9,7 @@
     tools:context="com.projectkaiser.app_android.MainActivity$PlaceholderFragment" >
 
     <FrameLayout
+        android:id="@+id/frameLayout1"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_above="@+id/rgFilters"
@@ -45,42 +46,5 @@
             android:text="@string/no_remote_issues"
             android:visibility="gone" />
     </FrameLayout>
-
-    <LinearLayout
-        android:id="@+id/rgFilters"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:orientation="vertical" >
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dip"
-            android:layout_alignParentTop="true"
-            android:layout_marginLeft="4dip"
-            android:layout_marginRight="4dip"
-            android:background="?attr/dividerVertical" />
-        
-        <RadioGroup
-            android:id="@+id/rgrFilters"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:orientation="horizontal" >
-
-            <RadioButton
-                android:id="@+id/rbnActive"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:checked="true"
-                android:text="@string/filter_active" />
-
-            <RadioButton
-                android:id="@+id/rbnClosed"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/filter_closed" />
-        </RadioGroup>
-    </LinearLayout>
 
 </RelativeLayout>

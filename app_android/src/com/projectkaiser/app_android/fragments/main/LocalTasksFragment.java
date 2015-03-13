@@ -63,6 +63,7 @@ public class LocalTasksFragment extends IssuesListAbstractFragment implements IG
 	
 	@Override
 	protected List<MIssue> getIssuesList() {
+		if (getActivity()==null) return null;
 		ILocalBL bl = BL.getLocal(getActivity().getApplicationContext());
 		m_tasks = new ArrayList<MIssue>(); 
 		for (MLocalIssue li: bl.getLocalTasks( isClosedTasksSelected()?TasksFilter.CLOSED:TasksFilter.ACTIVE )) 
