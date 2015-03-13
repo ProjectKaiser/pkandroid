@@ -3,8 +3,10 @@ package com.projectkaiser.app_android.fragments.main;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -71,9 +73,12 @@ public abstract class IssuesListAbstractFragment extends Fragment implements
 		m_rootView.findViewById(R.id.pbIssues).setVisibility(View.GONE);
 		m_rootView.findViewById(R.id.emptyText).setVisibility(View.GONE);
 
-		if (isFiltersSupported())
-			getActivity().findViewById(R.id.action_active_tasks).setVisibility(
-					View.VISIBLE);
+		if (isFiltersSupported()) {
+			if (getActivity() != null) {
+				getActivity().findViewById(R.id.action_active_tasks).setVisibility(
+						View.VISIBLE);
+			}
+		}
 
 		final ListView list = (ListView) m_rootView.findViewById(R.id.lvInbox);
 
@@ -112,7 +117,9 @@ public abstract class IssuesListAbstractFragment extends Fragment implements
 
 		getProgressLayout().setOnRefreshListener(this);
 		try {
-			((IGlobalAppEventsProvider) getActivity()).register(this);
+			if (getActivity() != null) {
+				((IGlobalAppEventsProvider) getActivity()).register(this);
+			}
 		} catch (ClassCastException e) {
 			throw new ClassCastException(getActivity().toString()
 					+ " must implement IMainMenuCmdProvider");
@@ -136,6 +143,8 @@ public abstract class IssuesListAbstractFragment extends Fragment implements
 
 	@Override
 	public void onRefresh() {
-		((IGlobalAppEventsProvider) getActivity()).syncRequested();
+		if(getActivity()!=null){
+			((IGlobalAppEventsProvider) getActivity()).syncRequested();
+		}
 	}
 }

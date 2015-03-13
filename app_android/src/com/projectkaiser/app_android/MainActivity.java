@@ -4,7 +4,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.HashMap;
 import org.apache.log4j.Logger;
 
 import android.content.Context;
@@ -13,6 +12,7 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
@@ -75,7 +75,7 @@ public class MainActivity extends ActionBarActivity implements
 	ArrayList<IGlobalAppEventsListener> m_eventListeners = new ArrayList<IGlobalAppEventsListener>();
 
 	List<String> m_connectionIds = new ArrayList<String>();
-	Map<String, Fragment> m_IssueFragments = new HashMap<String, Fragment>();
+//	Map<String, Fragment> m_IssueFragments = new HashMap<String, Fragment>();
 	SessionManager m_sessionManager;
 
 	private void createConnections() {
@@ -136,6 +136,7 @@ public class MainActivity extends ActionBarActivity implements
 	/** Swaps fragments in the main content view */
 	private void selectItem(int position) {
 		Intent i = null;
+
 		if (_menu != null) {
 			_menu.getItem(1).setVisible(false);
 			_menu.getItem(2).setVisible(false);
@@ -144,11 +145,14 @@ public class MainActivity extends ActionBarActivity implements
 
 			String connectionId = m_connectionIds.get(position);
 			mDrawerServerList.setItemChecked(position, true);
-
 			Fragment fragment = null;
+			
+/*			
 			if (m_IssueFragments.containsKey(connectionId)) {
 				fragment = m_IssueFragments.get(connectionId);
-			} else {
+			} else
+*/
+			{
 				if (ID_LOCAL.equals(connectionId)) {
 					fragment = LocalTasksFragment.newInstance();
 				} else if (ID_NOT_CONFIGURED.equals(connectionId)) {
@@ -163,16 +167,19 @@ public class MainActivity extends ActionBarActivity implements
 			}
 			if (fragment == null) {
 				return;
-			} else {
+			} 
+			/*			else {
 				if (!m_IssueFragments.containsKey(connectionId)) {
 					m_IssueFragments.put(connectionId, fragment);
 				}
 			}
+			*/
 
-			this.setTitle(mDrawerServers.get(position));
 			FragmentManager fragmentManager = getSupportFragmentManager();
-			fragmentManager.beginTransaction()
-					.replace(R.id.content_frame, fragment, "").commit();
+			FragmentTransaction transaction = fragmentManager.beginTransaction();
+			transaction.replace(R.id.content_frame, fragment);
+			transaction.addToBackStack(null);
+			transaction.commit();
 
 			if (fabButton != null) {
 				if (ID_LOCAL.equals(connectionId)) {
