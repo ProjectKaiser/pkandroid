@@ -146,15 +146,11 @@ public class MainActivity extends ActionBarActivity implements
 			String connectionId = m_connectionIds.get(position);
 			mDrawerServerList.setItemChecked(position, true);
 			Fragment fragment = null;
-			
-/*			
-			if (m_IssueFragments.containsKey(connectionId)) {
-				fragment = m_IssueFragments.get(connectionId);
-			} else
-*/
+			boolean bShowPlusButton = false;
 			{
 				if (ID_LOCAL.equals(connectionId)) {
 					fragment = LocalTasksFragment.newInstance();
+					bShowPlusButton = true;
 				} else if (ID_NOT_CONFIGURED.equals(connectionId)) {
 					fragment = new NoConnectionFragment();
 				} else {
@@ -163,17 +159,12 @@ public class MainActivity extends ActionBarActivity implements
 					args.putString(SrvConnectionId.ARG, connectionId);
 					f.setArguments(args);
 					fragment = f;
+					bShowPlusButton = true;
 				}
 			}
 			if (fragment == null) {
 				return;
 			} 
-			/*			else {
-				if (!m_IssueFragments.containsKey(connectionId)) {
-					m_IssueFragments.put(connectionId, fragment);
-				}
-			}
-			*/
 
 			FragmentManager fragmentManager = getSupportFragmentManager();
 			FragmentTransaction transaction = fragmentManager.beginTransaction();
@@ -187,11 +178,14 @@ public class MainActivity extends ActionBarActivity implements
 						_menu.getItem(1).setVisible(true);
 						_menu.getItem(2).setVisible(true);
 					}
+				}
+				if (bShowPlusButton){
 					fabButton.showFloatingActionButton();
 				} else {
 					fabButton.hideFloatingActionButton();
 				}
 			}
+			
 		} else if (position == mDrawerServers.size() - 2) {
 			i = new Intent(getApplicationContext(), SettingsActivity.class);
 			i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

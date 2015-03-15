@@ -34,6 +34,11 @@ public class InboxFragment extends IssuesListAbstractFragment implements IGlobal
 	}
 
 	@Override
+	protected boolean DeleteItem(int position){
+		return false;
+	}
+
+	@Override
 	protected List<MIssue> getIssuesList() {
 		m_issues = new ArrayList<MIssue>();
 		

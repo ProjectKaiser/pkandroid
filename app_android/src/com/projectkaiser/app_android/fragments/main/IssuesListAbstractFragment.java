@@ -3,10 +3,8 @@ package com.projectkaiser.app_android.fragments.main;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,21 +18,20 @@ import com.projectkaiser.app_android.bl.events.IGlobalAppEventsListener;
 import com.projectkaiser.app_android.bl.events.IGlobalAppEventsProvider;
 import com.projectkaiser.app_android.settings.SrvConnectionId;
 import com.projectkaiser.mobile.sync.MIssue;
+import com.projectkaiser.app_android.misc.SwipeDismissListViewTouchListener;
 
 public abstract class IssuesListAbstractFragment extends Fragment implements
 		IGlobalAppEventsListener, SwipeRefreshLayout.OnRefreshListener {
 
 	private View m_rootView;
 	private PKTaskListType mTaskListType;
-
+	
 	protected final void refresh() {
-		IssuesArrayAdapter adapter = new IssuesArrayAdapter(getRootView()
-				.getContext(), getIssuesList());
+		IssuesArrayAdapter adapter = new IssuesArrayAdapter(getRootView().getContext(), getIssuesList());
 		getListView().setAdapter(adapter);
 	}
 
 	protected abstract List<MIssue> getIssuesList();
-
 	boolean m_progressShown = false;
 
 	protected String getConnectionId() {
@@ -109,12 +106,37 @@ public abstract class IssuesListAbstractFragment extends Fragment implements
 		return (mTaskListType == PKTaskListType.CLOSED);
 	}
 
+	protected abstract boolean DeleteItem(int position);
+	
+	private class MyDismissCallbacks implements SwipeDismissListViewTouchListener.DismissCallbacks {
+		public void onDismiss(ListView listView, int[] reverseSortedPositions) {
+			IssuesArrayAdapter adapter = new IssuesArrayAdapter(getRootView().getContext(), getIssuesList());
+            for (int position : reverseSortedPositions) {
+            	// TODO: make delete but need possibility to restore
+            	//DeleteItem(position);
+            	// adapter.remove(adapter.getItem(position));
+            }
+            //refresh();
+            //adapter.notifyDataSetChanged();
+        }		
+		public boolean canDismiss(int position){
+			return true;
+		}
+	}
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		m_rootView = inflater.inflate(R.layout.fragment_issues, container,
 				false);
 
+		SwipeDismissListViewTouchListener touchListener =
+				          new SwipeDismissListViewTouchListener(
+				        		  getListView(),
+				                  new MyDismissCallbacks());
+		
+		getListView().setOnTouchListener(touchListener);
+		getListView().setOnScrollListener(touchListener.makeScrollListener());
+		
 		getProgressLayout().setOnRefreshListener(this);
 		try {
 			if (getActivity() != null) {
