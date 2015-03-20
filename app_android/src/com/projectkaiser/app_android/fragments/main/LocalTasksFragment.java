@@ -93,10 +93,10 @@ public class LocalTasksFragment extends IssuesListAbstractFragment implements
 
 	@Override
 	protected void onIssueClick(int position) {
-		Intent i = new Intent(getRootView().getContext(),
-				EditIssueActivity.class);
+		Intent i = new Intent(getRootView().getContext(),EditIssueActivity.class);
 		i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		i.putExtra(MIssue.class.getName(), m_tasks.get(position));
+		i.putExtra("SRVNAME", "");
 		startActivity(i);
 	}
 

@@ -62,6 +62,7 @@ public class EditIssueActivity extends ActionBarActivity implements
 	MTeamMember m_assignee = null;
 	MTeamMember m_responsible = null;
 	MIssue m_details;
+	String curServerName = "";
 	boolean missue_modified = false;
 	TextWatcher anyEditTextWatcher = null;
 	boolean mIgnoreModified = false;
@@ -400,6 +401,25 @@ public class EditIssueActivity extends ActionBarActivity implements
 		}
 	}
 
+	private void showFolderDialog(){
+		FolderDialogFragment dialog = new FolderDialogFragment();
+		dialog.setListener(new FolderListener() {
+			@Override
+			public void onLocalSelected() {
+				setIssuesFolder(null, null);
+			}
+
+			@Override
+			public void onFolderSelected(String connectionId,
+					Long projectId, Long folderId) {
+				setIssuesFolder(connectionId, folderId);
+			}
+		});
+
+		dialog.show(getSupportFragmentManager(), "folder");
+		return;
+	}
+	
 	private void createUi() {
 		mIgnoreModified = true;
 		try {
@@ -483,6 +503,9 @@ public class EditIssueActivity extends ActionBarActivity implements
 
 			setIssuesFolder(null, null);
 
+			if (this.getServerName().isEmpty()){
+				cmbFolder.setEnabled(false);
+			}
 			cmbFolder.setOnTouchListener(new OnTouchListener() {
 				@Override
 				public boolean onTouch(View v, MotionEvent event) {
@@ -493,25 +516,11 @@ public class EditIssueActivity extends ActionBarActivity implements
 						if (sm.getConnections().size() == 0) {
 							return true; // no connections configured
 						}
-
-						FolderDialogFragment dialog = new FolderDialogFragment();
-						dialog.setListener(new FolderListener() {
-							@Override
-							public void onLocalSelected() {
-								setIssuesFolder(null, null);
-							}
-
-							@Override
-							public void onFolderSelected(String connectionId,
-									Long projectId, Long folderId) {
-								setIssuesFolder(connectionId, folderId);
-							}
-						});
-
-						dialog.show(getSupportFragmentManager(), "folder");
+						
+						showFolderDialog();
 						return true;
 					}
-					return false;
+					return true;
 				}
 			});
 
@@ -682,6 +691,9 @@ public class EditIssueActivity extends ActionBarActivity implements
 		return (pnl.getVisibility() == View.VISIBLE);
 	}
 
+	public String getServerName(){
+		return curServerName;
+	}
 	private void switchPanel(Spinner cmb, ArrayAdapter<CharSequence> adapter,
 			String label, int resource) {
 		final View pnl = (View) findViewById(resource);
@@ -696,9 +708,12 @@ public class EditIssueActivity extends ActionBarActivity implements
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		if (getIntent().getExtras() != null)
+		curServerName = "";
+		if (getIntent().getExtras() != null){
 			m_details = (MIssue) getIntent().getExtras().get(
 					MIssue.class.getName());
+			curServerName = getIntent().getExtras().get("SRVNAME").toString();
+		}
 		else
 			m_details = null;
 

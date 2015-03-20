@@ -3,7 +3,6 @@ package com.projectkaiser.app_android;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import org.apache.log4j.Logger;
 
 import android.content.Context;
@@ -71,11 +70,12 @@ public class MainActivity extends ActionBarActivity implements
 	private static final String triniforce_email = "ivvist@gmail.com";
 	private FloatingActionButton fabButton = null;
 	private Menu _menu = null;
+	private String curServerName = null;
+	Fragment curfragment = null;
 
 	ArrayList<IGlobalAppEventsListener> m_eventListeners = new ArrayList<IGlobalAppEventsListener>();
 
 	List<String> m_connectionIds = new ArrayList<String>();
-//	Map<String, Fragment> m_IssueFragments = new HashMap<String, Fragment>();
 	SessionManager m_sessionManager;
 
 	private void createConnections() {
@@ -133,6 +133,15 @@ public class MainActivity extends ActionBarActivity implements
 		}
 	}
 
+	private void initLocalTasks() {
+		if (_menu != null) {
+			_menu.getItem(1).setChecked(true);
+			_menu.getItem(2).setChecked(false);
+			this.setTitle(getString(R.string.tab_local) + "("
+					+ getString(R.string.filter_active) + ")");
+		}
+	}
+
 	/** Swaps fragments in the main content view */
 	private void selectItem(int position) {
 		Intent i = null;
@@ -141,35 +150,44 @@ public class MainActivity extends ActionBarActivity implements
 			_menu.getItem(1).setVisible(false);
 			_menu.getItem(2).setVisible(false);
 		}
-		if (position < mDrawerServers.size() - 3) {
+		if (position < mDrawerServers.size() - 4) {
 
+			curServerName = "";
+
+			FragmentManager fragmentManager = getSupportFragmentManager();
+			FragmentTransaction transaction = fragmentManager
+					.beginTransaction();
+
+			if (curfragment != null) {
+				transaction.detach(curfragment);
+			}
 			String connectionId = m_connectionIds.get(position);
 			mDrawerServerList.setItemChecked(position, true);
-			Fragment fragment = null;
 			boolean bShowPlusButton = false;
 			{
 				if (ID_LOCAL.equals(connectionId)) {
-					fragment = LocalTasksFragment.newInstance();
+					curfragment = LocalTasksFragment.newInstance();
+					initLocalTasks();
 					bShowPlusButton = true;
 				} else if (ID_NOT_CONFIGURED.equals(connectionId)) {
-					fragment = new NoConnectionFragment();
+					curfragment = new NoConnectionFragment();
 				} else {
 					InboxFragment f = new InboxFragment();
 					Bundle args = new Bundle();
 					args.putString(SrvConnectionId.ARG, connectionId);
 					f.setArguments(args);
-					fragment = f;
+					curfragment = f;
 					bShowPlusButton = true;
+					curServerName = m_connectionIds.get(position);
+					this.setTitle(mDrawerServers.get(position));
 				}
 			}
-			if (fragment == null) {
+			if (curfragment == null) {
 				return;
-			} 
+			}
 
-			FragmentManager fragmentManager = getSupportFragmentManager();
-			FragmentTransaction transaction = fragmentManager.beginTransaction();
-			transaction.replace(R.id.content_frame, fragment);
-			transaction.addToBackStack(null);
+			transaction.replace(R.id.content_frame, curfragment);
+			// transaction.addToBackStack(null);
 			transaction.commit();
 
 			if (fabButton != null) {
@@ -179,21 +197,22 @@ public class MainActivity extends ActionBarActivity implements
 						_menu.getItem(2).setVisible(true);
 					}
 				}
-				if (bShowPlusButton){
+				if (bShowPlusButton) {
 					fabButton.showFloatingActionButton();
 				} else {
 					fabButton.hideFloatingActionButton();
 				}
 			}
-			
-		} else if (position == mDrawerServers.size() - 2) {
+
+		} else if (position == mDrawerServers.size() - 3) { // Settings
 			i = new Intent(getApplicationContext(), SettingsActivity.class);
 			i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 			i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 			getApplicationContext().startActivity(i);
+		} else if (position == mDrawerServers.size() - 2) { // Send log by email
+			SendErrorLog();
 		} else if (position == mDrawerServers.size() - 1) {
-			i = new Intent(getApplicationContext(), InfoActivity.class);
-
+			i = new Intent(getApplicationContext(), InfoActivity.class); // About
 			i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 			i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 			getApplicationContext().startActivity(i);
@@ -207,6 +226,7 @@ public class MainActivity extends ActionBarActivity implements
 		createConnections();
 		mDrawerServers.add("-");
 		mDrawerServers.add(getString(R.string.title_activity_settings));
+		mDrawerServers.add(getString(R.string.action_send_log));
 		mDrawerServers.add(getString(R.string.action_about));
 
 		Drawable newTaskIcon = getResources()
@@ -219,7 +239,7 @@ public class MainActivity extends ActionBarActivity implements
 		fabButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
-				newLocalIssue();
+				createNewIssue();
 				return;
 			}
 		});
@@ -278,7 +298,7 @@ public class MainActivity extends ActionBarActivity implements
 				ViewHolder holder = null;
 				if (convertView == null) {
 					holder = new ViewHolder();
-					if (position == mDrawerServers.size() - 3) {
+					if (position == mDrawerServers.size() - 4) {
 						convertView = mInflater.inflate(
 								R.layout.drawer_list_sep, null);
 						holder.textView = (TextView) convertView
@@ -346,12 +366,9 @@ public class MainActivity extends ActionBarActivity implements
 		getMenuInflater().inflate(R.menu.main, menu);
 		_menu = menu;
 		if (getVisibleFragment() instanceof LocalTasksFragment) {
-			_menu.getItem(1).setChecked(true);
-			_menu.getItem(2).setChecked(false);
+			initLocalTasks();
 			_menu.getItem(1).setVisible(true);
 			_menu.getItem(2).setVisible(true);
-			this.setTitle(getString(R.string.tab_local) + "("
-					+ getString(R.string.filter_active) + ")");
 		}
 		return true;
 	}
@@ -504,10 +521,7 @@ public class MainActivity extends ActionBarActivity implements
 			LocalTasksFragment curFragmentAc = (LocalTasksFragment) getVisibleFragment();
 			if (curFragmentAc != null) {
 				curFragmentAc.setTaskListType(PKTaskListType.ACTIVE);
-				this.setTitle(getString(R.string.tab_local) + "("
-						+ getString(R.string.filter_active) + ")");
-				_menu.getItem(1).setChecked(true);
-				_menu.getItem(2).setChecked(false);
+				initLocalTasks();
 			}
 			break;
 		case R.id.action_closed_tasks:
@@ -520,17 +534,6 @@ public class MainActivity extends ActionBarActivity implements
 				_menu.getItem(2).setChecked(true);
 			}
 			break;
-		case R.id.action_new_task:
-			newLocalIssue();
-			break;
-		case R.id.action_settings:
-			Intent i = new Intent(getApplicationContext(),
-					SettingsActivity.class);
-			i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-			i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-			finish();
-			getApplicationContext().startActivity(i);
-			return true;
 		case R.id.action_send_log:
 			SendErrorLog();
 			return true;
@@ -538,8 +541,9 @@ public class MainActivity extends ActionBarActivity implements
 		return super.onOptionsItemSelected(item);
 	}
 
-	public void newLocalIssue() {
+	public void createNewIssue() {
 		Intent i = new Intent(getApplicationContext(), EditIssueActivity.class);
+		i.putExtra("SRVNAME", curServerName);
 		startActivityForResult(i, ActivityReq.NEW_ISSUE);
 	}
 

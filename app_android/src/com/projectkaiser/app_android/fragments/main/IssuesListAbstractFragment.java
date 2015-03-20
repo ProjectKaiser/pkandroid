@@ -3,6 +3,7 @@ package com.projectkaiser.app_android.fragments.main;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -12,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import com.projectkaiser.app_android.misc.*;
+import com.projectkaiser.app_android.MainActivity;
 import com.projectkaiser.app_android.R;
 import com.projectkaiser.app_android.adapters.IssuesArrayAdapter;
 import com.projectkaiser.app_android.bl.events.IGlobalAppEventsListener;
@@ -69,14 +71,6 @@ public abstract class IssuesListAbstractFragment extends Fragment implements
 			return;
 		m_rootView.findViewById(R.id.pbIssues).setVisibility(View.GONE);
 		m_rootView.findViewById(R.id.emptyText).setVisibility(View.GONE);
-
-		if (isFiltersSupported()) {
-			if (getActivity() != null) {
-				getActivity().findViewById(R.id.action_active_tasks).setVisibility(
-						View.VISIBLE);
-			}
-		}
-
 		final ListView list = (ListView) m_rootView.findViewById(R.id.lvInbox);
 
 		list.setEmptyView(m_rootView.findViewById(R.id.emptyText));

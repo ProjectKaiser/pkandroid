@@ -19,6 +19,7 @@ import android.widget.ExpandableListView.OnChildClickListener;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 
+import com.projectkaiser.app_android.*;
 import com.projectkaiser.app_android.R;
 import com.projectkaiser.app_android.adapters.FoldersDlgAdapter;
 import com.projectkaiser.app_android.settings.SessionManager;
@@ -30,7 +31,7 @@ import com.projectkaiser.mobile.sync.MWorkingSet;
 import com.projectkaiser.mobile.sync.MWorkingSets;
 
 public class FolderDialogFragment extends DialogFragment {
-	
+
 	View m_view;
 
 	public interface FolderListener {
@@ -61,34 +62,38 @@ public class FolderDialogFragment extends DialogFragment {
 		return dialog;
 
 	}
-	
+
 	private SessionManager getSessionManager() {
 		return SessionManager.get(this.getActivity());
 	}
 
 	ArrayList<String> m_connectionIds = new ArrayList<String>();
-	
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		m_view = inflater.inflate(R.layout.dialog_folder, container, false);
-		
+
 		final SessionManager sm = getSessionManager();
 		final Spinner cmbConnections = (Spinner) m_view
 				.findViewById(R.id.cmbConnection);
-		
 
 		ArrayList<CharSequence> arrCons = new ArrayList<CharSequence>();
 
 		int selectedIndex = 0;
-		String lastConId = sm.getLatestFolderDlgConnectionId(); 
-		
-		for (String connId: sm.getConnections()) {
+		String lastConId = sm.getLatestFolderDlgConnectionId();
+
+		int idx  = 0;
+		for (String connId : sm.getConnections()) {
 			SrvConnectionBaseData base = sm.getBaseData(connId);
 			m_connectionIds.add(connId);
 			arrCons.add(base.getServerName());
-			if (lastConId!=null && lastConId.equals(connId))
-				selectedIndex = m_connectionIds.size()-1;
+			EditIssueActivity mainActivity = (EditIssueActivity) getActivity();
+			if (connId.equals(mainActivity.getServerName())){
+//			if (lastConId != null && lastConId.equals(connId))
+				selectedIndex = idx;
+			}
+			idx = idx + 1;
 		}
 		
 		ArrayAdapter<CharSequence> adptCons = new ArrayAdapter<CharSequence>(
@@ -101,36 +106,26 @@ public class FolderDialogFragment extends DialogFragment {
 			public void onItemSelected(AdapterView<?> arg0, View view,
 					int position, long arg3) {
 				showWorkingSets(position);
-				sm.updateLastFolderDlgConnectionId(m_connectionIds.get(position));
+				sm.updateLastFolderDlgConnectionId(m_connectionIds
+						.get(position));
 			}
 
 			@Override
 			public void onNothingSelected(AdapterView<?> arg0) {
 			}
 		});
-		
+
 		cmbConnections.setSelection(selectedIndex);
 		showWorkingSets(selectedIndex);
-		
-		if (adptCons.getCount() == 1)
-			cmbConnections.setVisibility(View.GONE);
-		
+
+//		if (adptCons.getCount() == 1)
+		cmbConnections.setVisibility(View.GONE);
 
 		// ////////////////////////////////////////////////////
 		// / Buttons
 
-		((Button) m_view.findViewById(R.id.btnSetLocal)).setOnClickListener(
-				new OnClickListener() {
-					@Override
-					public void onClick(View arg0) {
-						if (m_listener!=null)
-							m_listener.onLocalSelected();
-						getDialog().dismiss();
-					}
-				});
-
-		((Button) m_view.findViewById(R.id.btnCancel)).setOnClickListener(
-				new OnClickListener() {
+		((Button) m_view.findViewById(R.id.btnCancel))
+				.setOnClickListener(new OnClickListener() {
 					@Override
 					public void onClick(View arg0) {
 						getDialog().dismiss();
@@ -139,11 +134,11 @@ public class FolderDialogFragment extends DialogFragment {
 
 		return m_view;
 	}
-	
+
 	private void showWorkingSets(final int conIndex) {
-		
+
 		final String conId = m_connectionIds.get(conIndex);
-		
+
 		final Spinner cmbWorkingSet = (Spinner) m_view
 				.findViewById(R.id.cmbWorkingSet);
 		final LinearLayout pnlWorkingSet = (LinearLayout) m_view
@@ -151,13 +146,13 @@ public class FolderDialogFragment extends DialogFragment {
 		final ArrayList<CharSequence> arrWS = new ArrayList<CharSequence>();
 
 		arrWS.add(getString(R.string.all_projects));
-		
+
 		SessionManager sm = getSessionManager();
 		MWorkingSets workingSets = sm.getWorkingSets(conId);
-		
-		for (MWorkingSet ws : workingSets.getItems()) 
+
+		for (MWorkingSet ws : workingSets.getItems())
 			arrWS.add(ws.getName());
-		
+
 		ArrayAdapter<CharSequence> adptWs = new ArrayAdapter<CharSequence>(
 				getActivity().getBaseContext(),
 				android.R.layout.simple_spinner_item, arrWS);
@@ -165,21 +160,22 @@ public class FolderDialogFragment extends DialogFragment {
 		cmbWorkingSet.setAdapter(adptWs);
 		cmbWorkingSet.setOnItemSelectedListener(new OnItemSelectedListener() {
 			@Override
-			public void onItemSelected(AdapterView<?> arg0, View view,
-					int pos, long arg3) { 
+			public void onItemSelected(AdapterView<?> arg0, View view, int pos,
+					long arg3) {
 				showProjects(conIndex);
-				getSessionManager().updateLastWorkingSet(conId, arrWS.get(pos).toString());
+				getSessionManager().updateLastWorkingSet(conId,
+						arrWS.get(pos).toString());
 			}
 
 			@Override
 			public void onNothingSelected(AdapterView<?> arg0) {
 			}
 		});
-		
+
 		int selected = -1;
 		String lastWorkingSet = sm.getLatestWorkingSet(conId);
 		if (lastWorkingSet != null) {
-			for (int i=0; i<arrWS.size(); i++) {
+			for (int i = 0; i < arrWS.size(); i++) {
 				if (arrWS.get(i).equals(lastWorkingSet)) {
 					selected = i;
 					break;
@@ -188,8 +184,8 @@ public class FolderDialogFragment extends DialogFragment {
 		}
 		if (selected == -1) {
 			String defaultWorkingSet = workingSets.getDefaultWorkingSet();
-			if (defaultWorkingSet!=null) {
-				for (int i=0; i<arrWS.size(); i++) {
+			if (defaultWorkingSet != null) {
+				for (int i = 0; i < arrWS.size(); i++) {
 					if (arrWS.get(i).equals(defaultWorkingSet)) {
 						selected = i;
 						break;
@@ -197,58 +193,65 @@ public class FolderDialogFragment extends DialogFragment {
 				}
 			}
 		}
-		
+
 		if (selected == -1)
 			selected = 0;
-		
+
 		cmbWorkingSet.setSelection(selected);
 		showProjects(conIndex);
-		
-		pnlWorkingSet.setVisibility(adptWs.getCount() == 1?View.GONE : View.VISIBLE);
-		
+
+		pnlWorkingSet.setVisibility(adptWs.getCount() == 1 ? View.GONE
+				: View.VISIBLE);
+
 	}
 
 	private void showProjects(int conIndex) {
 		final String conId = m_connectionIds.get(conIndex);
-		final Spinner cmbWorkingSet = (Spinner)m_view.findViewById(
-				R.id.cmbWorkingSet);
+		final Spinner cmbWorkingSet = (Spinner) m_view
+				.findViewById(R.id.cmbWorkingSet);
 		final ExpandableListView elvFolders = (ExpandableListView) m_view
 				.findViewById(R.id.elvFolders);
 		int pos = cmbWorkingSet.getSelectedItemPosition();
 		if (pos < 0)
 			return;
-		
+
 		final ArrayList<MMyProject> wsProjects = new ArrayList<MMyProject>();
-		
+
 		if (pos == 0) { // All projects
-			
-			MDigestedArray<MMyProject> projects = getSessionManager().getMyProjects(conId);
-			for (MMyProject p:projects.getItems()) 
+
+			MDigestedArray<MMyProject> projects = getSessionManager()
+					.getMyProjects(conId);
+			for (MMyProject p : projects.getItems()) {
 				wsProjects.add(p);
-		
+			}
+
 		} else { // Working Set
-			
-			MWorkingSets workingSets = getSessionManager().getWorkingSets(conId);
-			final MWorkingSet ws = workingSets.getItems().get(pos-1);
-			MDataHelper hlp = new MDataHelper(getActivity().getApplicationContext(), conId);
-			for (Long projectId: ws.getProjects()) {
+
+			MWorkingSets workingSets = getSessionManager()
+					.getWorkingSets(conId);
+			final MWorkingSet ws = workingSets.getItems().get(pos - 1);
+			MDataHelper hlp = new MDataHelper(getActivity()
+					.getApplicationContext(), conId);
+			for (Long projectId : ws.getProjects()) {
 				MMyProject p = hlp.findProject(projectId);
-				if (p!=null)
+				if (p != null)
 					wsProjects.add(p);
 			}
-			
+
 		}
 
 		FoldersDlgAdapter adp = new FoldersDlgAdapter(getActivity()
 				.getBaseContext(), wsProjects);
 		elvFolders.setAdapter(adp);
-		if (adp.getGroupCount()>0)
+		if (adp.getGroupCount() > 0)
 			elvFolders.expandGroup(0);
-		elvFolders.setOnChildClickListener(new OnChildClickListener() {			
+		elvFolders.setOnChildClickListener(new OnChildClickListener() {
 			@Override
-			public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
-				if (m_listener!=null)
-					m_listener.onFolderSelected(conId, wsProjects.get(groupPosition).getId(), id);
+			public boolean onChildClick(ExpandableListView parent, View v,
+					int groupPosition, int childPosition, long id) {
+				if (m_listener != null)
+					m_listener.onFolderSelected(conId,
+							wsProjects.get(groupPosition).getId(), id);
 				getDialog().dismiss();
 				return true;
 			}

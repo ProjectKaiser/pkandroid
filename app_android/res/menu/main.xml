@@ -35,10 +35,10 @@
     
     <item
         android:id="@+id/action_send_log"
-        android:enabled="true"
+        android:enabled="false"
         app:showAsAction="never"
         android:title="@string/action_send_log"
         android:titleCondensed="@string/action_send_log"
-        android:visible="true">
+        android:visible="false">
     </item>
 </menu>
