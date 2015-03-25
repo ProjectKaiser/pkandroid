@@ -104,7 +104,7 @@
             android:background="?attr/dividerVertical" />
 
         <Button
-            android:id="@+id/btnCancel"
+            android:id="@+id/btnTaskActionCancel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"

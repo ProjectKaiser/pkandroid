@@ -124,7 +124,7 @@ public class FolderDialogFragment extends DialogFragment {
 		// ////////////////////////////////////////////////////
 		// / Buttons
 
-		((Button) m_view.findViewById(R.id.btnCancel))
+		((Button) m_view.findViewById(R.id.btnTaskActionCancel))
 				.setOnClickListener(new OnClickListener() {
 					@Override
 					public void onClick(View arg0) {

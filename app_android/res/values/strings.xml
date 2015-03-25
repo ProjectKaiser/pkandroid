@@ -34,16 +34,20 @@
     <string name="action_errorlog_caption">PK android error log</string>
     <string name="action_errorlog_error">Error sending mail</string>
     <string name="action_no_email_client">There are no email clients installed</string>
+    <string name="group_srv">Servers</string>
+    <string name="group_mngr">Management</string>
     
     <!-- Inbox Issue Tabs ****************************************************************** -->
     <string name="tab_details">Details</string>
     <string name="tab_comments">Comments</string>
-
+    
     <!-- Tasks State Buttons & Menu Actions ****************************************************************** -->
     <string name="completed">Completed</string>
     <string name="resume">Resume</string>
     <string name="delete">Delete</string>
-
+    <string name="jresumed">Task resumed</string>
+    <string name="jcompleted">Task completed</string>
+    
     <!-- Priorities ****************************************************************** -->
     <string name="priority_blocker">Blocker</string>
     <string name="priority_high">High</string>

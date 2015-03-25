@@ -9,7 +9,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
+import android.widget.Button;
+import android.widget.Toast;
+import android.view.View.OnClickListener;
 import com.projectkaiser.app_android.EditIssueActivity;
 import com.projectkaiser.app_android.R;
 import com.projectkaiser.app_android.bl.BL;
@@ -26,6 +28,7 @@ import com.projectkaiser.mobile.sync.MLocalIssue;
 
 public class LocalTasksFragment extends IssuesListAbstractFragment implements
 		IGlobalAppEventsListener {
+	private MIssue justCompletedIssue = null;
 	/**
 	 * Returns a new instance of this fragment for the given section number.
 	 */
@@ -62,6 +65,30 @@ public class LocalTasksFragment extends IssuesListAbstractFragment implements
 			refresh();
 	}
 
+	private void showToast(MIssue m_detail, String initText) {
+		justCompletedIssue = m_detail;
+		Toast toastTask = Toast.makeText(getActivity().getApplicationContext(),
+				initText, Toast.LENGTH_LONG);
+		toastTask.show();
+	}
+
+	@Override
+	protected boolean CompleteItem(int position) {
+		MIssue m_details = m_tasks.get(position);
+		if (m_details instanceof MLocalIssue) {
+			BL.getLocal(getActivity().getApplicationContext()).completeTask(
+					(MLocalIssue) m_details);
+			if (m_details.getState() == 0) {
+				showToast(m_details, getString(R.string.jcompleted));
+			} else {
+				showToast(m_details, getString(R.string.jresumed));
+			}
+			return true;
+		} else
+			return false;
+
+	}
+
 	@Override
 	protected boolean DeleteItem(int position) {
 		MIssue m_details = m_tasks.get(position);
@@ -93,7 +120,8 @@ public class LocalTasksFragment extends IssuesListAbstractFragment implements
 
 	@Override
 	protected void onIssueClick(int position) {
-		Intent i = new Intent(getRootView().getContext(),EditIssueActivity.class);
+		Intent i = new Intent(getRootView().getContext(),
+				EditIssueActivity.class);
 		i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		i.putExtra(MIssue.class.getName(), m_tasks.get(position));
 		i.putExtra("SRVNAME", "");

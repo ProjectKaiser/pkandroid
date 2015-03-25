@@ -15,7 +15,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -80,6 +79,7 @@ public class MainActivity extends ActionBarActivity implements
 
 	private void createConnections() {
 		m_connectionIds.clear();
+		m_connectionIds.add("");
 		m_connectionIds.add(ID_LOCAL);
 		mDrawerServers.add(getString(R.string.tab_local));
 		List<String> connections = m_sessionManager.getConnections();
@@ -105,12 +105,9 @@ public class MainActivity extends ActionBarActivity implements
 			MRemoteSyncedIssue alarmIssue = (MRemoteSyncedIssue) intent
 					.getSerializableExtra(ALARM_TASK);
 			if (alarmIssue != null) {
-				final ActionBar actionBar = getSupportActionBar();
 				for (int i = 1; i < m_connectionIds.size(); i++) {
-					if (m_connectionIds.get(i)
-							.equals(alarmIssue.getSrvConnId())) {
-
-						actionBar.setSelectedNavigationItem(i);
+					if (m_connectionIds.get(i).equals(alarmIssue.getSrvConnId())) {
+						this.selectServer(i);
 						Intent openIssueIntent = new Intent(
 								getApplicationContext(),
 								ViewIssueActivity.class);
@@ -129,7 +126,7 @@ public class MainActivity extends ActionBarActivity implements
 		@Override
 		public void onItemClick(AdapterView parent, View view, int position,
 				long id) {
-			selectItem(position);
+			selectServer(position);
 		}
 	}
 
@@ -143,7 +140,7 @@ public class MainActivity extends ActionBarActivity implements
 	}
 
 	/** Swaps fragments in the main content view */
-	private void selectItem(int position) {
+	private void selectServer(int position) {
 		Intent i = null;
 
 		if (_menu != null) {
@@ -223,6 +220,7 @@ public class MainActivity extends ActionBarActivity implements
 	private void createUi() {
 		setContentView(R.layout.activity_main);
 
+		mDrawerServers.add("-");
 		createConnections();
 		mDrawerServers.add("-");
 		mDrawerServers.add(getString(R.string.title_activity_settings));
@@ -265,9 +263,22 @@ public class MainActivity extends ActionBarActivity implements
 	private LayoutInflater mInflater;
 
 	public class ViewHolder {
+		public TextView textViewTitle;
 		public TextView textView;
 	}
 
+	private View drawTitleItem(ViewHolder holder, String strTitle){
+		View convertView = mInflater.inflate(R.layout.drawer_list_sep_srv, null);
+		holder.textView = (TextView) convertView.findViewById(R.id.textDrawerView);
+		holder.textView.setText("");
+		holder.textView.setHeight(1);
+		convertView.setBackgroundColor(Color.DKGRAY);
+		holder.textViewTitle = (TextView) convertView
+				.findViewById(R.id.textDrawerViewTitle);
+		holder.textViewTitle.setText(strTitle);
+		return convertView;
+	}
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -294,21 +305,21 @@ public class MainActivity extends ActionBarActivity implements
 		ArrayAdapter<String> ldp = new ArrayAdapter<String>(this,
 				R.layout.drawer_list_item, mDrawerServers) {
 			@Override
+			public boolean isEnabled(int position){
+				
+				return (position>0) && (position != mDrawerServers.size() - 4);
+			}
+			@Override
 			public View getView(int position, View convertView, ViewGroup parent) {
 				ViewHolder holder = null;
 				if (convertView == null) {
 					holder = new ViewHolder();
 					if (position == mDrawerServers.size() - 4) {
-						convertView = mInflater.inflate(
-								R.layout.drawer_list_sep, null);
-						holder.textView = (TextView) convertView
-								.findViewById(R.id.textDrawerView);
-						holder.textView.setText("");
-						holder.textView.setHeight(1);
-						convertView.setBackgroundColor(Color.DKGRAY);
+						convertView = drawTitleItem(holder, getString(R.string.group_mngr));
+					} else if (position == 0) {
+						convertView = drawTitleItem(holder, getString(R.string.group_srv));
 					} else {
-						convertView = mInflater.inflate(
-								R.layout.drawer_list_item, null);
+						convertView = mInflater.inflate(R.layout.drawer_list_item, null);
 						holder.textView = (TextView) convertView
 								.findViewById(R.id.textDrawerView);
 					}
@@ -342,7 +353,7 @@ public class MainActivity extends ActionBarActivity implements
 		mDrawerLayout.setDrawerListener(mDrawerToggle);
 
 		if (savedInstanceState == null) {
-			selectItem(0);
+			selectServer(1);
 		}
 	}
 

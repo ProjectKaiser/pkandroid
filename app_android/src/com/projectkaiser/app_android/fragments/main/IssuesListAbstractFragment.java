@@ -101,17 +101,21 @@ public abstract class IssuesListAbstractFragment extends Fragment implements
 	}
 
 	protected abstract boolean DeleteItem(int position);
+	protected abstract boolean CompleteItem(int position);
 	
 	private class MyDismissCallbacks implements SwipeDismissListViewTouchListener.DismissCallbacks {
 		public void onDismiss(ListView listView, int[] reverseSortedPositions) {
 			IssuesArrayAdapter adapter = new IssuesArrayAdapter(getRootView().getContext(), getIssuesList());
+			boolean bNeedrefresh = false;
             for (int position : reverseSortedPositions) {
             	// TODO: make delete but need possibility to restore
-            	//DeleteItem(position);
+            	bNeedrefresh = CompleteItem(position);
             	// adapter.remove(adapter.getItem(position));
             }
-            //refresh();
-            //adapter.notifyDataSetChanged();
+            if (bNeedrefresh) {
+            	refresh();
+            	adapter.notifyDataSetChanged();
+            }
         }		
 		public boolean canDismiss(int position){
 			return true;

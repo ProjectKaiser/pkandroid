@@ -137,7 +137,7 @@ public class SelectUserDialogFragment extends DialogFragment {
 					}
 				});
 
-		((Button) m_view.findViewById(R.id.btnCancel)).setOnClickListener(
+		((Button) m_view.findViewById(R.id.btnTaskActionCancel)).setOnClickListener(
 				new OnClickListener() {
 					@Override
 					public void onClick(View arg0) {

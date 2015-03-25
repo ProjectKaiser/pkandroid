@@ -34,6 +34,8 @@
     <string name="action_errorlog_caption">Журнал ошибок Project Kaiser</string>
     <string name="action_errorlog_error">Ошибка отсылки журнала</string>
     <string name="action_no_email_client">Нет установленных email клиентов</string>
+    <string name="group_srv">Сервера</string>
+    <string name="group_mngr">Управление</string>
     
     <!--  Inbox Issue Tabs ****************************************************************** -->
     <string name="tab_details">Подробности</string>
@@ -43,6 +45,8 @@
     <string name="completed">Завершено</string>
     <string name="resume">Возобновить</string>
     <string name="delete">Удалить</string>
+    <string name="jresumed">Задача возобновлена</string>
+    <string name="jcompleted">Задача завeршена</string>
     
     <!--  Priorities ****************************************************************** -->
     <string name="priority_blocker">Критический</string>

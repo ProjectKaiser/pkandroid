@@ -19,6 +19,7 @@ import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -401,7 +402,7 @@ public class EditIssueActivity extends ActionBarActivity implements
 		}
 	}
 
-	private void showFolderDialog(){
+	private void showFolderDialog() {
 		FolderDialogFragment dialog = new FolderDialogFragment();
 		dialog.setListener(new FolderListener() {
 			@Override
@@ -410,8 +411,8 @@ public class EditIssueActivity extends ActionBarActivity implements
 			}
 
 			@Override
-			public void onFolderSelected(String connectionId,
-					Long projectId, Long folderId) {
+			public void onFolderSelected(String connectionId, Long projectId,
+					Long folderId) {
 				setIssuesFolder(connectionId, folderId);
 			}
 		});
@@ -419,7 +420,7 @@ public class EditIssueActivity extends ActionBarActivity implements
 		dialog.show(getSupportFragmentManager(), "folder");
 		return;
 	}
-	
+
 	private void createUi() {
 		mIgnoreModified = true;
 		try {
@@ -491,6 +492,17 @@ public class EditIssueActivity extends ActionBarActivity implements
 					getBaseContext(), android.R.layout.simple_spinner_item,
 					m_priorities);
 
+			
+			cmbPriority.setOnTouchListener(new OnTouchListener() {
+
+				@Override
+				public boolean onTouch(View v, MotionEvent event) {
+					v.performClick();
+					setissue_modified();
+			        return true;
+			    }
+			});
+			
 			priorityAdapter
 					.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 			cmbPriority.setAdapter(priorityAdapter);
@@ -503,7 +515,7 @@ public class EditIssueActivity extends ActionBarActivity implements
 
 			setIssuesFolder(null, null);
 
-			if (this.getServerName().isEmpty()){
+			if (this.getServerName().isEmpty()) {
 				cmbFolder.setEnabled(false);
 			}
 			cmbFolder.setOnTouchListener(new OnTouchListener() {
@@ -516,7 +528,7 @@ public class EditIssueActivity extends ActionBarActivity implements
 						if (sm.getConnections().size() == 0) {
 							return true; // no connections configured
 						}
-						
+
 						showFolderDialog();
 						return true;
 					}
@@ -691,9 +703,10 @@ public class EditIssueActivity extends ActionBarActivity implements
 		return (pnl.getVisibility() == View.VISIBLE);
 	}
 
-	public String getServerName(){
+	public String getServerName() {
 		return curServerName;
 	}
+
 	private void switchPanel(Spinner cmb, ArrayAdapter<CharSequence> adapter,
 			String label, int resource) {
 		final View pnl = (View) findViewById(resource);
@@ -709,12 +722,11 @@ public class EditIssueActivity extends ActionBarActivity implements
 		super.onCreate(savedInstanceState);
 
 		curServerName = "";
-		if (getIntent().getExtras() != null){
+		if (getIntent().getExtras() != null) {
 			m_details = (MIssue) getIntent().getExtras().get(
 					MIssue.class.getName());
 			curServerName = getIntent().getExtras().get("SRVNAME").toString();
-		}
-		else
+		} else
 			m_details = null;
 
 		if (m_details == null)
@@ -774,16 +786,16 @@ public class EditIssueActivity extends ActionBarActivity implements
 		Spinner cmbPriority = (Spinner) findViewById(R.id.cmbPriority);
 		switch (cmbPriority.getSelectedItemPosition()) {
 		case 0:
-			t.setPriority(Priority.LOW);
+			changePriority(t, Priority.LOW);
 			break;
 		case 2:
-			t.setPriority(Priority.HIGH);
+			changePriority(t, Priority.HIGH);
 			break;
 		case 3:
-			t.setPriority(Priority.BLOCKER);
+			changePriority(t, Priority.BLOCKER);
 			break;
 		default:
-			t.setPriority(Priority.NORMAL);
+			changePriority(t, Priority.NORMAL);
 		}
 
 		// ////////////////////////////////////////////////////////
@@ -863,6 +875,10 @@ public class EditIssueActivity extends ActionBarActivity implements
 		}
 
 		return t;
+	}
+
+	void changePriority(MIssue t, int _priority) {
+		t.setPriority(_priority);
 	}
 
 	void deleteTask() {

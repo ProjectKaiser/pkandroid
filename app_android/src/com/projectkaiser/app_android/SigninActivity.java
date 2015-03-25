@@ -141,7 +141,7 @@ public class SigninActivity extends Activity implements ConnectionCallbacks,
 					}
 				});
 
-		findViewById(R.id.btnCancel).setOnClickListener(
+		findViewById(R.id.btnTaskActionCancel).setOnClickListener(
 				new View.OnClickListener() {
 					@Override
 					public void onClick(View view) {
