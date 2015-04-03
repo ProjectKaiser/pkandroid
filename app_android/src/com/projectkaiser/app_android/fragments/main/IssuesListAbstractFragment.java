@@ -31,6 +31,7 @@ public abstract class IssuesListAbstractFragment extends Fragment implements
 	protected final void refresh() {
 		IssuesArrayAdapter adapter = new IssuesArrayAdapter(getRootView().getContext(), getIssuesList());
 		getListView().setAdapter(adapter);
+		((MainActivity)getActivity()).initTaskMenu();
 	}
 
 	protected abstract List<MIssue> getIssuesList();

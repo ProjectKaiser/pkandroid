@@ -193,7 +193,6 @@ public class SettingsActivity extends PreferenceActivity {
 			pInterval.setPersistent(false);
 		}
 	}
-
 	 @Override
      public boolean onOptionsItemSelected(MenuItem item) {
              switch (item.getItemId()) {
@@ -202,7 +201,7 @@ public class SettingsActivity extends PreferenceActivity {
              }
              return true;
      }
-	
+/*	
 	@Override
 	public void onBackPressed() {
     	Intent i = new Intent(getApplicationContext(), MainActivity.class);
@@ -211,7 +210,7 @@ public class SettingsActivity extends PreferenceActivity {
         getApplicationContext().startActivity(i);
         finish();
 	}
-	
+	*/
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);

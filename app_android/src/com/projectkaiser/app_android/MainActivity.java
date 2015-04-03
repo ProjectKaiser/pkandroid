@@ -70,6 +70,7 @@ public class MainActivity extends ActionBarActivity implements
 	private FloatingActionButton fabButton = null;
 	private Menu _menu = null;
 	private String curServerName = null;
+	private int curItemPosition = 1; 
 	Fragment curfragment = null;
 
 	ArrayList<IGlobalAppEventsListener> m_eventListeners = new ArrayList<IGlobalAppEventsListener>();
@@ -126,6 +127,7 @@ public class MainActivity extends ActionBarActivity implements
 		@Override
 		public void onItemClick(AdapterView parent, View view, int position,
 				long id) {
+			curItemPosition = position; 
 			selectServer(position);
 		}
 	}
@@ -139,14 +141,20 @@ public class MainActivity extends ActionBarActivity implements
 		}
 	}
 
-	/** Swaps fragments in the main content view */
+	public void initTaskMenu(){
+		this.actLocalMenu(curItemPosition==1); 
+	}
+	
+	private void actLocalMenu(boolean bOn) {
+		if (_menu == null) return;
+		_menu.getItem(1).setVisible(bOn);
+		_menu.getItem(2).setVisible(bOn);
+	}
+		/** Swaps fragments in the main content view */
 	private void selectServer(int position) {
 		Intent i = null;
 
-		if (_menu != null) {
-			_menu.getItem(1).setVisible(false);
-			_menu.getItem(2).setVisible(false);
-		}
+			actLocalMenu(false);
 		if (position < mDrawerServers.size() - 4) {
 
 			curServerName = "";
@@ -190,8 +198,7 @@ public class MainActivity extends ActionBarActivity implements
 			if (fabButton != null) {
 				if (ID_LOCAL.equals(connectionId)) {
 					if (_menu != null) {
-						_menu.getItem(1).setVisible(true);
-						_menu.getItem(2).setVisible(true);
+						actLocalMenu(true);
 					}
 				}
 				if (bShowPlusButton) {
@@ -378,8 +385,7 @@ public class MainActivity extends ActionBarActivity implements
 		_menu = menu;
 		if (getVisibleFragment() instanceof LocalTasksFragment) {
 			initLocalTasks();
-			_menu.getItem(1).setVisible(true);
-			_menu.getItem(2).setVisible(true);
+			actLocalMenu(true);
 		}
 		return true;
 	}
@@ -478,15 +484,16 @@ public class MainActivity extends ActionBarActivity implements
 
 				@Override
 				public void onFailure(Throwable e) {
-					// log.error(e);
+					log.error(e);
 					syncFinishedForCon(connId);
 					if (e instanceof EAuthError)
 						Toast.makeText(getApplicationContext(),
 								getString(R.string.authentication_failed),
 								Toast.LENGTH_LONG).show();
-					else
-						Toast.makeText(getApplicationContext(), e.getMessage(),
-								Toast.LENGTH_LONG).show();
+					else {
+						Toast.makeText(getApplicationContext(), getString(R.string.network_error),Toast.LENGTH_LONG).show();
+						//Toast.makeText(getApplicationContext(), e.getMessage(),Toast.LENGTH_LONG).show();
+					}
 				}
 			});
 			m_syncingIds.add(connId);
