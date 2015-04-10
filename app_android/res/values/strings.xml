@@ -14,7 +14,8 @@
     <string name="short_date_time">dd.MM.yyyy hh:mm</string>
     <string name="hrs_pattern">%d h</string>
     <string name="mins_pattern">%d min</string>
-
+    <string name="NOT_SWIPING_ITEM">NOT_SWIPING_ITEM</string>
+    
     <!-- Main Activity ****************************************************************** -->
     <string name="action_newtask">New Task</string>
     <string name="action_sync">Sync</string>
@@ -43,7 +44,9 @@
     
     <!-- Tasks State Buttons & Menu Actions ****************************************************************** -->
     <string name="completed">Completed</string>
+    <string name="resumed">Resumed</string>
     <string name="resume">Resume</string>
+    <string name="complete">Complete</string>
     <string name="delete">Delete</string>
     <string name="jresumed">Task resumed</string>
     <string name="jcompleted">Task completed</string>

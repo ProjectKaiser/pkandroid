@@ -8,12 +8,11 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Button;
-import android.widget.Toast;
-import android.view.View.OnClickListener;
 import com.projectkaiser.app_android.EditIssueActivity;
 import com.projectkaiser.app_android.R;
+import com.projectkaiser.app_android.adapters.IssuesArrayAdapter;
 import com.projectkaiser.app_android.bl.BL;
 import com.projectkaiser.app_android.bl.events.AppEvent;
 import com.projectkaiser.app_android.bl.events.DataSyncStarted;
@@ -25,10 +24,10 @@ import com.projectkaiser.app_android.bl.local.TasksFilter;
 import com.projectkaiser.app_android.bl.obj.MRemoteNotSyncedIssue;
 import com.projectkaiser.mobile.sync.MIssue;
 import com.projectkaiser.mobile.sync.MLocalIssue;
+import com.projectkaiser.app_android.misc.SwipeDismissListViewTouchListener;
 
 public class LocalTasksFragment extends IssuesListAbstractFragment implements
 		IGlobalAppEventsListener {
-	private MIssue justCompletedIssue = null;
 	/**
 	 * Returns a new instance of this fragment for the given section number.
 	 */
@@ -39,18 +38,53 @@ public class LocalTasksFragment extends IssuesListAbstractFragment implements
 		LocalTasksFragment fragment = new LocalTasksFragment();
 		return fragment;
 	}
-
+	
 	@Override
 	protected boolean isFiltersSupported() {
 		return true;
 	}
 
+	private class MyDismissCallbacks implements SwipeDismissListViewTouchListener.DismissCallbacks {
+		public void onDismiss(ListView listView, int[] reverseSortedPositions) {
+			IssuesArrayAdapter adapter = new IssuesArrayAdapter(getRootView().getContext(), getIssuesList());
+            for (int position : reverseSortedPositions) {
+            	int realpos = position;
+            	if (removedItem!=null){
+                	if (realpos==removedItem.dismissPosition) return;
+                	if (realpos>removedItem.dismissPosition){
+                		realpos = realpos - 1;
+                	}
+            	}
+            	Long modif = 0L;
+        		MIssue m_details = m_tasks.get(realpos);
+        		if (m_details!=null) { 
+        			modif = m_details.getModified(); 
+        		}
+        		CompleteItem(realpos);
+            	removedItem = new LocalRemovedItem();
+            	removedItem.dismissPosition = realpos;
+            	removedItem.Modified = modif;
+        		adapter.setremovedItem(removedItem);
+        		getListView().setAdapter(adapter);
+            }
+        }		
+		public boolean canDismiss(int position){
+			return true;
+		}
+	}
+	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		View v = super.onCreateView(inflater, container, savedInstanceState);
 		((TextView) getRootView().findViewById(R.id.emptyText))
 				.setText(getString(R.string.no_local_issues));
+		SwipeDismissListViewTouchListener touchListener =
+		          new SwipeDismissListViewTouchListener(
+		        		  getListView(),
+		                  new MyDismissCallbacks());
+		getListView().setOnTouchListener(touchListener);
+		getListView().setOnScrollListener(touchListener.makeScrollListener());
 		return v;
 	}
 
@@ -64,25 +98,29 @@ public class LocalTasksFragment extends IssuesListAbstractFragment implements
 		} else if (event instanceof LocalTaskAdded)
 			refresh();
 	}
-
+/*
 	private void showToast(MIssue m_detail, String initText) {
 		justCompletedIssue = m_detail;
 		Toast toastTask = Toast.makeText(getActivity().getApplicationContext(),
 				initText, Toast.LENGTH_LONG);
 		toastTask.show();
 	}
-
+*/
 	@Override
 	protected boolean CompleteItem(int position) {
 		MIssue m_details = m_tasks.get(position);
+		
 		if (m_details instanceof MLocalIssue) {
+						
 			BL.getLocal(getActivity().getApplicationContext()).completeTask(
 					(MLocalIssue) m_details);
+			/*			
 			if (m_details.getState() == 0) {
 				showToast(m_details, getString(R.string.jcompleted));
 			} else {
 				showToast(m_details, getString(R.string.jresumed));
-			}
+			}*/
+			
 			return true;
 		} else
 			return false;

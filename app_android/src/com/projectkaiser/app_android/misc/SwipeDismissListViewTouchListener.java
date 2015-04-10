@@ -16,6 +16,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import com.projectkaiser.app_android.R;
+
 /**
  * A {@link android.view.View.OnTouchListener} that makes the list items in a {@link ListView}
  * dismissable. {@link ListView} is given special treatment because by default it handles touches
@@ -175,6 +177,7 @@ public class SwipeDismissListViewTouchListener implements View.OnTouchListener {
                     child = mListView.getChildAt(i);
                     child.getHitRect(rect);
                     if (rect.contains(x, y)) {
+                    	if (child.getTag()==view.getContext().getString(R.string.NOT_SWIPING_ITEM)) return false;
                         mDownView = child;
                         break;
                     }
@@ -207,7 +210,7 @@ public class SwipeDismissListViewTouchListener implements View.OnTouchListener {
                 float absVelocityY = Math.abs(mVelocityTracker.getYVelocity());
                 boolean dismiss = false;
                 boolean dismissRight = false;
-                if (Math.abs(deltaX) > mViewWidth / 2) {
+                if (Math.abs(deltaX) > mViewWidth / 3) {
                     dismiss = true;
                     dismissRight = deltaX > 0;
                 } else if (mMinFlingVelocity <= absVelocityX && absVelocityX <= mMaxFlingVelocity

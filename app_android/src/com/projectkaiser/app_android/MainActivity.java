@@ -616,6 +616,10 @@ public class MainActivity extends ActionBarActivity implements
 			lst.onEvent(event);
 	}
 
+	public void RefreshItemList() {
+		raise(new LocalTaskAdded());
+	}
+	
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (resultCode == RESULT_OK) {

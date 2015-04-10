@@ -42,11 +42,13 @@
     <string name="tab_comments">Комментарии</string>
     
     <!--  Tasks State Buttons & Menu Actions ****************************************************************** -->
-    <string name="completed">Завершено</string>
+    <string name="completed">Завершена</string>
     <string name="resume">Возобновить</string>
+    <string name="complete">Завершить</string>
     <string name="delete">Удалить</string>
     <string name="jresumed">Задача возобновлена</string>
     <string name="jcompleted">Задача завeршена</string>
+        <string name="resumed">Возобновлена</string>
     
     <!--  Priorities ****************************************************************** -->
     <string name="priority_blocker">Критический</string>

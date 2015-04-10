@@ -254,11 +254,15 @@ public class LocalBL implements ILocalBL {
 
 	@Override
 	public MRemoteNotSyncedIssue updateTask(MRemoteNotSyncedIssue task) {
+		long time = (new Date()).getTime();
+		return updateTaskEx(task, time);
+	}
+
+	@Override
+	public MRemoteNotSyncedIssue updateTaskEx(MRemoteNotSyncedIssue task, long time) {
 		SQLiteDatabase db = m_helper.getWritableDatabase();
 		db.beginTransaction();
 		try {
-
-			long time = (new Date()).getTime();
 
 			ContentValues values = new ContentValues();
 			values.put(PkTasksDb.F_NAME, task.getName());
@@ -378,11 +382,16 @@ public class LocalBL implements ILocalBL {
 
 	@Override
 	public MLocalIssue updateTask(MLocalIssue task) {
+		long time = (new Date()).getTime();
+		return updateTaskEx(task, time);
+	}
+	
+	@Override
+	public MLocalIssue updateTaskEx(MLocalIssue task, long time) {
 		SQLiteDatabase db = m_helper.getWritableDatabase();
 		db.beginTransaction();
 		try {
 
-			long time = (new Date()).getTime();
 
 			ContentValues values = new ContentValues();
 			values.put(PkTasksDb.F_NAME, task.getName());

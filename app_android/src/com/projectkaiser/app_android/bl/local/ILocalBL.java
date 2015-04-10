@@ -18,7 +18,9 @@ public interface ILocalBL {
 	MRemoteNotSyncedIssue addTask(MRemoteNotSyncedIssue task);
 	
 	MLocalIssue updateTask(MLocalIssue task);
+	MLocalIssue updateTaskEx(MLocalIssue task, long time);
 	MRemoteNotSyncedIssue updateTask(MRemoteNotSyncedIssue task);	
+	MRemoteNotSyncedIssue updateTaskEx(MRemoteNotSyncedIssue task, long time);	
 	
 	void deleteTask(MLocalIssue task);
 	void deleteTask(MRemoteNotSyncedIssue task);
