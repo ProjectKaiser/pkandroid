@@ -54,42 +54,49 @@ public class IssuesArrayAdapter extends ArrayAdapter<MIssue> {
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		View rowView = null;
 		int disPos = -1;
-		if (adapterRemovedItem!=null){disPos = adapterRemovedItem.dismissPosition;}
+		if (m_tasks==null) {return rowView;}
+		if (adapterRemovedItem != null) {
+			disPos = adapterRemovedItem.dismissPosition;
+		}
 		if (disPos == position) {
-			rowView = inflater.inflate(R.layout.inbox_dismiss_row, parent, false);
+			rowView = inflater.inflate(R.layout.inbox_dismiss_row, parent,	false);
 			rowView.setTag(m_ctx.getString(R.string.NOT_SWIPING_ITEM));
 			TextView lblTaskName = (TextView) rowView
 					.findViewById(R.id.lblDismissIssue);
 			TextView txtRestoreIssue = (TextView) rowView
 					.findViewById(R.id.txtRestoreIssue);
 			MIssue task = m_tasks.get(position);
-
-				txtRestoreIssue.setOnClickListener(new View.OnClickListener() {
+			if (task==null) {return rowView;}
+			
+			txtRestoreIssue.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View view) {
-					MIssue m_details = m_tasks.get(adapterRemovedItem.dismissPosition);
+					if (adapterRemovedItem == null)
+						return;
+					MIssue m_details = m_tasks
+							.get(adapterRemovedItem.dismissPosition);
 					if (m_details instanceof MLocalIssue) {
 						long time = adapterRemovedItem.Modified;
-						BL.getLocal(m_ctx).updateTaskEx((MLocalIssue)m_details, time);
-						MainActivity myAct = (MainActivity)m_ctx;
+						BL.getLocal(m_ctx).updateTaskEx(
+								(MLocalIssue) m_details, time);
+						MainActivity myAct = (MainActivity) m_ctx;
 						myAct.RefreshItemList();
 					}
-					
 					return;
-
 				}
 			});
-			
-			if (task.getState() == 0) {
-				lblTaskName.setText(task.getName() + " - "
-						+ m_ctx.getString(R.string.completed));
-				txtRestoreIssue.setText(m_ctx.getString(R.string.cancel));
-			} else {
-				lblTaskName.setText(task.getName() + " - "
-						+ m_ctx.getString(R.string.resumed));
-				txtRestoreIssue.setText(m_ctx.getString(R.string.cancel));
+
+			if (task != null && lblTaskName != null) {
+				if (task.getState() == 0) {
+					lblTaskName.setText(task.getName() + " - "
+							+ m_ctx.getString(R.string.completed));
+					txtRestoreIssue.setText(m_ctx.getString(R.string.cancel));
+				} else {
+					lblTaskName.setText(task.getName() + " - "
+							+ m_ctx.getString(R.string.resumed));
+					txtRestoreIssue.setText(m_ctx.getString(R.string.cancel));
+				}
 			}
-			
 		} else {
 
 			rowView = inflater.inflate(R.layout.inbox_row, parent, false);

@@ -10,14 +10,23 @@ import android.widget.Button;
 
 import com.projectkaiser.app_android.R;
 import com.projectkaiser.app_android.bl.events.IGlobalAppEventsProvider;
+import com.projectkaiser.app_android.fragments.main.IRetainedFragment;
 
-
-public class NoConnectionFragment extends Fragment {
+public class NoConnectionFragment extends Fragment implements 
+		IRetainedFragment{
 	/**
 	 * Returns a new instance of this fragment for the given section number.
 	 */
+    private IssueListData data;
+	
+	@Override
+    public IssueListData getData() {
+        return data;
+    }
+
 	public static NoConnectionFragment newInstance() {
 		NoConnectionFragment fragment = new NoConnectionFragment();
+		fragment.data = new IssueListData();
 		return fragment;
 	}
 
@@ -26,6 +35,11 @@ public class NoConnectionFragment extends Fragment {
 	
 	View m_rootView;
 	
+	@Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setRetainInstance(true);
+    }
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {

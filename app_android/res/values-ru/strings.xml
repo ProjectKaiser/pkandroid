@@ -18,6 +18,7 @@
     <!--  Main Activity ****************************************************************** -->
     <string name="action_newtask">Создать</string>
     <string name="action_sync">Синхронизация</string>
+    <string name="last_sync_time">Время синх.</string>
     <string name="action_about">О программе</string>
     <string name="action_send_log">Отправить журнал ошибок</string>
     <string name="tab_inbox_not_configured">Входящие</string>
@@ -100,6 +101,14 @@
     
     <!--  Notifications ****************************************************************** -->
     <string name="notification_new_tasks">И другие задачи (%d)</string>
+    
+    <!-- Date & Time periods************************************************************** -->
+    <string name="short_year">г</string>
+    <string name="short_month">м</string>
+    <string name="short_week">н</string>
+    <string name="short_day">д</string>
+    <string name="short_hour">ч</string>
+    <string name="short_min">мин</string>
     
     <!--  Sign In Dialog ****************************************************************** -->
     <string name="login_with_google">Войти используя мою учетную запись Google</string>

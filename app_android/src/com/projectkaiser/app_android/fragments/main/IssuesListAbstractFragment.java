@@ -9,10 +9,8 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.AbsListView;
 
 import com.projectkaiser.app_android.misc.*;
 import com.projectkaiser.app_android.MainActivity;
@@ -22,34 +20,47 @@ import com.projectkaiser.app_android.bl.events.IGlobalAppEventsListener;
 import com.projectkaiser.app_android.bl.events.IGlobalAppEventsProvider;
 import com.projectkaiser.app_android.settings.SrvConnectionId;
 import com.projectkaiser.mobile.sync.MIssue;
+import com.projectkaiser.app_android.fragments.main.IssueListData;
+import com.projectkaiser.app_android.fragments.main.IRetainedFragment;
 
 public abstract class IssuesListAbstractFragment extends Fragment implements
-		IGlobalAppEventsListener, SwipeRefreshLayout.OnRefreshListener {
+		IGlobalAppEventsListener, SwipeRefreshLayout.OnRefreshListener, IRetainedFragment {
 
 	private View m_rootView;
 	private PKTaskListType mTaskListType;
 	protected LocalRemovedItem removedItem = null;
+    private IssueListData statedata;
+
+    public void initStateData(){
+    	statedata = new  IssueListData();   	
+    }
+    
+	@Override
+	public IssueListData getData() {
+        return statedata;
+    }
 
 	protected final void refresh() {
-		IssuesArrayAdapter adapter = new IssuesArrayAdapter(getRootView().getContext(), getIssuesList());
+		ListView lv = getListView();
+		if (lv == null || getIssuesList()==null)
+			return;
+		IssuesArrayAdapter adapter = new IssuesArrayAdapter(getRootView()
+				.getContext(), getIssuesList());
 		removedItem = null;
-		getListView().setAdapter(adapter);
-		((MainActivity)getActivity()).initTaskMenu();
+		lv.setAdapter(adapter);
 	}
 
+	
 	protected abstract List<MIssue> getIssuesList();
 	boolean m_progressShown = false;
 
 	protected String getConnectionId() {
 		return getArguments().getString(SrvConnectionId.ARG);
 	}
-	
+
 	protected final void showProgress() {
 		m_rootView.findViewById(R.id.pbIssues).setVisibility(View.GONE);
 		m_rootView.findViewById(R.id.emptyText).setVisibility(View.GONE);
-		if (isFiltersSupported()) {
-			// TODO: Make Edit button visible
-		}
 
 		final ListView list = (ListView) m_rootView.findViewById(R.id.lvInbox);
 		list.setEmptyView(m_rootView.findViewById(R.id.pbIssues));
@@ -105,12 +116,21 @@ public abstract class IssuesListAbstractFragment extends Fragment implements
 	}
 
 	protected abstract boolean DeleteItem(int position);
+
 	protected abstract boolean CompleteItem(int position);
 
 	@Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        // retain this fragment
+        setRetainInstance(true);
+    }
+	
+	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		m_rootView = inflater.inflate(R.layout.fragment_issues, container, false);
+		m_rootView = inflater.inflate(R.layout.fragment_issues, container,
+				false);
 		
 		getProgressLayout().setOnRefreshListener(this);
 		try {
@@ -121,49 +141,32 @@ public abstract class IssuesListAbstractFragment extends Fragment implements
 			throw new ClassCastException(getActivity().toString()
 					+ " must implement IMainMenuCmdProvider");
 		}
-/*		
-		getListView().setOnScrollListener(new OnScrollListener() {
-			@Override
-			public void onScrollStateChanged(AbsListView view, int scrollState) {
-			}
 
-			@Override
-			public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-			    boolean enable = false;
-			    if(view != null && view.getChildCount() > 0){
-			        // check if the first item of the list is visible
-			        boolean firstItemVisible = view.getFirstVisiblePosition() == 0;
-			        // check if the top of the first item is visible
-			        boolean topOfFirstItemVisible = view.getChildAt(0).getTop() == 0;
-			        // enabling or disabling the refresh layout
-			        enable = firstItemVisible && topOfFirstItemVisible;
-			    }
-			    getProgressLayout().setEnabled(enable);
-			}
-		});
-*/
-
-		getListView().setOnItemClickListener(
-				new AdapterView.OnItemClickListener() {
-					@Override
-					public void onItemClick(AdapterView<?> parentView,
-							View childView, int position, long id) {
-						if (removedItem!=null) {
-							if (removedItem.dismissPosition==position) return;
-						}
-						onIssueClick(position);
+		ListView lv = getListView();
+		if (lv != null) {
+			lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+				@Override
+				public void onItemClick(AdapterView<?> parentView,
+						View childView, int position, long id) {
+					if (removedItem != null) {
+						if (removedItem.dismissPosition == position)
+							return;
 					}
-				});
+					onIssueClick(position);
+				}
+			});
 
-		getListView().setEmptyView(m_rootView.findViewById(R.id.emptyText));
+			lv.setEmptyView(m_rootView.findViewById(R.id.emptyText));
 
-		hideProgress();
-		refresh();
+			hideProgress();
+			refresh();
+		}
 		return m_rootView;
 	}
+
 	@Override
 	public void onRefresh() {
-		if(getActivity()!=null){
+		if (getActivity() != null) {
 			((IGlobalAppEventsProvider) getActivity()).syncRequested();
 		}
 	}

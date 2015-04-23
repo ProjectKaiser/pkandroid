@@ -2,6 +2,7 @@ package com.projectkaiser.app_android;
 
 import java.text.SimpleDateFormat;
 import java.util.Locale;
+import java.util.Date;
 
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
@@ -28,9 +29,11 @@ public class InfoActivity extends ActionBarActivity {
 			lblVersion.setText("error");
 		}
 		
-		SimpleDateFormat df = new SimpleDateFormat(getString(R.string.short_date_time), Locale.getDefault());	
-		if (sm.getLastSyncDate()!=null)
-			lblLasySync.setText(getString(R.string.last_sync, df.format(sm.getLastSyncDate())));
+		SimpleDateFormat df = new SimpleDateFormat(getString(R.string.short_date_time), Locale.getDefault());
+		Date lastSyncDate = sm.getCommonLastSyncDate();
+		if (lastSyncDate != null)
+			lblLasySync.setText(getString(R.string.last_sync,
+					df.format(lastSyncDate)));
 		else
 			lblLasySync.setText("");
 	}

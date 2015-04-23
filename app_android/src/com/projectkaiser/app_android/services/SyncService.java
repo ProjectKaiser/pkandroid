@@ -178,6 +178,7 @@ public class SyncService extends IntentService {
 			ResponseParser.parseSyncResponse(sm, connectionId, result);
 			MDigestedArray<MRemoteSyncedIssue> newIssues = sm.getIssues(connectionId);
 			sendNotifications(base.getServerName(), oldIssues, newIssues, base.getUserId());
+			sm.updateLastSyncDate(connectionId);
 		}
 	}
 
@@ -198,7 +199,7 @@ public class SyncService extends IntentService {
 			
 			SessionManager sm = SessionManager.get(getApplicationContext());
 			Date now = new Date();
-			Date lastSync = sm.getLastSyncDate();
+			Date lastSync = sm.getCommonLastSyncDate();
 			boolean bNeedSync = (lastSync == null || now.getTime() - lastSync.getTime() >= SyncAlarmReceiver.SYNC_INTERVAL_MILLIS);
 			
 			if (bNeedSync)

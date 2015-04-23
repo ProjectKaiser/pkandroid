@@ -19,6 +19,7 @@
     <!-- Main Activity ****************************************************************** -->
     <string name="action_newtask">New Task</string>
     <string name="action_sync">Sync</string>
+    <string name="last_sync_time">Last sync time</string>
     <string name="action_about">About</string>
     <string name="action_send_log">Send error log</string>
     <string name="tab_inbox_not_configured">Inbox</string>
@@ -102,6 +103,13 @@
     <!-- Notifications ****************************************************************** -->
     <string name="notification_new_tasks">And other %d tasks</string>
 
+    <!-- Date & Time periods************************************************************** -->
+    <string name="short_year">y</string>
+    <string name="short_month">m</string>
+    <string name="short_week">w</string>
+    <string name="short_day">d</string>
+    <string name="short_hour">h</string>
+    <string name="short_min">min</string>
     <!-- Sign In Dialog ****************************************************************** -->
     <string name="login_with_google">Sign in using my Google account</string>
     <string name="prompt_email">Email</string>

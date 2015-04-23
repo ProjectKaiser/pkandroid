@@ -8,44 +8,64 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.projectkaiser.app_android.MainActivity$PlaceholderFragment" >
 
-    <FrameLayout
-        android:id="@+id/frameLayout1"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_above="@+id/rgFilters"
-        android:layout_alignParentTop="true" >
-
-        <android.support.v4.widget.SwipeRefreshLayout
-            xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:tools="http://schemas.android.com/tools"
-            android:id="@+id/swrInbox"
-            android:layout_width="match_parent"
-            android:layout_height="fill_parent" >
-
-            <ListView
-                android:id="@+id/lvInbox"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" >
-            </ListView>
-
-        </android.support.v4.widget.SwipeRefreshLayout>
-
-        <ProgressBar
-            android:id="@+id/pbIssues"
-            style="?android:attr/progressBarStyleLarge"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:visibility="gone" />
+    <TableRow
+        android:id="@+id/tableRow1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
 
         <TextView
-            android:id="@+id/emptyText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:gravity="center"
-            android:text="@string/no_remote_issues"
-            android:visibility="gone" />
-    </FrameLayout>
+            android:id="@+id/textViewError"
+            android:layout_width="match_parent"
+            android:layout_gravity="top"
+            android:gravity="top|center_horizontal"
+            android:lines="2"
+            android:textColor="#ff0000"
+            android:textSize="16sp" />
 
+    </TableRow>
+
+    <TableRow
+        android:id="@+id/tableRowListView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" >
+
+        <FrameLayout
+            android:id="@+id/frameLayout1"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent" >
+
+            <android.support.v4.widget.SwipeRefreshLayout
+                xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:id="@+id/swrInbox"
+                android:layout_width="match_parent"
+                android:layout_height="fill_parent" >
+
+                <ListView
+                    android:id="@+id/lvInbox"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+            </android.support.v4.widget.SwipeRefreshLayout>
+
+            <ProgressBar
+                android:id="@+id/pbIssues"
+                style="?android:attr/progressBarStyleLarge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/emptyText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:text="@string/no_remote_issues"
+                android:visibility="gone" />
+        </FrameLayout>
+
+    </TableRow>
+
+  
 </RelativeLayout>

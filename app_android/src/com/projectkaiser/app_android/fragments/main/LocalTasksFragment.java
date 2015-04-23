@@ -34,8 +34,10 @@ public class LocalTasksFragment extends IssuesListAbstractFragment implements
 
 	List<MIssue> m_tasks = null;
 
+
 	public static LocalTasksFragment newInstance() {
 		LocalTasksFragment fragment = new LocalTasksFragment();
+		fragment.initStateData();
 		return fragment;
 	}
 	
@@ -47,6 +49,7 @@ public class LocalTasksFragment extends IssuesListAbstractFragment implements
 	private class MyDismissCallbacks implements SwipeDismissListViewTouchListener.DismissCallbacks {
 		public void onDismiss(ListView listView, int[] reverseSortedPositions) {
 			IssuesArrayAdapter adapter = new IssuesArrayAdapter(getRootView().getContext(), getIssuesList());
+        	if (m_tasks==null) return;
             for (int position : reverseSortedPositions) {
             	int realpos = position;
             	if (removedItem!=null){
@@ -56,10 +59,10 @@ public class LocalTasksFragment extends IssuesListAbstractFragment implements
                 	}
             	}
             	Long modif = 0L;
+            	if (realpos<=-1) {return;}
         		MIssue m_details = m_tasks.get(realpos);
-        		if (m_details!=null) { 
-        			modif = m_details.getModified(); 
-        		}
+        		if (m_details==null) return; 
+      			modif = m_details.getModified(); 
         		CompleteItem(realpos);
             	removedItem = new LocalRemovedItem();
             	removedItem.dismissPosition = realpos;
@@ -98,14 +101,7 @@ public class LocalTasksFragment extends IssuesListAbstractFragment implements
 		} else if (event instanceof LocalTaskAdded)
 			refresh();
 	}
-/*
-	private void showToast(MIssue m_detail, String initText) {
-		justCompletedIssue = m_detail;
-		Toast toastTask = Toast.makeText(getActivity().getApplicationContext(),
-				initText, Toast.LENGTH_LONG);
-		toastTask.show();
-	}
-*/
+
 	@Override
 	protected boolean CompleteItem(int position) {
 		MIssue m_details = m_tasks.get(position);
@@ -114,13 +110,6 @@ public class LocalTasksFragment extends IssuesListAbstractFragment implements
 						
 			BL.getLocal(getActivity().getApplicationContext()).completeTask(
 					(MLocalIssue) m_details);
-			/*			
-			if (m_details.getState() == 0) {
-				showToast(m_details, getString(R.string.jcompleted));
-			} else {
-				showToast(m_details, getString(R.string.jresumed));
-			}*/
-			
 			return true;
 		} else
 			return false;
