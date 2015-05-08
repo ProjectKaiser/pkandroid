@@ -8,7 +8,7 @@
         android:negativeButtonText="@null"
         android:positiveButtonText="@null"
         android:title="@string/pref_title_sync_frequency" />
-
+    
     
     <Preference android:title="@string/prefs_accounts" android:summary="@string/prefs_accounts_summary" >
         <intent
@@ -16,5 +16,10 @@
              android:targetPackage="com.projectkaiser.app_android"
              android:targetClass="com.projectkaiser.app_android.AccountsMgmtActivity" />
     </Preference>
-
+    
+	<CheckBoxPreference
+		android:title="@string/pref_show_new_task"
+        android:defaultValue="false"
+        android:key="new_task_block" />
+    
 </PreferenceScreen>

@@ -17,6 +17,7 @@
     <string name="NOT_SWIPING_ITEM">NOT_SWIPING_ITEM</string>
     
     <!-- Main Activity ****************************************************************** -->
+    <string name="new_task_notif">Click to create new task</string>
     <string name="action_newtask">New Task</string>
     <string name="action_sync">Sync</string>
     <string name="last_sync_time">Last sync time</string>
@@ -133,7 +134,8 @@
     <string name="prefs_accounts">Accounts</string>
     <string name="prefs_accounts_summary">Add or remove PK accounts</string>
     <string name="pref_title_sync_frequency">Sync interval</string>
-
+    <string name="pref_show_new_task">New task notification</string>
+    
     <string-array name="server_items">
         <item>Local tasks</item>
         <item>Settings</item>

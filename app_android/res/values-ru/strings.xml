@@ -16,6 +16,7 @@
     <string name="mins_pattern">%d мин</string>
 
     <!--  Main Activity ****************************************************************** -->
+    <string name="new_task_notif">Нажмите, чтобы создать задачу</string>
     <string name="action_newtask">Создать</string>
     <string name="action_sync">Синхронизация</string>
     <string name="last_sync_time">Время синх.</string>
@@ -134,7 +135,8 @@
     <string name="prefs_accounts">Учетные записи</string>
     <string name="prefs_accounts_summary">Управление учетными записями</string>
     <string name="pref_title_sync_frequency">Интервал синхронизации</string>
-
+    <string name="pref_show_new_task">Уведомление "Новая задача"</string>
+    
     <string-array name="server_items">
         <item>Локальные задачи</item>
         <item>Настройки</item>

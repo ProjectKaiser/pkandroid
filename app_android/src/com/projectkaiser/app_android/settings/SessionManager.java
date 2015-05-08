@@ -60,8 +60,12 @@ public class SessionManager {
 	private static final String KEY_LAST_SYNC_STATUS = "last_sync_status";
 
 	public static final String KEY_SYNC_INTERVAL = "sync_frequency";
+	
+	public static final String KEY_SHOW_NEW_TASK = "new_task_block";
 
 	public static final String KEY_ISSUES_ATTACHMENT = "issue_attachment";
+
+	public static final int NEW_TASK_ACTIVITY_ID = 10001;
 
 	protected SessionManager(Context context) {
 		this._context = context;
@@ -271,6 +275,16 @@ public class SessionManager {
 
 	public int getSyncIntervalMin() {
 		return pref.getInt(KEY_SYNC_INTERVAL, 5);
+	}
+
+	public boolean getShowNewTask() {
+		return pref.getBoolean(KEY_SHOW_NEW_TASK, false);
+	}
+	
+	public void setShowNewTask(boolean value) {
+		Editor editor = pref.edit();
+		editor.putBoolean(KEY_SHOW_NEW_TASK, value);
+		editor.commit();
 	}
 
 	public void setSyncIntervalMin(int value) {

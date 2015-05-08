@@ -271,9 +271,10 @@ public class SigninActivity extends Activity implements ConnectionCallbacks,
 		final String account = mPlusClient.getAccountName();
 
 		final GoogleAuthScheme scheme = new GoogleAuthScheme();
-		scheme.setDisplayName(mPlusClient.getCurrentPerson().getDisplayName());
-		scheme.setPictureUrl(mPlusClient.getCurrentPerson().getImage().getUrl());
-
+		if (mPlusClient.getCurrentPerson()!=null) {
+			scheme.setDisplayName(mPlusClient.getCurrentPerson().getDisplayName());
+			scheme.setPictureUrl(mPlusClient.getCurrentPerson().getImage().getUrl());
+		}
 		mPlusClient.clearDefaultAccount();
 		mPlusClient.disconnect();
 

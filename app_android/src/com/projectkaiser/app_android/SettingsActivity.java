@@ -3,20 +3,27 @@ package com.projectkaiser.app_android;
 import java.util.List;
 
 import android.annotation.TargetApi;
+import android.app.NotificationManager;
+import android.app.Notification;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.BitmapFactory.Options;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
+import android.preference.CheckBoxPreference;
+import android.support.v4.app.NotificationCompat;
 import android.view.MenuItem;
 
 import com.projectkaiser.app_android.services.SyncAlarmReceiver;
 import com.projectkaiser.app_android.settings.SessionManager;
-
 
 /**
  * A {@link PreferenceActivity} that presents a set of application settings. On
@@ -73,6 +80,11 @@ public class SettingsActivity extends PreferenceActivity {
 		((ListPreference)pInterval).setValue(defValue);
 		pInterval.setDefaultValue(defValue);
 		bindPreferenceSummaryToValue(pInterval, defValue);
+		Preference pNewTask = findPreference(SessionManager.KEY_SHOW_NEW_TASK); 
+		Boolean defBoolValue = Boolean.valueOf(sm.getShowNewTask());
+		((CheckBoxPreference)pNewTask).setChecked(false);
+		pInterval.setDefaultValue(false);
+		bindPreferenceNewTaskToValue(pNewTask, defBoolValue);
 		pInterval.setPersistent(false);
 	}
 
@@ -127,17 +139,80 @@ public class SettingsActivity extends PreferenceActivity {
 		}
 	}
 
+	private void hideNewTaskNotification(){
+		NotificationManager mNotificationManager = (NotificationManager) this
+				.getSystemService(Context.NOTIFICATION_SERVICE);
+		mNotificationManager.cancel(SessionManager.NEW_TASK_ACTIVITY_ID);
+	}
+	
+	public static int calculateInSampleSize(
+            BitmapFactory.Options options, int reqWidth, int reqHeight) {
+    // Raw height and width of image
+    final int height = options.outHeight;
+    final int width = options.outWidth;
+    int inSampleSize = 1;
+
+    if (height > reqHeight || width > reqWidth) {
+
+        final int halfHeight = height / 2;
+        final int halfWidth = width / 2;
+
+        // Calculate the largest inSampleSize value that is a power of 2 and keeps both
+        // height and width larger than the requested height and width.
+        while ((halfHeight / inSampleSize) > reqHeight
+                && (halfWidth / inSampleSize) > reqWidth) {
+            inSampleSize *= 2;
+        }
+    }
+
+    return inSampleSize;
+}	
+	private void showNewTaskNotification() {
+
+		Intent i = new Intent(getApplicationContext(), EditIssueActivity.class);
+		PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
+				i, PendingIntent.FLAG_UPDATE_CURRENT);
+		
+		//BitmapFactory.Options options = new BitmapFactory.Options();
+	    //options.inJustDecodeBounds = false;
+	    Bitmap bm = BitmapFactory.decodeResource(getResources(), R.drawable.ic_addtask_red_xxx);
+	    
+	    NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(
+				this).setSmallIcon(R.drawable.ic_newtasks_notification)
+				.setContentTitle(getString(R.string.app_name))
+				.setContentText(getString(R.string.new_task_notif))
+				.setAutoCancel(false)
+				.setOngoing(true);
+
+		mBuilder.setContentIntent(contentIntent);
+		Notification notif = mBuilder.build();
+		notif.contentView.setImageViewBitmap(android.R.id.icon, bm); 
+		NotificationManager mNotificationManager = (NotificationManager) this
+				.getSystemService(Context.NOTIFICATION_SERVICE);
+		mNotificationManager.notify(SessionManager.NEW_TASK_ACTIVITY_ID, notif);
+	}
+
 	private static void savePreference(Preference preference, String stringValue) {
+		SessionManager sm = SessionManager.get(preference.getContext());
 		if (SessionManager.KEY_SYNC_INTERVAL.equalsIgnoreCase(preference.getKey())) {
 			int intervalMinutes = Integer.valueOf(stringValue);
-			SessionManager sm = SessionManager.get(preference.getContext());
 			sm.setSyncIntervalMin(intervalMinutes);
 			SyncAlarmReceiver receiver = new SyncAlarmReceiver();
 			receiver.cancelAlarm(preference.getContext());
 			if (intervalMinutes > 0)
 				receiver.setAlarm(preference.getContext());					
+		}  else if (SessionManager.KEY_SHOW_NEW_TASK.equalsIgnoreCase(preference.getKey())) {
+			boolean showNewTask = Boolean.valueOf(stringValue);
+			sm.setShowNewTask(showNewTask);
+			if (showNewTask){
+				((SettingsActivity)preference.getContext()).showNewTaskNotification();
+			} else {
+				((SettingsActivity)preference.getContext()).hideNewTaskNotification();
+			}
 		}
+		
 	}
+	
 	/**
 	 * A preference value change listener that updates the preference's summary
 	 * to reflect its new value.
@@ -162,6 +237,12 @@ public class SettingsActivity extends PreferenceActivity {
 	 * @see #sBindPreferenceSummaryToValueListener
 	 */
 
+	private static void bindPreferenceNewTaskToValue(Preference preference, Boolean initialValue) {
+		preference
+		.setOnPreferenceChangeListener(sBindPreferenceSummaryToValueListener);
+
+		((CheckBoxPreference)preference).setChecked(initialValue);
+	}
 	private static void bindPreferenceSummaryToValue(Preference preference, String initialValue) {
 		// Set the listener to watch for value changes.
 		preference

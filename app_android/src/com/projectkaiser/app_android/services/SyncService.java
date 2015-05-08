@@ -18,6 +18,7 @@ import android.net.Uri;
 import android.os.PowerManager;
 import android.support.v4.app.NotificationCompat;
 
+import com.projectkaiser.app_android.EditIssueActivity;
 import com.projectkaiser.app_android.MainActivity;
 import com.projectkaiser.app_android.R;
 import com.projectkaiser.app_android.bl.BL;
@@ -25,6 +26,7 @@ import com.projectkaiser.app_android.bl.local.ILocalBL;
 import com.projectkaiser.app_android.bl.obj.MNewComment;
 import com.projectkaiser.app_android.bl.obj.MRemoteNotSyncedIssue;
 import com.projectkaiser.app_android.bl.obj.MRemoteSyncedIssue;
+import com.projectkaiser.app_android.consts.ActivityReq;
 import com.projectkaiser.app_android.jsonapi.parser.ResponseParser;
 import com.projectkaiser.app_android.jsonrpc.JsonRPC;
 import com.projectkaiser.app_android.jsonrpc.auth.SessionAuthScheme;
@@ -51,9 +53,9 @@ public class SyncService extends IntentService {
 
 	private void sendNotification(String title, String msg,
 			MRemoteSyncedIssue issue) {
+
 		mNotificationManager = (NotificationManager) this
 				.getSystemService(Context.NOTIFICATION_SERVICE);
-
 		Intent activityIntent = new Intent(this, MainActivity.class);
 		activityIntent.putExtra(MainActivity.ALARM_TASK, issue);
 

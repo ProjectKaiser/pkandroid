@@ -9,6 +9,11 @@ import java.util.Date;
 
 import org.apache.log4j.Logger;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -16,6 +21,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
@@ -311,7 +317,34 @@ public class MainActivity extends ActionBarActivity implements
 				return;
 			}
 		});
+		
+		if (m_sessionManager.getShowNewTask()) {
+			showNewTaskNotification();
+		}
+	}
 
+	public void showNewTaskNotification() {
+
+		Intent i = new Intent(getApplicationContext(), EditIssueActivity.class);
+		PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
+				i, PendingIntent.FLAG_UPDATE_CURRENT);
+		
+
+		Bitmap bm = BitmapFactory.decodeResource(getResources(), R.drawable.ic_addtask_red_xxx);
+		NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(
+				this).setSmallIcon(R.drawable.ic_newtasks_notification)
+				.setContentTitle(getString(R.string.app_name))
+				.setContentText(getString(R.string.new_task_notif))
+				.setAutoCancel(false)
+				.setOngoing(true);
+		
+		mBuilder.setContentIntent(contentIntent);
+		Notification notif = mBuilder.build();
+		notif.contentView.setImageViewBitmap(android.R.id.icon, bm); 
+		//setImageViewResource(android.R.id.icon, R.drawable.ic_addtask_red);		
+		NotificationManager mNotificationManager = (NotificationManager) this
+				.getSystemService(Context.NOTIFICATION_SERVICE);
+		mNotificationManager.notify(SessionManager.NEW_TASK_ACTIVITY_ID, notif);
 	}
 
 	@Override
