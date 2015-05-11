@@ -2,7 +2,7 @@ package com.projectkaiser.app_android;
 
 import android.content.Context;
 import android.graphics.Color;
-
+import android.text.format.Time;
 import com.projectkaiser.app_android.DrawerItemData;
 import com.projectkaiser.app_android.settings.SessionManager;
 import java.lang.String;
@@ -33,7 +33,13 @@ public class ServerListData {
 
 
 	public long getSyncDate() {
-		return sm.getLastSyncDate(mConnId).getTime();
+		if (sm.getLastSyncDate(mConnId)==null){
+			Time now = new Time();
+			now.setToNow();
+			return now.toMillis(true);
+		} else {
+			return sm.getLastSyncDate(mConnId).getTime();
+		}
 	}
 
 	public DrawerItemData getSyncDateCaption(Context ctx) {
