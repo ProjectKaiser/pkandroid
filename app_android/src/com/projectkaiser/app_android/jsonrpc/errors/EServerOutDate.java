@@ -8,6 +8,4 @@ public class EServerOutDate extends RuntimeException {
 	public EServerOutDate(String msg) {
 		super(msg);
 	}
-
-	
 }

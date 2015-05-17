@@ -39,6 +39,7 @@ public class JsonRPC implements IAppRPC {
 	private HashMap<String, Integer> functionMap = new HashMap<String, Integer>();
 
 	public JsonRPC() {
+
 		functionMap.put(SRV_FUNC_LOGIN, SRV_FUNC_LOGIN_VER);
 		functionMap.put(SRV_FUNC_CREATE, SRV_FUNC_CREATE_VER);
 		functionMap.put(SRV_FUNC_SYNC, SRV_FUNC_SYNC_VER);
@@ -261,13 +262,14 @@ public class JsonRPC implements IAppRPC {
 				TextUtils.SimpleStringSplitter fnSplitter = new TextUtils.SimpleStringSplitter(
 						':');
 
-				HashMap<String, Integer> tempMap = (HashMap<String, Integer>) functionMap.clone();
+				HashMap<String, Integer> tempMap = (HashMap<String, Integer>) functionMap
+						.clone();
 				while (splitter.hasNext()) {
 					String fn = splitter.next();
 					bAppFneFound = false;
 					errfnName = "";
-					Iterator<Entry<String, Integer>> it = tempMap
-							.entrySet().iterator();
+					Iterator<Entry<String, Integer>> it = tempMap.entrySet()
+							.iterator();
 					while (it.hasNext()) {
 						HashMap.Entry<String, Integer> fnItem = (HashMap.Entry<String, Integer>) it
 								.next();
@@ -275,8 +277,8 @@ public class JsonRPC implements IAppRPC {
 							bAppFneFound = true;
 							fnSplitter.setString(fn);
 							int idx = 0;
-							while (splitter.hasNext()) {
-								String srvfn = splitter.next();
+							while (fnSplitter.hasNext()) {
+								String srvfn = fnSplitter.next();
 								if (idx == 1) {
 									if (Integer.parseInt(srvfn) > fnItem
 											.getValue()) {
@@ -299,20 +301,18 @@ public class JsonRPC implements IAppRPC {
 						break;
 					}
 				}
-				if (tempMap.keySet().size()>0){ // Application has more functions than Server
-					throw new EServerOutDate("Server is outdated: one or more functions not found on Server");
+				if (tempMap.keySet().size() > 0) { // Application has more
+													// functions than Server
+					throw new EServerOutDate("0");
 				}
 				if (!bAppFneFound) {
-					throw new EServerOutDate("Application is outdated: Function '"
-							+ errfnName + "' not found in Application");
+					throw new EServerOutDate(errfnName);
 				}
-				if (!bAppFnOut) {
-					throw new EServerOutDate(
-							"Application is outdated. Please update your application");
+				if (bAppFnOut) {
+					throw new EServerOutDate("1");
 				}
-				if (!bSrvFnOut) {
-					throw new EServerOutDate(
-							"Your Server is outdated. Please update your Server");
+				if (bSrvFnOut) {
+					throw new EServerOutDate("2");
 				}
 
 			} catch (JSONException e) {

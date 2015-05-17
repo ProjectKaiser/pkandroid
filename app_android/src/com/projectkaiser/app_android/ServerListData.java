@@ -33,6 +33,9 @@ public class ServerListData {
 
 
 	public long getSyncDate() {
+		if (mConnId.isEmpty()){
+			return 0;
+		}
 		if (sm.getLastSyncDate(mConnId)==null){
 			Time now = new Time();
 			now.setToNow();
@@ -47,8 +50,10 @@ public class ServerListData {
 		if (ctx == null)
 			return drID;
 		long ms = getSyncDate();
-		if (ms == 0)
+		if (ms == 0){
+			drID.setText("");
 			return drID;
+		}
 
 		drID.setColor(Color.GRAY);
 		Calendar eCalendar = Calendar.getInstance();
@@ -82,13 +87,7 @@ public class ServerListData {
 		}
 		int diffhours = eCalendar.get(Calendar.HOUR_OF_DAY)
 				- sCalendar.get(Calendar.HOUR_OF_DAY);
-		/*
-		 * if (sm != null) { if (sm.getSyncIntervalMin() >= 60) { if (diffhours
-		 * >= 0) { if (sm.getSyncIntervalMin() * 60 >= diffhours) {
-		 * drID.setColor(Color.GREEN); } } }
-		 * 
-		 * }
-		 */
+		
 		if (diffhours > 0) {
 			drID.setText(diffhours + ctx.getString(R.string.short_hour));
 			return drID;

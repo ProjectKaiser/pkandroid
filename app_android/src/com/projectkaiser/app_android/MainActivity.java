@@ -1,7 +1,6 @@
 package com.projectkaiser.app_android;
 
 import java.io.File;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -38,6 +37,7 @@ import android.graphics.drawable.Drawable;
 import android.view.Gravity;
 import java.net.UnknownHostException;
 
+import com.projectkaiser.app_android.jsonrpc.errors.*;
 import com.projectkaiser.app_android.misc.*;
 import com.projectkaiser.app_android.async.AsyncCallback;
 import com.projectkaiser.app_android.bl.BL;
@@ -57,7 +57,6 @@ import com.projectkaiser.app_android.fragments.main.LocalTasksFragment;
 import com.projectkaiser.app_android.fragments.main.NoConnectionFragment;
 import com.projectkaiser.app_android.jsonapi.parser.ResponseParser;
 import com.projectkaiser.app_android.jsonrpc.auth.SessionAuthScheme;
-import com.projectkaiser.app_android.jsonrpc.errors.EAuthError;
 import com.projectkaiser.app_android.services.PkAlarmManager;
 import com.projectkaiser.app_android.services.SyncAlarmReceiver;
 import com.projectkaiser.app_android.settings.SessionManager;
@@ -521,6 +520,7 @@ public class MainActivity extends ActionBarActivity implements
 			holder.textStatusView.setText("");
 		}
 		if (sld.getStatus() != "") {
+			holder.textStatusView.setText("X");
 			holder.textStatusView.setTextColor(Color.RED);
 		}
 	}
@@ -671,6 +671,24 @@ public class MainActivity extends ActionBarActivity implements
 								Toast.LENGTH_LONG).show();
 						UpdateServerListError(connId,
 								getString(R.string.authentication_failed));
+					} else if (e instanceof EServerOutDate) {
+						String msg = ((EServerOutDate)e).getMessage(); 
+						String newmsg = ""; 
+						if (msg.equals("0")){
+							newmsg = getString(R.string.validation_srv_out);
+						} else if (msg.equals("1")){
+							newmsg = getString(R.string.validation_app_out);
+						} else if (msg.equals("2")){
+							newmsg = getString(R.string.validation_srv_out);
+						} else {
+							 newmsg= getString(R.string.validation_app_fnout) + " " 
+							  + msg + " " 
+							   + getString(R.string.validation_app_end); 
+						}
+						Toast.makeText(getApplicationContext(),
+								newmsg,
+								Toast.LENGTH_LONG).show();
+						UpdateServerListError(connId, newmsg);
 					} else if (e.getCause() instanceof UnknownHostException) {
 						Toast.makeText(getApplicationContext(),
 								getString(R.string.network_error),

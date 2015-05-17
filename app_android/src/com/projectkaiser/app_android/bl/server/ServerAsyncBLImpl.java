@@ -15,7 +15,6 @@ import com.projectkaiser.mobile.sync.MSynchronizeResponseEx;
 public class ServerAsyncBLImpl implements IServerAsyncBL {
 	
 	JsonRPC m_rpc = new JsonRPC();
-	
 	public ServerAsyncBLImpl() {
 	}
 	
