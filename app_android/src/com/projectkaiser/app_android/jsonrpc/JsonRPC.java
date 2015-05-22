@@ -32,6 +32,7 @@ public class JsonRPC implements IAppRPC {
 	private final String SRV_FUNC_CREATE = "create";
 	private final String SRV_FUNC_SYNC = "sync";
 
+	private final Integer APP_VER = 1;
 	private final Integer SRV_FUNC_LOGIN_VER = 1;
 	private final Integer SRV_FUNC_CREATE_VER = 1;
 	private final Integer SRV_FUNC_SYNC_VER = 1;
@@ -103,7 +104,7 @@ public class JsonRPC implements IAppRPC {
 	@Override
 	public String create(MCreateRequestEx request) {
 
-		return request(request, GetFuncRequest("create", SRV_FUNC_CREATE_VER),
+		return request(request, GetFuncRequest(SRV_FUNC_CREATE, SRV_FUNC_CREATE_VER),
 				getTasks(request), getComments(request), request.getLocale()
 						.getLanguage());
 
@@ -145,7 +146,7 @@ public class JsonRPC implements IAppRPC {
 		j.openArrayProp("headers");
 		j.openObject();
 		j.addProp("key", "intf");
-		j.addProp("value", "android:1");
+		j.addProp("value", "android:" + APP_VER);
 		j.closeObject();
 		j.closeArrayProp();
 		// </headers>
@@ -214,10 +215,17 @@ public class JsonRPC implements IAppRPC {
 				String stack;
 				if (error.isNull("stackTrace"))
 					stack = "unknown";
-				else
+				else 
 					stack = error.getString("stackTrace");
 				if (stack.contains(".EAuth$"))
 					throw new EAuthError();
+				else if (stack.contains("EClientNotSupportedAnymore"))
+					throw new EServerOutDate("1");
+				else if (stack.contains("EClientNotYetSupported"))
+					throw new EServerOutDate("0");
+				else if (stack.contains("EFunctionNotSupported"))
+					throw new EServerOutDate("3");
+				
 				throw new EAppException(message);
 			}
 
@@ -329,7 +337,7 @@ public class JsonRPC implements IAppRPC {
 
 		return request(
 				request,
-				GetFuncRequest("sync", SRV_FUNC_SYNC_VER),
+				GetFuncRequest(SRV_FUNC_SYNC, SRV_FUNC_SYNC_VER),
 				request.getLocale().getLanguage(),
 				request.getWorkingSetsDigest() == null ? "" : request
 						.getWorkingSetsDigest(),
@@ -343,7 +351,7 @@ public class JsonRPC implements IAppRPC {
 	@Override
 	public String login(MBasicRequest request) {
 
-		return request(request, GetFuncRequest("login", SRV_FUNC_LOGIN_VER),
+		return request(request, GetFuncRequest(SRV_FUNC_LOGIN, SRV_FUNC_LOGIN_VER),
 				request.getLocale().getLanguage());
 
 	}

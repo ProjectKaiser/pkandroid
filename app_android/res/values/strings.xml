@@ -181,5 +181,6 @@
    	<string name="validation_app_fnout">Application is outdated: Function</string>
    	<string name="validation_app_out">Application is outdated: Please update your Application</string>
 	<string name="validation_srv_out">Your Server is outdated. Please update your Server</string>
-	
+	<string name="validation_srv_app">Server and application incompatible</string>
+		
 </resources>

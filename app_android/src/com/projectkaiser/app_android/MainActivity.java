@@ -673,18 +673,7 @@ public class MainActivity extends ActionBarActivity implements
 								getString(R.string.authentication_failed));
 					} else if (e instanceof EServerOutDate) {
 						String msg = ((EServerOutDate)e).getMessage(); 
-						String newmsg = ""; 
-						if (msg.equals("0")){
-							newmsg = getString(R.string.validation_srv_out);
-						} else if (msg.equals("1")){
-							newmsg = getString(R.string.validation_app_out);
-						} else if (msg.equals("2")){
-							newmsg = getString(R.string.validation_srv_out);
-						} else {
-							 newmsg= getString(R.string.validation_app_fnout) + " " 
-							  + msg + " " 
-							   + getString(R.string.validation_app_end); 
-						}
+						String newmsg = EServerOutDate.GetErrorText(getApplicationContext(), msg); 
 						Toast.makeText(getApplicationContext(),
 								newmsg,
 								Toast.LENGTH_LONG).show();

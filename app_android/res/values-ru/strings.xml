@@ -177,8 +177,9 @@
     <string name="authentication_failed">Аутентификация не удалась</string>
 	<string name="network_error">Ошибка сети</string>    
 	<string name="validation_app_end">не найдена на сервере</string>
-   	<string name="validation_app_out">Приложение устарело: Пожалуйста, обновите Ваше приложение </string>
+   	<string name="validation_app_out">Приложение устарело: Пожалуйста, обновите Ваше приложение</string>
 	<string name="validation_app_fnout">Приложение устарело. Функция </string>
-	<string name="validation_srv_out">Сервер устарел. Пожалуйста, обновите Ваш сервер.</string>
-	
+	<string name="validation_srv_out">Сервер устарел. Пожалуйста, обновите Ваш сервер</string>
+	<string name="validation_srv_app">Сервер и приложение несовместимы</string>
+		
 </resources>

@@ -44,6 +44,7 @@ import com.projectkaiser.app_android.jsonrpc.auth.GoogleAuthScheme;
 import com.projectkaiser.app_android.jsonrpc.auth.PlainAuthScheme;
 import com.projectkaiser.app_android.jsonrpc.auth.SessionAuthScheme;
 import com.projectkaiser.app_android.jsonrpc.errors.EAuthError;
+import com.projectkaiser.app_android.jsonrpc.errors.EServerOutDate;
 import com.projectkaiser.app_android.settings.SessionManager;
 import com.projectkaiser.app_android.settings.SrvConnectionBaseData;
 import com.projectkaiser.app_android.settings.SrvConnectionId;
@@ -435,6 +436,12 @@ public class SigninActivity extends Activity implements ConnectionCallbacks,
 					} else
 						Toast.makeText(getApplicationContext(), e.getMessage(),
 								Toast.LENGTH_LONG).show();
+				} else if (e instanceof EServerOutDate) {
+					String msg = ((EServerOutDate)e).getMessage(); 
+					String newmsg = EServerOutDate.GetErrorText(getApplicationContext(), msg); 
+					Toast.makeText(getApplicationContext(),
+							newmsg,
+							Toast.LENGTH_LONG).show();
 				} else
 					Toast.makeText(getApplicationContext(), e.getMessage(),
 							Toast.LENGTH_LONG).show();
