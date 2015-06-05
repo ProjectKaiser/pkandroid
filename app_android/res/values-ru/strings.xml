@@ -101,7 +101,7 @@
     <string name="select_nobody">Очистить</string>
     
     <!--  Notifications ****************************************************************** -->
-    <string name="notification_new_tasks">И другие задачи (%d)</string>
+    <string name="notification_new_tasks">и другие задачи</string>
     
     <!-- Date & Time periods************************************************************** -->
     <string name="short_year">г</string>
@@ -135,8 +135,10 @@
     <string name="prefs_accounts">Учетные записи</string>
     <string name="prefs_accounts_summary">Управление учетными записями</string>
     <string name="pref_title_sync_frequency">Интервал синхронизации</string>
-    <string name="pref_show_new_task">Уведомление "Новая задача"</string>
-    
+    <string name="pref_show_new_task">Уведомление \'Новая задача\'</string>
+    <string name="pref_new_task_notif">Создавать новую задачу с экрана блокировки</string>
+    <string name="pref_show_due_task">Уведомление \'Просроченная задача\'</string>
+    <string name="pref_due_task_notif">Показывать уведомление на экране блокировки</string>
     <string-array name="server_items">
         <item>Локальные задачи</item>
         <item>Настройки</item>
@@ -176,10 +178,21 @@
     <string name="user_not_found">Пользователь не найден!</string>
     <string name="authentication_failed">Аутентификация не удалась</string>
 	<string name="network_error">Ошибка сети</string>    
-	<string name="validation_app_end">не найдена на сервере</string>
-   	<string name="validation_app_out">Приложение устарело: Пожалуйста, обновите Ваше приложение</string>
-	<string name="validation_app_fnout">Приложение устарело. Функция </string>
-	<string name="validation_srv_out">Сервер устарел. Пожалуйста, обновите Ваш сервер</string>
-	<string name="validation_srv_app">Сервер и приложение несовместимы</string>
-		
+
+   	<string name="validation_app_fnout">Приложение устарело. Функция(и)</string>
+    <string name="validation_app_end">больше не поддерживаются в приложении</string>
+   	<string name="validation_srv_fnout">Сервер устарел. Функция(и)</string>
+   	<string name="validation_srv_end">больше не поддерживаются на сервере</string>
+   	<string name="validation_srv_bad">Червер и приложение не совместимы</string>
+	
+    <string name="sync_srv_error_0">Ошибка: Версия функции более не поддерживается</string>
+    <string name="sync_srv_error_1">Ошибка: Версия функции еще не поддерживается</string>
+    <string name="sync_srv_error_2">Ошибка: Функция неизвестна серверу</string>
+    <string name="sync_srv_error_3">Ошибка: Неизвестная ошибка коммункации с сервером</string>
+    			
+    <!-- Communication functions -->
+	<string name="func_create_task">Создание задачи</string>
+	<string name="func_sync">Синхронизация</string>
+	<string name="func_login">Создание аккаунта</string>
+						
 </resources>

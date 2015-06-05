@@ -102,9 +102,10 @@ public class JsonRPC implements IAppRPC {
 	}
 
 	@Override
-	public String create(MCreateRequestEx request) {
+	public String rpc_create(MCreateRequestEx request) {
 
-		return request(request, GetFuncRequest(SRV_FUNC_CREATE, SRV_FUNC_CREATE_VER),
+		return request(request,
+				GetFuncRequest(SRV_FUNC_CREATE, SRV_FUNC_CREATE_VER),
 				getTasks(request), getComments(request), request.getLocale()
 						.getLanguage());
 
@@ -215,17 +216,17 @@ public class JsonRPC implements IAppRPC {
 				String stack;
 				if (error.isNull("stackTrace"))
 					stack = "unknown";
-				else 
+				else
 					stack = error.getString("stackTrace");
 				if (stack.contains(".EAuth$"))
 					throw new EAuthError();
 				else if (stack.contains("EClientNotSupportedAnymore"))
-					throw new EServerOutDate("1");
+					throw new EServerOutDate(0, "EClientNotSupportedAnymore");
 				else if (stack.contains("EClientNotYetSupported"))
-					throw new EServerOutDate("0");
+					throw new EServerOutDate(1, "EClientNotYetSupported");
 				else if (stack.contains("EFunctionNotSupported"))
-					throw new EServerOutDate("3");
-				
+					throw new EServerOutDate(2, "EFunctionNotSupported");
+
 				throw new EAppException(message);
 			}
 
@@ -253,12 +254,47 @@ public class JsonRPC implements IAppRPC {
 		}
 	}
 
-	private void validateServer(JSONObject result) {
+	private int getFuncVersion(String fnstr) {
+		TextUtils.SimpleStringSplitter fnSplitter = new TextUtils.SimpleStringSplitter(
+				':');
+		fnSplitter.setString(fnstr);
+		int idx = 0;
+		while (fnSplitter.hasNext()) {
+			String srvfn = fnSplitter.next();
+			if (idx == 1) {
+				return Integer.parseInt(srvfn);
+			}
+			idx = idx + 1;
+		}
+		return 0;
+	}
 
-		boolean bAppFneFound = false;
-		boolean bAppFnOut = false;
-		boolean bSrvFnOut = false;
-		String errfnName = "";
+	private String getFuncName(String fnstr) {
+		TextUtils.SimpleStringSplitter fnSplitter = new TextUtils.SimpleStringSplitter(
+				':');
+		fnSplitter.setString(fnstr);
+		fnSplitter.hasNext();
+		return fnSplitter.next();
+	}
+
+	private int getMaxFuncVer(String strFunc, String fnName) {
+		TextUtils.SimpleStringSplitter splitter = new TextUtils.SimpleStringSplitter(','); 
+		splitter.setString(strFunc);
+		int maxVer = 0;
+		while (splitter.hasNext()) {
+			String fn = splitter.next();
+			int srvVer = getFuncVersion(fn);
+			String strName =  getFuncName(fn);
+			if (strName.equals(fnName)) {
+				if (maxVer<srvVer){
+					maxVer=srvVer;
+				}
+			}
+		}
+		return maxVer;
+	}
+
+	private void validateServer(JSONObject result) {
 
 		if (!result.isNull("headers")) {
 			try {
@@ -267,60 +303,60 @@ public class JsonRPC implements IAppRPC {
 				TextUtils.SimpleStringSplitter splitter = new TextUtils.SimpleStringSplitter(
 						',');
 				splitter.setString(strFunc);
-				TextUtils.SimpleStringSplitter fnSplitter = new TextUtils.SimpleStringSplitter(
-						':');
 
 				HashMap<String, Integer> tempMap = (HashMap<String, Integer>) functionMap
 						.clone();
+
+				// Search coincident functions numbers
 				while (splitter.hasNext()) {
 					String fn = splitter.next();
-					bAppFneFound = false;
-					errfnName = "";
+					int srvVer = getFuncVersion(fn);
 					Iterator<Entry<String, Integer>> it = tempMap.entrySet()
 							.iterator();
 					while (it.hasNext()) {
-						HashMap.Entry<String, Integer> fnItem = (HashMap.Entry<String, Integer>) it
+						HashMap.Entry<String, Integer> appfn = (HashMap.Entry<String, Integer>) it
 								.next();
-						if (fn.contains(fnItem.getKey())) {
-							bAppFneFound = true;
-							fnSplitter.setString(fn);
-							int idx = 0;
-							while (fnSplitter.hasNext()) {
-								String srvfn = fnSplitter.next();
-								if (idx == 1) {
-									if (Integer.parseInt(srvfn) > fnItem
-											.getValue()) {
-										bAppFnOut = true;
-										break;
-									} else if (Integer.parseInt(srvfn) < fnItem
-											.getValue()) {
-										bSrvFnOut = true;
-										break;
-									}
-
-								}
-								idx = idx + 1;
+						if (fn.contains(appfn.getKey())) {
+							int appVer = appfn.getValue();
+							if (srvVer == appVer) {
+								tempMap.remove(appfn.getKey());
+								break;
 							}
-							tempMap.remove(fnItem.getKey());
 						}
 					}
-					if (!bAppFneFound) {
-						errfnName = fn;
-						break;
+				}
+				String strAppObsolete = "";
+				String strSrvObsolete = "";
+				if (tempMap.keySet().size() == 0) { // All app functions are found
+					return;
+				} else {
+					Iterator<Entry<String, Integer>> ittemp = tempMap.entrySet().iterator();
+					while (ittemp.hasNext()) {
+						HashMap.Entry<String, Integer> appfn1 = (HashMap.Entry<String, Integer>) ittemp
+								.next();
+						if (appfn1.getValue() > getMaxFuncVer(strFunc, appfn1.getKey())){
+							if (strSrvObsolete.isEmpty()) {
+								strSrvObsolete = "'" + appfn1.getKey() + "'";
+							} else {
+								strSrvObsolete = strSrvObsolete + ", '"
+										+ appfn1.getKey() + "'";
+							}
+						} else {
+							if (strAppObsolete.isEmpty()) {
+								strAppObsolete = "'" + appfn1.getKey() + "'";
+							} else {
+								strAppObsolete = strAppObsolete + ", '"
+										+ appfn1.getKey() + "'";
+							}
+						}
 					}
 				}
-				if (tempMap.keySet().size() > 0) { // Application has more
-													// functions than Server
-					throw new EServerOutDate("0");
+
+				if (!strSrvObsolete.isEmpty()) {
+					throw new EAppSyncWarning(0, strSrvObsolete);
 				}
-				if (!bAppFneFound) {
-					throw new EServerOutDate(errfnName);
-				}
-				if (bAppFnOut) {
-					throw new EServerOutDate("1");
-				}
-				if (bSrvFnOut) {
-					throw new EServerOutDate("2");
+				if (!strAppObsolete.isEmpty()) {
+					throw new EAppSyncWarning(1, strAppObsolete);
 				}
 
 			} catch (JSONException e) {
@@ -333,7 +369,7 @@ public class JsonRPC implements IAppRPC {
 	}
 
 	@Override
-	public String syncronize(MSynchronizeRequestEx request) {
+	public String rpc_syncronize(MSynchronizeRequestEx request) {
 
 		return request(
 				request,
@@ -349,10 +385,11 @@ public class JsonRPC implements IAppRPC {
 	}
 
 	@Override
-	public String login(MBasicRequest request) {
+	public String rpc_login(MBasicRequest request) {
 
-		return request(request, GetFuncRequest(SRV_FUNC_LOGIN, SRV_FUNC_LOGIN_VER),
-				request.getLocale().getLanguage());
+		return request(request,
+				GetFuncRequest(SRV_FUNC_LOGIN, SRV_FUNC_LOGIN_VER), request
+						.getLocale().getLanguage());
 
 	}
 

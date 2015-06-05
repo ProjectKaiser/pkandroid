@@ -26,7 +26,7 @@ public class ServerAsyncBLImpl implements IServerAsyncBL {
 			@Override
 			protected AsyncTaskResult<String> doInBackground(MBasicRequest... params) {
 				try {				
-					return new AsyncTaskResult<String>(m_rpc.login(params[0]));
+					return new AsyncTaskResult<String>(m_rpc.rpc_login(params[0]));
 				} catch (Exception e) {
 					return new AsyncTaskResult<String>(e);
 				}	
@@ -56,10 +56,10 @@ public class ServerAsyncBLImpl implements IServerAsyncBL {
 					
 					if (cr != null) {
 						if (cr.getNewIssues().size() > 0 || cr.getNewComments().size() > 0) 
-							CreateFilesResultParser.parseResponse(m_rpc.create(cr), resp.getCommentRes(), resp.getTaskRes());
+							CreateFilesResultParser.parseResponse(m_rpc.rpc_create(cr), resp.getCommentRes(), resp.getTaskRes());
 					}
 					
-					resp.setData(m_rpc.syncronize(sr));
+					resp.setData(m_rpc.rpc_syncronize(sr));
 					
 					return new AsyncTaskResult<MSynchronizeResponseEx>(resp);
 				} catch (Exception e) {

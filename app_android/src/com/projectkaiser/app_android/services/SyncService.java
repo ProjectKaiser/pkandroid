@@ -8,11 +8,14 @@ import org.apache.log4j.Logger;
 
 import android.app.ActivityManager;
 import android.app.IntentService;
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.PowerManager;
@@ -23,6 +26,7 @@ import com.projectkaiser.app_android.MainActivity;
 import com.projectkaiser.app_android.R;
 import com.projectkaiser.app_android.bl.BL;
 import com.projectkaiser.app_android.bl.local.ILocalBL;
+import com.projectkaiser.app_android.bl.local.TasksFilter;
 import com.projectkaiser.app_android.bl.obj.MNewComment;
 import com.projectkaiser.app_android.bl.obj.MRemoteNotSyncedIssue;
 import com.projectkaiser.app_android.bl.obj.MRemoteSyncedIssue;
@@ -35,6 +39,8 @@ import com.projectkaiser.app_android.settings.SessionManager;
 import com.projectkaiser.app_android.settings.SrvConnectionBaseData;
 import com.projectkaiser.mobile.sync.MCreateRequestEx;
 import com.projectkaiser.mobile.sync.MDigestedArray;
+import com.projectkaiser.mobile.sync.MIssue;
+import com.projectkaiser.mobile.sync.MLocalIssue;
 import com.projectkaiser.mobile.sync.MMyProject;
 import com.projectkaiser.mobile.sync.MSynchronizeRequestEx;
 import com.projectkaiser.mobile.sync.MWorkingSets;
@@ -51,8 +57,8 @@ public class SyncService extends IntentService {
 		super("ProjectKaiserSyncService");
 	}
 
-	private void sendNotification(String title, String msg,
-			MRemoteSyncedIssue issue) {
+	private void sendNotification(String title, String msg, MIssue issue,
+			int id_icon) {
 
 		mNotificationManager = (NotificationManager) this
 				.getSystemService(Context.NOTIFICATION_SERVICE);
@@ -65,15 +71,16 @@ public class SyncService extends IntentService {
 		Uri alarmSound = RingtoneManager
 				.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 
+		Bitmap bm = BitmapFactory.decodeResource(getResources(), id_icon);
 		NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(
-				this).setSmallIcon(R.drawable.ic_newtasks_notification)
-				.setContentTitle(title)
+				this).setSmallIcon(R.drawable.ic_newtasks_notification).setContentTitle(title)
 				.setStyle(new NotificationCompat.BigTextStyle().bigText(msg))
-				.setContentText(msg).setSound(alarmSound)
-				.setAutoCancel(true);
+				.setContentText(msg).setSound(alarmSound).setAutoCancel(true);
 
 		mBuilder.setContentIntent(contentIntent);
-		mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
+		Notification notif = mBuilder.build();
+		notif.contentView.setImageViewBitmap(android.R.id.icon, bm); 
+		mNotificationManager.notify(NOTIFICATION_ID, notif);
 	}
 
 	private Date getNewestTaskDate(MDigestedArray<MRemoteSyncedIssue> issues) {
@@ -91,25 +98,28 @@ public class SyncService extends IntentService {
 	}
 
 	private void sendNotifications(String serverName,
-			MDigestedArray<MRemoteSyncedIssue> oldData, MDigestedArray<MRemoteSyncedIssue> newData,
-			Long currentUserId) {
+			MDigestedArray<MRemoteSyncedIssue> oldData,
+			MDigestedArray<MRemoteSyncedIssue> newData, Long currentUserId) {
 		Date oldDate = getNewestTaskDate(oldData);
 		ArrayList<MRemoteSyncedIssue> newTasks = new ArrayList<MRemoteSyncedIssue>();
 
+		// Searching new arrived tasks
 		for (MRemoteSyncedIssue issue : newData.getItems()) {
 			Date mod = new Date(issue.getModified());
+
 			if (mod.after(oldDate)
-					&& !issue.getModifier().equals(currentUserId))
+					&& !issue.getModifier().equals(currentUserId)) {
 				newTasks.add(issue);
+			}
 		}
 
 		if (newTasks.size() > 0) {
 			StringBuilder text = new StringBuilder();
 			text.append(newTasks.get(0).getName());
 			if (newTasks.size() > 1)
-				text.append(getString(R.string.notification_new_tasks,
-						String.valueOf(newTasks.size() - 1)));
-			sendNotification(serverName, text.toString(), newTasks.get(0));
+				text.append(getString(R.string.notification_new_tasks) + "(" + String.valueOf(newTasks.size() - 1) + ")");
+			sendNotification(serverName, text.toString(), newTasks.get(0),
+					R.drawable.ic_newtasks_notification);
 		}
 	}
 
@@ -123,19 +133,20 @@ public class SyncService extends IntentService {
 			return true;
 		return false;
 	}
-	
-	private void createFiles(String connectionId, SessionManager sm, SrvConnectionBaseData base) {
+
+	private void createFiles(String connectionId, SessionManager sm,
+			SrvConnectionBaseData base) {
 		ILocalBL bl = BL.getLocal(getApplicationContext());
 		final List<MNewComment> newComments = bl.getNewComments();
 		final List<MRemoteNotSyncedIssue> newTasks = bl.getNotSyncedTasks();
-		
-		if (newComments.size() == 0 && newTasks.size()==0)
+
+		if (newComments.size() == 0 && newTasks.size() == 0)
 			return;
-		
+
 		MCreateRequestEx request = new MCreateRequestEx();
-		
+
 		SessionAuthScheme scheme = new SessionAuthScheme();
-		scheme.setSessionId(base.getSessionId());		
+		scheme.setSessionId(base.getSessionId());
 		request.setAuthScheme(scheme);
 
 		request.setServerUrl(sm.getServerUrl(connectionId));
@@ -143,26 +154,28 @@ public class SyncService extends IntentService {
 
 		request.setNewComments(newComments);
 		request.setNewIssues(newTasks);
-		
+
 		JsonRPC rpc = new JsonRPC();
 		List<Object> commentsRes = new ArrayList<Object>();
 		List<Object> tasksRes = new ArrayList<Object>();
-		
-		CreateFilesResultParser.parseResponse(rpc.create(request), commentsRes, tasksRes);
-		
+
+		CreateFilesResultParser.parseResponse(rpc.rpc_create(request),
+				commentsRes, tasksRes);
+
 		bl.handleCreateResult(request, commentsRes, tasksRes);
 	}
-	
-	private void loadData(String connectionId, SessionManager sm, SrvConnectionBaseData base) {
+
+	private void loadData(String connectionId, SessionManager sm,
+			SrvConnectionBaseData base) {
 		MSynchronizeRequestEx request = new MSynchronizeRequestEx();
-		
+
 		SessionAuthScheme scheme = new SessionAuthScheme();
-		scheme.setSessionId(base.getSessionId());		
+		scheme.setSessionId(base.getSessionId());
 		request.setAuthScheme(scheme);
-		
+
 		request.setServerUrl(sm.getServerUrl(connectionId));
 		request.setLocale(getResources().getConfiguration().locale);
-		
+
 		MDigestedArray<MRemoteSyncedIssue> issues = sm.getIssues(connectionId);
 		MDigestedArray<MMyProject> projects = sm.getMyProjects(connectionId);
 		MWorkingSets workingSets = sm.getWorkingSets(connectionId);
@@ -172,48 +185,78 @@ public class SyncService extends IntentService {
 		request.setWorkingSetsDigest(workingSets.getDigest());
 
 		JsonRPC rpc = new JsonRPC();
-		String result = rpc.syncronize(request);
+		String result = rpc.rpc_syncronize(request);
 
-		if (result != null && !result.equalsIgnoreCase("null")) { 
+		if (result != null && !result.equalsIgnoreCase("null")) {
 			// null = no changes since last sync
-			MDigestedArray<MRemoteSyncedIssue> oldIssues = sm.getIssues(connectionId);
+			MDigestedArray<MRemoteSyncedIssue> oldIssues = sm
+					.getIssues(connectionId);
 			ResponseParser.parseSyncResponse(sm, connectionId, result);
-			MDigestedArray<MRemoteSyncedIssue> newIssues = sm.getIssues(connectionId);
-			sendNotifications(base.getServerName(), oldIssues, newIssues, base.getUserId());
+			MDigestedArray<MRemoteSyncedIssue> newIssues = sm
+					.getIssues(connectionId);
+			sendNotifications(base.getServerName(), oldIssues, newIssues,
+					base.getUserId());
 			sm.updateLastSyncDate(connectionId);
+		}
+	}
+
+	private void CheckLocalDueDates() {
+		SessionManager sm = SessionManager.get(getApplicationContext());
+		ILocalBL bl = BL.getLocal(getApplicationContext());
+		ArrayList<MIssue> m_localtasks = new ArrayList<MIssue>();
+		for (MLocalIssue li : bl.getLocalTasks(TasksFilter.ACTIVE)) {
+			if (li.getDueDate() != null) {
+				Date duedate = new Date(li.getDueDate());
+				if (duedate.before(new Date()) && !sm.isLocalIssueNotified(li)) {
+					m_localtasks.add(li);
+					sm.setLocalIssueNotified(li);
+				}
+			}
+		}
+
+		if (m_localtasks.size() > 0) {
+			StringBuilder text = new StringBuilder();
+			text.append(m_localtasks.get(0).getName());
+			if (m_localtasks.size() > 1)
+				text.append(getString(R.string.notification_new_tasks) + " (" + String.valueOf(m_localtasks.size() - 1)+ ")");
+			sendNotification(getString(R.string.tab_local), text.toString(),
+					m_localtasks.get(0), R.drawable.ic_calendar);
 		}
 	}
 
 	@Override
 	protected void onHandleIntent(Intent intent) {
-		
+
 		try {
-			
+
 			PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
 
 			boolean isInteractive = pm.isScreenOn();
-			boolean isAppRunning = isForeground("com.projectkaiser.app_android"); 
+			boolean isAppRunning = isForeground("com.projectkaiser.app_android");
 
 			if (isInteractive && isAppRunning) {
 				log.debug("App is active, skipping sync");
 				return;
 			}
-			
+
 			SessionManager sm = SessionManager.get(getApplicationContext());
 			Date now = new Date();
 			Date lastSync = sm.getCommonLastSyncDate();
-			boolean bNeedSync = (lastSync == null || now.getTime() - lastSync.getTime() >= SyncAlarmReceiver.SYNC_INTERVAL_MILLIS);
-			
-			if (bNeedSync)
+			boolean bNeedSync = (lastSync == null || now.getTime()
+					- lastSync.getTime() >= SyncAlarmReceiver.SYNC_INTERVAL_MILLIS);
+
+			if (bNeedSync) {
+				CheckLocalDueDates();
 				for (String connectionId : sm.getConnections()) {
-					
+
 					SrvConnectionBaseData base = sm.getBaseData(connectionId);
 
 					createFiles(connectionId, sm, base);
-	
+
 					loadData(connectionId, sm, base);
-	
+
 				}
+			}
 		} catch (Throwable e) {
 			log.error(e);
 		} finally {

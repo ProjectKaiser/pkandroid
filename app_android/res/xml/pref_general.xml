@@ -19,6 +19,7 @@
     
 	<CheckBoxPreference
 		android:title="@string/pref_show_new_task"
+		android:summary="@string/pref_new_task_notif"
         android:defaultValue="false"
         android:key="new_task_block" />
     

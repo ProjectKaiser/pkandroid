@@ -44,14 +44,14 @@ public class SettingsActivity extends PreferenceActivity {
 	 * shown on tablets.
 	 */
 	private static final boolean ALWAYS_SIMPLE_PREFS = false;
-	
+
 	@Override
 	protected void onPostCreate(Bundle savedInstanceState) {
 		super.onPostCreate(savedInstanceState);
 		setupSimplePreferencesScreen();
-		
-        getActionBar().setDisplayHomeAsUpEnabled(true);
-        getActionBar().setHomeButtonEnabled(true);		
+
+		getActionBar().setDisplayHomeAsUpEnabled(true);
+		getActionBar().setHomeButtonEnabled(true);
 	}
 
 	/**
@@ -73,16 +73,16 @@ public class SettingsActivity extends PreferenceActivity {
 		// Bind the summaries of EditText/List/Dialog/Ringtone preferences to
 		// their values. When their values change, their summaries are updated
 		// to reflect the new value, per the Android Design guidelines.
-		
-		SessionManager sm = SessionManager.get(this);		
-		Preference pInterval = findPreference(SessionManager.KEY_SYNC_INTERVAL); 
+
+		SessionManager sm = SessionManager.get(this);
+		Preference pInterval = findPreference(SessionManager.KEY_SYNC_INTERVAL);
 		String defValue = String.valueOf(sm.getSyncIntervalMin());
-		((ListPreference)pInterval).setValue(defValue);
+		((ListPreference) pInterval).setValue(defValue);
 		pInterval.setDefaultValue(defValue);
 		bindPreferenceSummaryToValue(pInterval, defValue);
-		Preference pNewTask = findPreference(SessionManager.KEY_SHOW_NEW_TASK); 
+		Preference pNewTask = findPreference(SessionManager.KEY_SHOW_NEW_TASK);
 		Boolean defBoolValue = Boolean.valueOf(sm.getShowNewTask());
-		((CheckBoxPreference)pNewTask).setChecked(false);
+		((CheckBoxPreference) pNewTask).setChecked(false);
 		pInterval.setDefaultValue(false);
 		bindPreferenceNewTaskToValue(pNewTask, defBoolValue);
 		pInterval.setPersistent(false);
@@ -123,13 +123,13 @@ public class SettingsActivity extends PreferenceActivity {
 			loadHeadersFromResource(R.xml.pref_headers, target);
 		}
 	}
-	
+
 	private static void updateSummary(Preference preference, String stringValue) {
 
 		if (preference instanceof ListPreference) {
-			
+
 			ListPreference listPreference = (ListPreference) preference;
-			int index = listPreference.findIndexOfValue(stringValue);			
+			int index = listPreference.findIndexOfValue(stringValue);
 			preference
 					.setSummary(index >= 0 ? listPreference.getEntries()[index]
 							: null);
@@ -139,54 +139,54 @@ public class SettingsActivity extends PreferenceActivity {
 		}
 	}
 
-	private void hideNewTaskNotification(){
+	private void hideNewTaskNotification() {
 		NotificationManager mNotificationManager = (NotificationManager) this
 				.getSystemService(Context.NOTIFICATION_SERVICE);
 		mNotificationManager.cancel(SessionManager.NEW_TASK_ACTIVITY_ID);
 	}
-	
-	public static int calculateInSampleSize(
-            BitmapFactory.Options options, int reqWidth, int reqHeight) {
-    // Raw height and width of image
-    final int height = options.outHeight;
-    final int width = options.outWidth;
-    int inSampleSize = 1;
 
-    if (height > reqHeight || width > reqWidth) {
+	public static int calculateInSampleSize(BitmapFactory.Options options,
+			int reqWidth, int reqHeight) {
+		// Raw height and width of image
+		final int height = options.outHeight;
+		final int width = options.outWidth;
+		int inSampleSize = 1;
 
-        final int halfHeight = height / 2;
-        final int halfWidth = width / 2;
+		if (height > reqHeight || width > reqWidth) {
 
-        // Calculate the largest inSampleSize value that is a power of 2 and keeps both
-        // height and width larger than the requested height and width.
-        while ((halfHeight / inSampleSize) > reqHeight
-                && (halfWidth / inSampleSize) > reqWidth) {
-            inSampleSize *= 2;
-        }
-    }
+			final int halfHeight = height / 2;
+			final int halfWidth = width / 2;
 
-    return inSampleSize;
-}	
+			// Calculate the largest inSampleSize value that is a power of 2 and
+			// keeps both
+			// height and width larger than the requested height and width.
+			while ((halfHeight / inSampleSize) > reqHeight
+					&& (halfWidth / inSampleSize) > reqWidth) {
+				inSampleSize *= 2;
+			}
+		}
+
+		return inSampleSize;
+	}
+
 	private void showNewTaskNotification() {
 
 		Intent i = new Intent(getApplicationContext(), EditIssueActivity.class);
-		PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
-				i, PendingIntent.FLAG_UPDATE_CURRENT);
-		
-		//BitmapFactory.Options options = new BitmapFactory.Options();
-	    //options.inJustDecodeBounds = false;
-	    Bitmap bm = BitmapFactory.decodeResource(getResources(), R.drawable.ic_addtask_red_xxx);
-	    
-	    NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(
+		PendingIntent contentIntent = PendingIntent.getActivity(this, 0, i,
+				PendingIntent.FLAG_UPDATE_CURRENT);
+
+		Bitmap bm = BitmapFactory.decodeResource(getResources(),
+				R.drawable.ic_addtask_red_xxx);
+
+		NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(
 				this).setSmallIcon(R.drawable.ic_newtasks_notification)
 				.setContentTitle(getString(R.string.app_name))
 				.setContentText(getString(R.string.new_task_notif))
-				.setAutoCancel(false)
-				.setOngoing(true);
+				.setAutoCancel(false).setOngoing(true);
 
 		mBuilder.setContentIntent(contentIntent);
 		Notification notif = mBuilder.build();
-		notif.contentView.setImageViewBitmap(android.R.id.icon, bm); 
+		notif.contentView.setImageViewBitmap(android.R.id.icon, bm);
 		NotificationManager mNotificationManager = (NotificationManager) this
 				.getSystemService(Context.NOTIFICATION_SERVICE);
 		mNotificationManager.notify(SessionManager.NEW_TASK_ACTIVITY_ID, notif);
@@ -194,25 +194,29 @@ public class SettingsActivity extends PreferenceActivity {
 
 	private static void savePreference(Preference preference, String stringValue) {
 		SessionManager sm = SessionManager.get(preference.getContext());
-		if (SessionManager.KEY_SYNC_INTERVAL.equalsIgnoreCase(preference.getKey())) {
+		if (SessionManager.KEY_SYNC_INTERVAL.equalsIgnoreCase(preference
+				.getKey())) {
 			int intervalMinutes = Integer.valueOf(stringValue);
 			sm.setSyncIntervalMin(intervalMinutes);
 			SyncAlarmReceiver receiver = new SyncAlarmReceiver();
 			receiver.cancelAlarm(preference.getContext());
 			if (intervalMinutes > 0)
-				receiver.setAlarm(preference.getContext());					
-		}  else if (SessionManager.KEY_SHOW_NEW_TASK.equalsIgnoreCase(preference.getKey())) {
+				receiver.setAlarm(preference.getContext());
+		} else if (SessionManager.KEY_SHOW_NEW_TASK.equalsIgnoreCase(preference
+				.getKey())) {
 			boolean showNewTask = Boolean.valueOf(stringValue);
 			sm.setShowNewTask(showNewTask);
-			if (showNewTask){
-				((SettingsActivity)preference.getContext()).showNewTaskNotification();
+			if (showNewTask) {
+				((SettingsActivity) preference.getContext())
+						.showNewTaskNotification();
 			} else {
-				((SettingsActivity)preference.getContext()).hideNewTaskNotification();
+				((SettingsActivity) preference.getContext())
+						.hideNewTaskNotification();
 			}
 		}
-		
+
 	}
-	
+
 	/**
 	 * A preference value change listener that updates the preference's summary
 	 * to reflect its new value.
@@ -221,7 +225,9 @@ public class SettingsActivity extends PreferenceActivity {
 		@Override
 		public boolean onPreferenceChange(Preference preference, Object value) {
 			String stringValue = value.toString();
-			updateSummary(preference, stringValue);
+			if (!preference.getKey().equals("new_task_block")) {
+				updateSummary(preference, stringValue);
+			}
 			savePreference(preference, stringValue);
 			return true;
 		}
@@ -237,17 +243,20 @@ public class SettingsActivity extends PreferenceActivity {
 	 * @see #sBindPreferenceSummaryToValueListener
 	 */
 
-	private static void bindPreferenceNewTaskToValue(Preference preference, Boolean initialValue) {
+	private static void bindPreferenceNewTaskToValue(Preference preference,
+			Boolean initialValue) {
 		preference
-		.setOnPreferenceChangeListener(sBindPreferenceSummaryToValueListener);
+				.setOnPreferenceChangeListener(sBindPreferenceSummaryToValueListener);
 
-		((CheckBoxPreference)preference).setChecked(initialValue);
+		((CheckBoxPreference) preference).setChecked(initialValue);
 	}
-	private static void bindPreferenceSummaryToValue(Preference preference, String initialValue) {
+
+	private static void bindPreferenceSummaryToValue(Preference preference,
+			String initialValue) {
 		// Set the listener to watch for value changes.
 		preference
 				.setOnPreferenceChangeListener(sBindPreferenceSummaryToValueListener);
-		
+
 		updateSummary(preference, initialValue);
 	}
 
@@ -261,37 +270,37 @@ public class SettingsActivity extends PreferenceActivity {
 		public void onCreate(Bundle savedInstanceState) {
 			super.onCreate(savedInstanceState);
 			addPreferencesFromResource(R.xml.pref_general);
-			
+
 			// Bind the summaries of EditText/List/Dialog/Ringtone preferences
 			// to their values. When their values change, their summaries are
 			// updated to reflect the new value, per the Android Design
 			// guidelines.
-			Preference pInterval = findPreference(SessionManager.KEY_SYNC_INTERVAL); 
-			String defValue = String.valueOf(SessionManager.get(getActivity()).getSyncIntervalMin());
+			Preference pInterval = findPreference(SessionManager.KEY_SYNC_INTERVAL);
+			String defValue = String.valueOf(SessionManager.get(getActivity())
+					.getSyncIntervalMin());
 			pInterval.setDefaultValue(defValue);
-			((ListPreference)pInterval).setValue(defValue);
+			((ListPreference) pInterval).setValue(defValue);
 			bindPreferenceSummaryToValue(pInterval, defValue);
 			pInterval.setPersistent(false);
 		}
 	}
-	 @Override
-     public boolean onOptionsItemSelected(MenuItem item) {
-             switch (item.getItemId()) {
-             case android.R.id.home:
-            	 onBackPressed();  
-             }
-             return true;
-     }
-/*	
+
 	@Override
-	public void onBackPressed() {
-    	Intent i = new Intent(getApplicationContext(), MainActivity.class);
-        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        getApplicationContext().startActivity(i);
-        finish();
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case android.R.id.home:
+			onBackPressed();
+		}
+		return true;
 	}
-	*/
+
+	/*
+	 * @Override public void onBackPressed() { Intent i = new
+	 * Intent(getApplicationContext(), MainActivity.class);
+	 * i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+	 * i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+	 * getApplicationContext().startActivity(i); finish(); }
+	 */
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);

@@ -6,10 +6,10 @@ import com.projectkaiser.mobile.sync.MSynchronizeRequestEx;
 
 public interface IAppRPC {
 	
-	String login(MBasicRequest request);
+	String rpc_login(MBasicRequest request);
 
-	String create(MCreateRequestEx request);
+	String rpc_create(MCreateRequestEx request);
 
-	String syncronize(MSynchronizeRequestEx request);
+	String rpc_syncronize(MSynchronizeRequestEx request);
 	
 }

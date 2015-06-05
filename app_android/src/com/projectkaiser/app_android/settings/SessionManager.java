@@ -22,6 +22,7 @@ import com.projectkaiser.app_android.jsonrpc.auth.AuthScheme;
 import com.projectkaiser.app_android.jsonrpc.auth.GoogleAuthScheme;
 import com.projectkaiser.app_android.jsonrpc.auth.PlainAuthScheme;
 import com.projectkaiser.mobile.sync.MDigestedArray;
+import com.projectkaiser.mobile.sync.MLocalIssue;
 import com.projectkaiser.mobile.sync.MMyProject;
 import com.projectkaiser.mobile.sync.MWorkingSets;
 
@@ -59,13 +60,19 @@ public class SessionManager {
 
 	private static final String KEY_LAST_SYNC_STATUS = "last_sync_status";
 
+	private static final String KEY_LAST_SYNC_WARNING = "last_sync_warning";
+
 	public static final String KEY_SYNC_INTERVAL = "sync_frequency";
 	
 	public static final String KEY_SHOW_NEW_TASK = "new_task_block";
+	
+	public static final String KEY_SHOW_DUE_TASK = "due_task_block";
 
 	public static final String KEY_ISSUES_ATTACHMENT = "issue_attachment";
 
 	public static final int NEW_TASK_ACTIVITY_ID = 10001;
+
+	private static final String KEY_LOCAL_NOTIF = "local_notif";
 
 	protected SessionManager(Context context) {
 		this._context = context;
@@ -263,6 +270,12 @@ public class SessionManager {
 		editor.commit();
 	}
 
+	public void updateLastSyncWarning(String connId, String warning) {
+		Editor editor = pref.edit();
+		editor.putString(KEY_LAST_SYNC_WARNING + connId, warning);
+		editor.commit();
+	}
+
 	public String getLatestWorkingSet(String connectionId) {
 		SrvConnectionId id = new SrvConnectionId(connectionId);
 		return pref.getString(id.prefixed(KEY_LAST_FOLDER_DLG_WORKING_SET),
@@ -284,6 +297,16 @@ public class SessionManager {
 	public void setShowNewTask(boolean value) {
 		Editor editor = pref.edit();
 		editor.putBoolean(KEY_SHOW_NEW_TASK, value);
+		editor.commit();
+	}
+
+	public int getShowDueTask() {
+		return pref.getInt(KEY_SHOW_DUE_TASK, -1);
+	}
+	
+	public void setShowDueTask(int value) {
+		Editor editor = pref.edit();
+		editor.putInt(KEY_SHOW_DUE_TASK, value);
 		editor.commit();
 	}
 
@@ -319,6 +342,10 @@ public class SessionManager {
 		return pref.getString(KEY_LAST_SYNC_STATUS + connId, "");
 	}
 
+	public String getLastSyncWarning(String connId) {
+		return pref.getString(KEY_LAST_SYNC_WARNING + connId, "");
+	}
+
 	public Date getCommonLastSyncDate() {
 		SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
 		Date initSyncDate = null;
@@ -340,4 +367,19 @@ public class SessionManager {
 		}
 		return initSyncDate;
 	}
+
+	public boolean isLocalIssueNotified(MLocalIssue issue){
+		String exStr = pref.getString(KEY_LOCAL_NOTIF,"");
+		return exStr.contains(issue.getId().toString());
+	}
+	public void setLocalIssueNotified(MLocalIssue issue){
+		Editor editor = pref.edit();
+		String exStr = pref.getString(KEY_LOCAL_NOTIF,"");
+		if (!exStr.contains(issue.getId().toString())){
+			editor.putString(KEY_LOCAL_NOTIF, exStr + "," + issue.getId().toString());
+			editor.commit();
+		}
+	}
+	
 }
+

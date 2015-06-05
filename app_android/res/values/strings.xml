@@ -102,8 +102,8 @@
     <string name="select_nobody">Nobody</string>
 
     <!-- Notifications ****************************************************************** -->
-    <string name="notification_new_tasks">And other %d tasks</string>
-
+    <string name="notification_new_tasks">and other tasks</string>
+    
     <!-- Date & Time periods************************************************************** -->
     <string name="short_year">y</string>
     <string name="short_month">m</string>
@@ -135,6 +135,9 @@
     <string name="prefs_accounts_summary">Add or remove PK accounts</string>
     <string name="pref_title_sync_frequency">Sync interval</string>
     <string name="pref_show_new_task">New task notification</string>
+    <string name="pref_new_task_notif">Create new task from block screen </string>
+    <string name="pref_show_due_task">Overdue task notification</string>
+    <string name="pref_due_task_notif">Show notificaction on block screen</string>
     
     <string-array name="server_items">
         <item>Local tasks</item>
@@ -177,10 +180,20 @@
     <string name="title_activity_email">EMailActivity</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
-    <string name="validation_app_end">not found in Application</string>
-   	<string name="validation_app_fnout">Application is outdated: Function</string>
-   	<string name="validation_app_out">Application is outdated: Please update your Application</string>
-	<string name="validation_srv_out">Your Server is outdated. Please update your Server</string>
-	<string name="validation_srv_app">Server and application incompatible</string>
-		
+   	<string name="validation_app_fnout">Warning: Application is outdated. Function(s)</string>
+    <string name="validation_app_end">do not support by Application anymore</string>
+   	<string name="validation_srv_fnout">Warning: Server is outdated. Function(s)</string>
+   	<string name="validation_srv_end">do not support by Server anymore</string>
+   	<string name="validation_srv_bad">Warning: Server and application incompatible</string>
+   	
+   	<string name="sync_srv_error_0">Error: Application is outdated. Client function not supported anymore</string>
+    <string name="sync_srv_error_1">Error: Server is outdated. Client function not supported yet</string>
+    <string name="sync_srv_error_2">Error: Unknown client function</string>
+    <string name="sync_srv_error_3">Error: Unknown communication error</string>
+    	
+	<!-- Communication functions -->
+	<string name="func_create_task">Create task</string>
+	<string name="func_sync">Synchronization</string>
+	<string name="func_login">Create account</string>
+						
 </resources>

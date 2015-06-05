@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -51,13 +52,21 @@ public class InboxFragment extends IssuesListAbstractFragment implements
 
 	private void showSyncError(SessionManager sm, String connId) {
 		// Check if Last sync operation had error
-		String err = sm.getLastSyncStatus(connId);
 		TableRow trLV = (TableRow) getRootView().findViewById(
 				R.id.tableRowListView);
 		TextView tV = (TextView) getRootView().findViewById(R.id.textViewError);
 		if (trLV != null && tV != null) {
+			String err = sm.getLastSyncStatus(connId);
 			if (!err.isEmpty()) {
 				tV.setText(err);
+				tV.setTextColor(Color.RED);
+				trLV.setPaddingRelative(0, 120, 0, 0);
+				return;
+			}
+			String warn = sm.getLastSyncWarning(connId);
+			if (!warn.isEmpty()) {
+				tV.setText(warn);
+				tV.setTextColor(Color.GRAY);
 				trLV.setPaddingRelative(0, 120, 0, 0);
 				return;
 			}
