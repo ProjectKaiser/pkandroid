@@ -107,6 +107,7 @@ public class SyncService extends IntentService {
 		for (MRemoteSyncedIssue issue : newData.getItems()) {
 			Date mod = new Date(issue.getModified());
 
+			//if (mod.after(oldDate)) {
 			if (mod.after(oldDate)
 					&& !issue.getModifier().equals(currentUserId)) {
 				newTasks.add(issue);
@@ -207,7 +208,8 @@ public class SyncService extends IntentService {
 		for (MLocalIssue li : bl.getLocalTasks(TasksFilter.ACTIVE)) {
 			if (li.getDueDate() != null) {
 				Date duedate = new Date(li.getDueDate());
-				if (duedate.before(new Date()) && !sm.isLocalIssueNotified(li)) {
+//				if (duedate.before(new Date()) &&  !sm.isLocalIssueNotified(li)) {
+				if (!sm.isLocalIssueNotified(li)) {
 					m_localtasks.add(li);
 					sm.setLocalIssueNotified(li);
 				}
@@ -220,7 +222,7 @@ public class SyncService extends IntentService {
 			if (m_localtasks.size() > 1)
 				text.append(getString(R.string.notification_new_tasks) + " (" + String.valueOf(m_localtasks.size() - 1)+ ")");
 			sendNotification(getString(R.string.tab_local), text.toString(),
-					m_localtasks.get(0), R.drawable.ic_calendar);
+					m_localtasks.get(0), R.drawable.id_calendar);
 		}
 	}
 

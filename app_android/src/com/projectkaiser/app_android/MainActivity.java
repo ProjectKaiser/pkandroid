@@ -3,8 +3,6 @@ package com.projectkaiser.app_android;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
-import java.util.Date;
 
 import org.apache.log4j.Logger;
 
@@ -123,7 +121,7 @@ public class MainActivity extends ActionBarActivity implements
 				if (!bWarning) {
 					m_sessionManager.updateLastSyncStatus(connId, eStr);
 					m_sessionManager.updateLastSyncWarning(connId, "");
-				}else {
+				} else {
 					m_sessionManager.updateLastSyncStatus(connId, "");
 					m_sessionManager.updateLastSyncWarning(connId, eStr);
 				}
@@ -169,31 +167,28 @@ public class MainActivity extends ActionBarActivity implements
 			MIssue issue = (MIssue) intent.getSerializableExtra(ALARM_TASK);
 			if (issue != null) {
 				MIssue alarmIssue = null;
-				String srvName = "";
+				String srvName;
 				if (issue instanceof MRemoteSyncedIssue) {
 					alarmIssue = (MRemoteSyncedIssue) issue;
 					srvName = ((MRemoteSyncedIssue) alarmIssue).getSrvConnId();
+					Intent openIssueIntent = new Intent(
+							getApplicationContext(), ViewIssueActivity.class);
+					openIssueIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+					openIssueIntent
+							.putExtra(MIssue.class.getName(), alarmIssue);
+					startActivity(openIssueIntent);
 				} else {
 					alarmIssue = (MLocalIssue) issue;
 					srvName = ID_LOCAL;
+					this.selectServer(1);
+					Intent i = new Intent(getApplicationContext(),
+							EditIssueActivity.class);
+					i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+					i.putExtra(MIssue.class.getName(), alarmIssue);
+					i.putExtra("SRVNAME", "");
+					startActivity(i);
 				}
-				if (alarmIssue != null) {
-					for (int i = 1; i < m_connectionIds.size(); i++) {
-						if (m_connectionIds.get(i).equals(srvName)) {
-							this.selectServer(i);
 
-							Intent openIssueIntent = new Intent(
-									getApplicationContext(),
-									ViewIssueActivity.class);
-							openIssueIntent
-									.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-							openIssueIntent.putExtra(MIssue.class.getName(),
-									alarmIssue);
-							getApplicationContext().startActivity(
-									openIssueIntent);
-						}
-					}
-				}
 			}
 		}
 	};
@@ -484,10 +479,11 @@ public class MainActivity extends ActionBarActivity implements
 
 		mDrawerServerListView.setAdapter(ldp);
 
-		if (getIntent() != null)
-			onNewIntent(getIntent()); // we need to call this for the case when
-										// Activity is started for the first
-										// time
+		Intent cIntent = getIntent();
+		if (cIntent != null)
+			onNewIntent(cIntent); // we need to call this for the case when
+									// Activity is started for the first
+									// time
 
 		mDrawerServerListView
 				.setOnItemClickListener(new DrawerItemClickListener());
@@ -511,17 +507,38 @@ public class MainActivity extends ActionBarActivity implements
 
 		mDrawerLayout.setDrawerListener(mDrawerToggle);
 
-		if (savedInstanceState == null) {
+		if (savedInstanceState == null && cIntent == null) {
 			selectServer(1);
 		} else {
 			FragmentManager fragmentManager = MainActivity.this
 					.getSupportFragmentManager();
 			curfragment = fragmentManager.findFragmentByTag("data");
-			oldItemPosition = 1;
 			if (curfragment != null) {
 				InitFragmentData();
 			} else {
-				selectServer(oldItemPosition);
+				oldItemPosition = 1;
+				boolean bSrvFound = false;
+				if (cIntent != null) {
+					MIssue issue = (MIssue) cIntent
+							.getSerializableExtra(ALARM_TASK);
+					if (issue != null) {
+						if (issue instanceof MRemoteSyncedIssue) {
+							MRemoteSyncedIssue alarmIssue = (MRemoteSyncedIssue) issue;
+							String srvName = ((MRemoteSyncedIssue) alarmIssue)
+									.getSrvConnId();
+							for (int i = 1; i < m_connectionIds.size(); i++) {
+								if ( srvName.equals(m_connectionIds.get(i))) {
+									this.selectServer(i);
+									bSrvFound = true;
+									break;
+								}
+							}
+						}
+					}
+				}
+				if (!bSrvFound) {
+					selectServer(oldItemPosition);
+				}
 			}
 		}
 
@@ -690,7 +707,8 @@ public class MainActivity extends ActionBarActivity implements
 								getString(R.string.authentication_failed),
 								Toast.LENGTH_LONG).show();
 						UpdateServerListError(connId,
-								getString(R.string.authentication_failed), false);
+								getString(R.string.authentication_failed),
+								false);
 					} else if (e instanceof EServerOutDate) {
 						String newmsg = ((EServerOutDate) e)
 								.GetErrorText(getApplicationContext());

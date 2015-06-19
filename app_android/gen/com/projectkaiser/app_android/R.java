@@ -1460,32 +1460,38 @@ containing a value of this type.
         public static final int ic_action_cancel=0x7f020070;
         public static final int ic_action_ok=0x7f020071;
         public static final int ic_addtask=0x7f020072;
-        public static final int ic_adduser=0x7f020073;
-        public static final int ic_cloud=0x7f020074;
-        public static final int ic_comment=0x7f020075;
-        public static final int ic_complete=0x7f020076;
-        public static final int ic_delete=0x7f020077;
-        public static final int ic_drawer=0x7f020078;
-        public static final int ic_folder=0x7f020079;
-        public static final int ic_folder2=0x7f02007a;
-        public static final int ic_issue_edit=0x7f02007b;
-        public static final int ic_launcher=0x7f02007c;
-        public static final int ic_newitem=0x7f02007d;
-        public static final int ic_newtasks_notification=0x7f02007e;
-        public static final int ic_plusone_medium_off_client=0x7f02007f;
-        public static final int ic_plusone_small_off_client=0x7f020080;
-        public static final int ic_plusone_standard_off_client=0x7f020081;
-        public static final int ic_plusone_tall_off_client=0x7f020082;
-        public static final int ic_save=0x7f020083;
-        public static final int ic_sync=0x7f020084;
-        public static final int ic_syncerror=0x7f020085;
-        public static final int ic_upload=0x7f020086;
-        public static final int powered_by_google_dark=0x7f020087;
-        public static final int powered_by_google_light=0x7f020088;
+        public static final int ic_addtask_red_xxx=0x7f020073;
+        public static final int ic_adduser=0x7f020074;
+        public static final int ic_cloud=0x7f020075;
+        public static final int ic_comment=0x7f020076;
+        public static final int ic_complete=0x7f020077;
+        public static final int ic_delete=0x7f020078;
+        public static final int ic_drawer=0x7f020079;
+        public static final int ic_folder=0x7f02007a;
+        public static final int ic_folder2=0x7f02007b;
+        public static final int ic_issue_edit=0x7f02007c;
+        public static final int ic_launcher=0x7f02007d;
+        public static final int ic_newitem=0x7f02007e;
+        public static final int ic_newtasks_notification=0x7f02007f;
+        public static final int ic_plusone_medium_off_client=0x7f020080;
+        public static final int ic_plusone_small_off_client=0x7f020081;
+        public static final int ic_plusone_standard_off_client=0x7f020082;
+        public static final int ic_plusone_tall_off_client=0x7f020083;
+        public static final int ic_save=0x7f020084;
+        public static final int ic_sync=0x7f020085;
+        public static final int ic_syncerror=0x7f020086;
+        public static final int ic_upload=0x7f020087;
+        public static final int id_calendar=0x7f020088;
+        public static final int powered_by_google_dark=0x7f020089;
+        public static final int powered_by_google_light=0x7f02008a;
     }
     public static final class id {
+        public static final int TableRow01=0x7f0600ac;
+        public static final int TableRow02=0x7f0600aa;
+        public static final int TableRow03=0x7f0600ae;
+        public static final int TextView01=0x7f06008f;
         public static final int ViewColorPickerHelper=0x7f060060;
-        public static final int action_about=0x7f0600b8;
+        public static final int action_active_tasks=0x7f0600c4;
         public static final int action_bar=0x7f06002e;
         public static final int action_bar_activity_content=0x7f060015;
         public static final int action_bar_container=0x7f06002d;
@@ -1493,34 +1499,32 @@ containing a value of this type.
         public static final int action_bar_root=0x7f06002c;
         public static final int action_bar_subtitle=0x7f060035;
         public static final int action_bar_title=0x7f060034;
-        public static final int action_cancel=0x7f0600b0;
+        public static final int action_cancel=0x7f0600bd;
+        public static final int action_closed_tasks=0x7f0600c5;
         public static final int action_context_bar=0x7f06002f;
-        public static final int action_forgot_password=0x7f0600b5;
+        public static final int action_forgot_password=0x7f0600c2;
         public static final int action_menu_divider=0x7f060016;
         public static final int action_menu_presenter=0x7f060017;
         public static final int action_mode_close_button=0x7f060036;
-        public static final int action_new_task=0x7f0600b6;
-        public static final int action_ok=0x7f0600b1;
-        public static final int action_send_log=0x7f0600b9;
-        public static final int action_settings=0x7f0600b4;
-        public static final int action_sync=0x7f0600b7;
-        public static final int action_task_close=0x7f0600b3;
-        public static final int action_task_delete=0x7f0600af;
-        public static final int action_task_resume=0x7f0600b2;
+        public static final int action_new_task=0x7f0600c3;
+        public static final int action_ok=0x7f0600be;
+        public static final int action_send_log=0x7f0600c6;
+        public static final int action_settings=0x7f0600c1;
+        public static final int action_task_close=0x7f0600c0;
+        public static final int action_task_delete=0x7f0600bc;
+        public static final int action_task_resume=0x7f0600bf;
         public static final int activity_chooser_view_content=0x7f060037;
         public static final int activity_main=0x7f060063;
         public static final int always=0x7f06000b;
         public static final int beginning=0x7f060011;
         public static final int book_now=0x7f060028;
         public static final int btnButton1=0x7f060078;
-        public static final int btnButton2=0x7f060079;
-        public static final int btnCancel=0x7f060061;
         public static final int btnClearDueDate=0x7f06006d;
-        public static final int btnConfigureConnection=0x7f0600a4;
-        public static final int btnNewComment=0x7f060091;
-        public static final int btnSelectMe=0x7f06008d;
-        public static final int btnSetLocal=0x7f060089;
+        public static final int btnConfigureConnection=0x7f0600a9;
+        public static final int btnNewComment=0x7f060093;
+        public static final int btnSelectMe=0x7f06008b;
         public static final int btnSignIn=0x7f060062;
+        public static final int btnTaskActionCancel=0x7f060061;
         public static final int buyButton=0x7f060022;
         public static final int buy_now=0x7f060027;
         public static final int buy_with_google=0x7f060026;
@@ -1528,13 +1532,13 @@ containing a value of this type.
         public static final int checkbox=0x7f06003f;
         public static final int classic=0x7f060029;
         public static final int cmbAssignee=0x7f060074;
-        public static final int cmbConnection=0x7f060084;
+        public static final int cmbConnection=0x7f060083;
         public static final int cmbDueDate=0x7f06006e;
         public static final int cmbFolder=0x7f060069;
         public static final int cmbMoreSettings=0x7f060077;
         public static final int cmbPriority=0x7f06006a;
         public static final int cmbResponsible=0x7f060075;
-        public static final int cmbWorkingSet=0x7f060086;
+        public static final int cmbWorkingSet=0x7f060085;
         public static final int collapseActionView=0x7f06000d;
         public static final int content_frame=0x7f060064;
         public static final int default_activity_button=0x7f06003a;
@@ -1542,21 +1546,22 @@ containing a value of this type.
         public static final int disableHome=0x7f060008;
         public static final int dropdown=0x7f06000f;
         public static final int edit_query=0x7f060042;
-        public static final int edtComment=0x7f060090;
+        public static final int edtComment=0x7f060092;
         public static final int edtDescription=0x7f060076;
         public static final int edtHours=0x7f060070;
         public static final int edtIssueName=0x7f060068;
         public static final int edtMinutes=0x7f060071;
         public static final int edtServerUrl=0x7f06005a;
-        public static final int edtUsersFilter=0x7f06008a;
-        public static final int elvFolders=0x7f060088;
+        public static final int edtUsersFilter=0x7f060088;
+        public static final int elvFolders=0x7f060087;
         public static final int email=0x7f06005c;
-        public static final int emptyText=0x7f060099;
+        public static final int emptyText=0x7f06009e;
         public static final int end=0x7f060013;
         public static final int expand_activities_button=0x7f060038;
         public static final int expanded_menu=0x7f06003e;
+        public static final int frameLayout1=0x7f06009a;
         public static final int grayscale=0x7f06002a;
-        public static final int hDivider1=0x7f06008c;
+        public static final int hDivider1=0x7f06008a;
         public static final int holo_dark=0x7f06001d;
         public static final int holo_light=0x7f06001e;
         public static final int home=0x7f060014;
@@ -1565,38 +1570,41 @@ containing a value of this type.
         public static final int icon=0x7f06003c;
         public static final int ifRoom=0x7f06000a;
         public static final int image=0x7f060039;
-        public static final int imgDlgHeader=0x7f060082;
-        public static final int imgNonSynced=0x7f06007c;
-        public static final int imgSyncFailure=0x7f06007d;
-        public static final int lblAssignee=0x7f0600ab;
-        public static final int lblBudget=0x7f0600aa;
-        public static final int lblCommentBody=0x7f06007e;
-        public static final int lblCommentCreated=0x7f06007b;
-        public static final int lblCommentCreator=0x7f06007a;
-        public static final int lblDescription=0x7f060094;
+        public static final int imgDlgHeader=0x7f060081;
+        public static final int imgNonSynced=0x7f06007b;
+        public static final int imgSyncFailure=0x7f06007c;
+        public static final int lblAction=0x7f0600b0;
+        public static final int lblAssignee=0x7f0600b8;
+        public static final int lblBudget=0x7f0600b7;
+        public static final int lblCommentBody=0x7f06007d;
+        public static final int lblCommentCreated=0x7f06007a;
+        public static final int lblCommentCreator=0x7f060079;
+        public static final int lblDescription=0x7f060096;
+        public static final int lblDismissIssue=0x7f0600a0;
         public static final int lblDue=0x7f06006c;
-        public static final int lblDueDate=0x7f0600a9;
-        public static final int lblEmail=0x7f060080;
-        public static final int lblFolder=0x7f0600a7;
-        public static final int lblFolderName=0x7f06008f;
+        public static final int lblDueDate=0x7f0600b6;
+        public static final int lblEmail=0x7f06007f;
+        public static final int lblFolder=0x7f0600b4;
+        public static final int lblFolderName=0x7f060091;
         public static final int lblHours=0x7f060072;
-        public static final int lblInboxRowPriority=0x7f06009d;
-        public static final int lblInboxRowTaskDueDate=0x7f06009f;
-        public static final int lblInboxRowTaskName=0x7f06009e;
-        public static final int lblInboxRowTaskStatus=0x7f0600a0;
+        public static final int lblInboxRowPriority=0x7f0600a2;
+        public static final int lblInboxRowTaskDueDate=0x7f0600a4;
+        public static final int lblInboxRowTaskName=0x7f0600a3;
+        public static final int lblInboxRowTaskStatus=0x7f0600a5;
         public static final int lblLastSync=0x7f060050;
         public static final int lblMinutes=0x7f060073;
-        public static final int lblNotConfigured=0x7f0600a2;
-        public static final int lblNotConfiguredHint=0x7f0600a3;
-        public static final int lblPriority=0x7f0600a8;
-        public static final int lblProjectName=0x7f06008e;
-        public static final int lblResponsible=0x7f0600ac;
-        public static final int lblRoleName=0x7f0600a6;
-        public static final int lblServerName=0x7f06007f;
+        public static final int lblNotConfigured=0x7f0600a7;
+        public static final int lblNotConfiguredHint=0x7f0600a8;
+        public static final int lblPriority=0x7f0600b5;
+        public static final int lblProjectName=0x7f060090;
+        public static final int lblResponsible=0x7f0600b9;
+        public static final int lblRoleName=0x7f0600b3;
+        public static final int lblServerName=0x7f06007e;
         public static final int lblSyncError=0x7f060067;
-        public static final int lblUserName=0x7f0600a5;
+        public static final int lblTaskAction=0x7f0600b1;
+        public static final int lblUserName=0x7f0600b2;
         public static final int lblVersion=0x7f06004f;
-        public static final int left_drawer=0x7f060065;
+        public static final int left_drawer_servers=0x7f060065;
         public static final int listMode=0x7f060001;
         public static final int list_item=0x7f06003b;
         public static final int login=0x7f06005e;
@@ -1604,39 +1612,39 @@ containing a value of this type.
         public static final int login_status=0x7f060053;
         public static final int login_status_message=0x7f060054;
         public static final int lvAccounts=0x7f06004e;
-        public static final int lvComments=0x7f060093;
-        public static final int lvInbox=0x7f060097;
-        public static final int lvUsers=0x7f06008b;
+        public static final int lvComments=0x7f060095;
+        public static final int lvInbox=0x7f06009c;
+        public static final int lvUsers=0x7f060089;
         public static final int match_parent=0x7f060024;
         public static final int middle=0x7f060012;
         public static final int monochrome=0x7f06002b;
         public static final int never=0x7f060009;
         public static final int none=0x7f060010;
         public static final int normal=0x7f060000;
+        public static final int notif_due_task=0x7f0600ad;
+        public static final int notif_new_task=0x7f0600ab;
+        public static final int notif_time_before=0x7f0600af;
         public static final int password=0x7f06005d;
-        public static final int pbIssues=0x7f060098;
+        public static final int pbIssues=0x7f06009d;
         public static final int pnlBudget=0x7f06006f;
         public static final int pnlButtons=0x7f060056;
-        public static final int pnlComments=0x7f060092;
-        public static final int pnlContent=0x7f060083;
-        public static final int pnlDescription=0x7f0600ad;
-        public static final int pnlDlgHeader=0x7f060081;
+        public static final int pnlComments=0x7f060094;
+        public static final int pnlContent=0x7f060082;
+        public static final int pnlDescription=0x7f0600ba;
+        public static final int pnlDlgHeader=0x7f060080;
         public static final int pnlDueDate=0x7f06006b;
-        public static final int pnlFolders=0x7f060087;
-        public static final int pnlNoConnection=0x7f0600a1;
+        public static final int pnlFolders=0x7f060086;
+        public static final int pnlNoConnection=0x7f0600a6;
         public static final int pnlPlainAuth=0x7f06005b;
-        public static final int pnlWorkingSet=0x7f060085;
+        public static final int pnlWorkingSet=0x7f060084;
         public static final int production=0x7f06001f;
         public static final int progress_circular=0x7f060018;
         public static final int progress_horizontal=0x7f060019;
         public static final int radio=0x7f060041;
         public static final int radioGroup1=0x7f060057;
-        public static final int rbnActive=0x7f06009b;
-        public static final int rbnClosed=0x7f06009c;
         public static final int rbnCustomServer=0x7f060059;
         public static final int rbnPKSaas=0x7f060058;
-        public static final int rgFilters=0x7f060095;
-        public static final int rgrFilters=0x7f06009a;
+        public static final int rgFilters=0x7f06009f;
         public static final int sandbox=0x7f060020;
         public static final int satellite=0x7f06001a;
         public static final int scrollView1=0x7f060066;
@@ -1658,16 +1666,23 @@ containing a value of this type.
         public static final int split_action_bar=0x7f060030;
         public static final int strict_sandbox=0x7f060021;
         public static final int submit_area=0x7f06004b;
-        public static final int swrInbox=0x7f060096;
+        public static final int swrInbox=0x7f06009b;
         public static final int tabMode=0x7f060002;
+        public static final int tableRow1=0x7f060097;
+        public static final int tableRowListView=0x7f060099;
         public static final int terrain=0x7f06001b;
+        public static final int textDrawerView=0x7f06008c;
+        public static final int textDrawerViewTitle=0x7f06008e;
+        public static final int textStatusDrawerView=0x7f06008d;
         public static final int textView1=0x7f060051;
+        public static final int textViewError=0x7f060098;
         public static final int title=0x7f06003d;
         public static final int top_action_bar=0x7f060032;
+        public static final int txtRestoreIssue=0x7f0600a1;
         public static final int up=0x7f060033;
         public static final int useLogo=0x7f060003;
         public static final int vpTask=0x7f060052;
-        public static final int webView1=0x7f0600ae;
+        public static final int webView1=0x7f0600bb;
         public static final int withText=0x7f06000c;
         public static final int wrap_content=0x7f060025;
     }
@@ -1734,17 +1749,23 @@ containing a value of this type.
         public static final int dialog_folder=0x7f030021;
         public static final int dialog_user=0x7f030022;
         public static final int drawer_list_item=0x7f030023;
-        public static final int folders_group_item=0x7f030024;
-        public static final int folders_item=0x7f030025;
-        public static final int folders_row=0x7f030026;
-        public static final int fragment_comments=0x7f030027;
-        public static final int fragment_description=0x7f030028;
-        public static final int fragment_issues=0x7f030029;
-        public static final int inbox_row=0x7f03002a;
-        public static final int no_connection_fragment=0x7f03002b;
-        public static final int support_simple_spinner_dropdown_item=0x7f03002c;
-        public static final int teammembers_row=0x7f03002d;
-        public static final int view_issue=0x7f03002e;
+        public static final int drawer_list_item_set=0x7f030024;
+        public static final int drawer_list_sep_srv=0x7f030025;
+        public static final int folders_group_item=0x7f030026;
+        public static final int folders_item=0x7f030027;
+        public static final int folders_row=0x7f030028;
+        public static final int fragment_comments=0x7f030029;
+        public static final int fragment_description=0x7f03002a;
+        public static final int fragment_issues=0x7f03002b;
+        public static final int fragment_issues_old=0x7f03002c;
+        public static final int inbox_dismiss_row=0x7f03002d;
+        public static final int inbox_row=0x7f03002e;
+        public static final int no_connection_fragment=0x7f03002f;
+        public static final int notification_settings_activity=0x7f030030;
+        public static final int support_simple_spinner_dropdown_item=0x7f030031;
+        public static final int task_toast_layout=0x7f030032;
+        public static final int teammembers_row=0x7f030033;
+        public static final int view_issue=0x7f030034;
     }
     public static final class menu {
         public static final int edit_local_closed=0x7f0e0000;
@@ -1757,6 +1778,7 @@ containing a value of this type.
         public static final int new_issue=0x7f0e0007;
     }
     public static final class string {
+        public static final int NOT_SWIPING_ITEM=0x7f0b0031;
         /**  Content description for the action bar "home" affordance. [CHAR LIMIT=NONE] 
          */
         public static final int abc_action_bar_home_description=0x7f0b0001;
@@ -1797,29 +1819,26 @@ containing a value of this type.
         /**  Description of a share target (both in the list of such or the default share button) in a ShareActionProvider (share UI). [CHAR LIMIT=NONE] 
          */
         public static final int abc_shareactionprovider_share_with_application=0x7f0b000b;
-        public static final int action_about=0x7f0b0033;
-        public static final int action_errorlog_body=0x7f0b003f;
-        public static final int action_errorlog_caption=0x7f0b0040;
-        public static final int action_errorlog_error=0x7f0b0041;
-        public static final int action_errorlog_sent=0x7f0b003e;
-        public static final int action_forgot_password=0x7f0b0077;
-        /**  Main Activity ****************************************************************** 
-  Main Activity ****************************************************************** 
-         */
-        public static final int action_newtask=0x7f0b0031;
-        public static final int action_no_email_client=0x7f0b0042;
-        public static final int action_send_log=0x7f0b0034;
-        public static final int action_settings=0x7f0b008e;
-        public static final int action_sign_in=0x7f0b0076;
-        public static final int action_sync=0x7f0b0032;
+        public static final int action_about=0x7f0b0036;
+        public static final int action_errorlog_body=0x7f0b0042;
+        public static final int action_errorlog_caption=0x7f0b0043;
+        public static final int action_errorlog_error=0x7f0b0044;
+        public static final int action_errorlog_sent=0x7f0b0041;
+        public static final int action_forgot_password=0x7f0b0086;
+        public static final int action_newtask=0x7f0b0033;
+        public static final int action_no_email_client=0x7f0b0045;
+        public static final int action_send_log=0x7f0b0037;
+        public static final int action_settings=0x7f0b00a1;
+        public static final int action_sign_in=0x7f0b0085;
+        public static final int action_sync=0x7f0b0034;
         /**   Settings Activity ****************************************************************** 
          */
-        public static final int add_account=0x7f0b007d;
-        public static final int add_comment=0x7f0b0066;
+        public static final int add_account=0x7f0b008c;
+        public static final int add_comment=0x7f0b006f;
         /**  Select Folder Dialog ****************************************************************** 
   Select Folder Dialog ****************************************************************** 
          */
-        public static final int all_projects=0x7f0b0067;
+        public static final int all_projects=0x7f0b0070;
         /**  General ****************************************************************** 
   General ****************************************************************** 
          */
@@ -1827,15 +1846,15 @@ containing a value of this type.
         /**  View / Edit Issue  ****************************************************************** 
   View / Edit Issue  ****************************************************************** 
          */
-        public static final int assignee_not_specified=0x7f0b004c;
+        public static final int assignee_not_specified=0x7f0b0055;
         /**  Errors ****************************************************************** 
          */
-        public static final int authentication_failed=0x7f0b0086;
-        public static final int btn_configure=0x7f0b003b;
+        public static final int authentication_failed=0x7f0b0099;
+        public static final int btn_configure=0x7f0b003e;
         public static final int cancel=0x7f0b002b;
-        public static final int cancel_creating_task_confirm=0x7f0b005f;
-        public static final int cancel_editing_task_confirm=0x7f0b0060;
-        public static final int close_task_confirm=0x7f0b0062;
+        public static final int cancel_creating_task_confirm=0x7f0b0068;
+        public static final int cancel_editing_task_confirm=0x7f0b0069;
+        public static final int close_task_confirm=0x7f0b006b;
         /**  Button in confirmation dialog to enable Google Play services.  Clicking it
         will direct user to application settings of Google Play services where they
         can enable it [CHAR LIMIT=40] 
@@ -1925,122 +1944,161 @@ containing a value of this type.
         /**  Long form sign-in button text [CHAR LIMIT=30] 
          */
         public static final int common_signin_button_text_long=0x7f0b0025;
+        public static final int complete=0x7f0b004d;
         /**  Tasks State Buttons & Menu Actions ****************************************************************** 
   Tasks State Buttons & Menu Actions ****************************************************************** 
          */
-        public static final int completed=0x7f0b0045;
-        public static final int connection_not_configured=0x7f0b0039;
-        public static final int connection_not_configured_hint=0x7f0b003a;
-        public static final int delete=0x7f0b0047;
-        public static final int delete_account_confirm=0x7f0b007e;
-        public static final int delete_task_confirm=0x7f0b0063;
-        public static final int due_date_short_label=0x7f0b004e;
+        public static final int completed=0x7f0b004a;
+        public static final int connection_not_configured=0x7f0b003c;
+        public static final int connection_not_configured_hint=0x7f0b003d;
+        public static final int delete=0x7f0b004e;
+        public static final int delete_account_confirm=0x7f0b008d;
+        public static final int delete_task_confirm=0x7f0b006c;
+        public static final int due_date_short_label=0x7f0b0057;
         /**   Errors ****************************************************************** 
          */
-        public static final int error_field_required=0x7f0b008b;
-        public static final int error_incorrect_email_or_password=0x7f0b007b;
-        public static final int error_invalid_email=0x7f0b007a;
-        public static final int filter_active=0x7f0b003c;
-        public static final int filter_closed=0x7f0b003d;
-        public static final int folder_not_found=0x7f0b0089;
-        public static final int google_authentication_progress=0x7f0b0078;
-        public static final int hello_world=0x7f0b008d;
+        public static final int error_field_required=0x7f0b009e;
+        public static final int error_incorrect_email_or_password=0x7f0b008a;
+        public static final int error_invalid_email=0x7f0b0089;
+        public static final int filter_active=0x7f0b003f;
+        public static final int filter_closed=0x7f0b0040;
+        public static final int folder_not_found=0x7f0b009c;
+        /**  Communication functions 
+ Communication functions 
+         */
+        public static final int func_create_task=0x7f0b00ab;
+        public static final int func_login=0x7f0b00ad;
+        public static final int func_sync=0x7f0b00ac;
+        public static final int google_authentication_progress=0x7f0b0087;
+        public static final int group_mngr=0x7f0b0047;
+        public static final int group_srv=0x7f0b0046;
+        public static final int hello_world=0x7f0b00a0;
         public static final int hrs_pattern=0x7f0b002f;
-        public static final int issue_assignee=0x7f0b0058;
-        public static final int issue_assignee_label=0x7f0b0059;
-        public static final int issue_budget=0x7f0b0054;
-        public static final int issue_budget_label=0x7f0b0055;
-        public static final int issue_clear_due_date=0x7f0b0053;
-        public static final int issue_click_to_assign_due_date=0x7f0b0052;
-        public static final int issue_description_label=0x7f0b005c;
-        public static final int issue_due_date=0x7f0b0050;
-        public static final int issue_due_date_label=0x7f0b0051;
-        public static final int issue_hours=0x7f0b0056;
-        public static final int issue_load_image=0x7f0b005d;
-        public static final int issue_mins=0x7f0b0057;
-        public static final int issue_priority=0x7f0b004f;
-        public static final int issue_responsible=0x7f0b005a;
-        public static final int issue_responsible_label=0x7f0b005b;
-        public static final int last_sync=0x7f0b0085;
-        public static final int login_progress_signing_in=0x7f0b0079;
+        public static final int issue_assignee=0x7f0b0061;
+        public static final int issue_assignee_label=0x7f0b0062;
+        public static final int issue_budget=0x7f0b005d;
+        public static final int issue_budget_label=0x7f0b005e;
+        public static final int issue_clear_due_date=0x7f0b005c;
+        public static final int issue_click_to_assign_due_date=0x7f0b005b;
+        public static final int issue_description_label=0x7f0b0065;
+        public static final int issue_due_date=0x7f0b0059;
+        public static final int issue_due_date_label=0x7f0b005a;
+        public static final int issue_hours=0x7f0b005f;
+        public static final int issue_load_image=0x7f0b0066;
+        public static final int issue_mins=0x7f0b0060;
+        public static final int issue_priority=0x7f0b0058;
+        public static final int issue_responsible=0x7f0b0063;
+        public static final int issue_responsible_label=0x7f0b0064;
+        public static final int jcompleted=0x7f0b0050;
+        public static final int jresumed=0x7f0b004f;
+        public static final int last_sync=0x7f0b0098;
+        public static final int last_sync_time=0x7f0b0035;
+        public static final int login_progress_signing_in=0x7f0b0088;
         /**  Sign In Dialog ****************************************************************** 
   Sign In Dialog ****************************************************************** 
          */
-        public static final int login_with_google=0x7f0b006f;
+        public static final int login_with_google=0x7f0b007e;
         public static final int mins_pattern=0x7f0b0030;
-        public static final int more_settings_label=0x7f0b005e;
-        public static final int network_error=0x7f0b0087;
+        public static final int more_settings_label=0x7f0b0067;
+        public static final int network_error=0x7f0b009a;
+        /**  Main Activity ****************************************************************** 
+  Main Activity ****************************************************************** 
+         */
+        public static final int new_task_notif=0x7f0b0032;
         public static final int no=0x7f0b002a;
-        public static final int no_local_issues=0x7f0b0037;
-        public static final int no_remote_issues=0x7f0b0038;
+        public static final int no_local_issues=0x7f0b003a;
+        public static final int no_remote_issues=0x7f0b003b;
         /**  Notifications ****************************************************************** 
   Notifications ****************************************************************** 
          */
-        public static final int notification_new_tasks=0x7f0b006e;
+        public static final int notification_new_tasks=0x7f0b0077;
         public static final int ok=0x7f0b0028;
-        public static final int pref_header_general=0x7f0b007f;
-        public static final int pref_title_sync_frequency=0x7f0b0082;
-        public static final int prefs_accounts=0x7f0b0080;
-        public static final int prefs_accounts_summary=0x7f0b0081;
+        public static final int pref_due_task_notif=0x7f0b0095;
+        public static final int pref_header_general=0x7f0b008e;
+        public static final int pref_new_task_notif=0x7f0b0093;
+        public static final int pref_show_due_task=0x7f0b0094;
+        public static final int pref_show_new_task=0x7f0b0092;
+        public static final int pref_title_sync_frequency=0x7f0b0091;
+        public static final int prefs_accounts=0x7f0b008f;
+        public static final int prefs_accounts_summary=0x7f0b0090;
         /**  Priorities ****************************************************************** 
   Priorities ****************************************************************** 
          */
-        public static final int priority_blocker=0x7f0b0048;
-        public static final int priority_high=0x7f0b0049;
-        public static final int priority_low=0x7f0b004b;
-        public static final int priority_normal=0x7f0b004a;
-        public static final int project_not_found=0x7f0b0088;
-        public static final int prompt_email=0x7f0b0070;
-        public static final int prompt_password=0x7f0b0071;
-        public static final int prompt_server=0x7f0b0072;
-        public static final int responsible_not_specified=0x7f0b004d;
-        public static final int resume=0x7f0b0046;
-        public static final int resume_task_confirm=0x7f0b0061;
+        public static final int priority_blocker=0x7f0b0051;
+        public static final int priority_high=0x7f0b0052;
+        public static final int priority_low=0x7f0b0054;
+        public static final int priority_normal=0x7f0b0053;
+        public static final int project_not_found=0x7f0b009b;
+        public static final int prompt_email=0x7f0b007f;
+        public static final int prompt_password=0x7f0b0080;
+        public static final int prompt_server=0x7f0b0081;
+        public static final int responsible_not_specified=0x7f0b0056;
+        public static final int resume=0x7f0b004c;
+        public static final int resume_task_confirm=0x7f0b006a;
+        public static final int resumed=0x7f0b004b;
         public static final int save=0x7f0b002c;
-        public static final int search_users=0x7f0b006b;
-        public static final int select_folder_dlg_header=0x7f0b0069;
-        public static final int select_me=0x7f0b006c;
-        public static final int select_nobody=0x7f0b006d;
+        public static final int search_users=0x7f0b0074;
+        public static final int select_folder_dlg_header=0x7f0b0072;
+        public static final int select_me=0x7f0b0075;
+        public static final int select_nobody=0x7f0b0076;
         /**  Select User Dialog ****************************************************************** 
   Select User Dialog ****************************************************************** 
          */
-        public static final int select_user_dlg_header=0x7f0b006a;
-        public static final int server_cloud=0x7f0b0073;
-        public static final int server_cloud_url=0x7f0b0075;
-        public static final int server_custom=0x7f0b0074;
-        public static final int set_local=0x7f0b0068;
+        public static final int select_user_dlg_header=0x7f0b0073;
+        public static final int server_cloud=0x7f0b0082;
+        public static final int server_cloud_url=0x7f0b0084;
+        public static final int server_custom=0x7f0b0083;
+        public static final int set_local=0x7f0b0071;
         /**  Format ****************************************************************** 
   Format ****************************************************************** 
          */
         public static final int short_date=0x7f0b002d;
         public static final int short_date_time=0x7f0b002e;
-        public static final int sync_error=0x7f0b0064;
-        public static final int tab_comments=0x7f0b0044;
+        public static final int short_day=0x7f0b007b;
+        public static final int short_hour=0x7f0b007c;
+        public static final int short_min=0x7f0b007d;
+        public static final int short_month=0x7f0b0079;
+        public static final int short_week=0x7f0b007a;
+        /**  Date & Time periods************************************************************** 
+ Date & Time periods************************************************************** 
+         */
+        public static final int short_year=0x7f0b0078;
+        public static final int sync_error=0x7f0b006d;
+        public static final int sync_srv_error_0=0x7f0b00a7;
+        public static final int sync_srv_error_1=0x7f0b00a8;
+        public static final int sync_srv_error_2=0x7f0b00a9;
+        public static final int sync_srv_error_3=0x7f0b00aa;
+        public static final int tab_comments=0x7f0b0049;
         /**  Inbox Issue Tabs ****************************************************************** 
   Inbox Issue Tabs ****************************************************************** 
          */
-        public static final int tab_details=0x7f0b0043;
-        public static final int tab_inbox_not_configured=0x7f0b0035;
-        public static final int tab_local=0x7f0b0036;
-        public static final int title_activity_email=0x7f0b008c;
+        public static final int tab_details=0x7f0b0048;
+        public static final int tab_inbox_not_configured=0x7f0b0038;
+        public static final int tab_local=0x7f0b0039;
+        public static final int title_activity_email=0x7f0b009f;
         /**  Settings Activity ****************************************************************** 
          */
-        public static final int title_activity_settings=0x7f0b007c;
-        public static final int user_not_found=0x7f0b008a;
+        public static final int title_activity_settings=0x7f0b008b;
+        public static final int user_not_found=0x7f0b009d;
+        public static final int validation_app_end=0x7f0b00a3;
+        public static final int validation_app_fnout=0x7f0b00a2;
+        public static final int validation_srv_bad=0x7f0b00a6;
+        public static final int validation_srv_end=0x7f0b00a5;
+        public static final int validation_srv_fnout=0x7f0b00a4;
         /**  About Activity ****************************************************************** 
   About Activity ****************************************************************** 
          */
-        public static final int version=0x7f0b0083;
+        public static final int version=0x7f0b0096;
         /**  Text on a placeholder buy button when Google Play services is not
          available or up-to-date 
          */
         public static final int wallet_buy_button_place_holder=0x7f0b0026;
-        public static final int website=0x7f0b0084;
+        public static final int website=0x7f0b0097;
         public static final int yes=0x7f0b0029;
         /**  Comments Tab ****************************************************************** 
   Comments Tab ****************************************************************** 
          */
-        public static final int your_comment=0x7f0b0065;
+        public static final int your_comment=0x7f0b006e;
     }
     public static final class style {
         /** 
