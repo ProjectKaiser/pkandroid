@@ -57,6 +57,8 @@ public class SessionManager {
 	private static final String KEY_CONNECTIONS = "connections";
 
 	private static final String KEY_LAST_SYNC_DATE = "last_sync_date";
+	
+	private static final String KEY_LOCAL_DUE_DATE = "last_local_due_date";
 
 	private static final String KEY_LAST_SYNC_STATUS = "last_sync_status";
 
@@ -64,6 +66,8 @@ public class SessionManager {
 
 	public static final String KEY_SYNC_INTERVAL = "sync_frequency";
 	
+	public static final String KEY_TIME_NOTIF = "time_notif";
+
 	public static final String KEY_SHOW_NEW_TASK = "new_task_block";
 	
 	public static final String KEY_SHOW_DUE_TASK = "due_task_block";
@@ -258,6 +262,12 @@ public class SessionManager {
 		editor.commit();
 	}
 
+	public void updateLastLocalDueDate() {
+		Editor editor = pref.edit();
+		editor.putLong(KEY_LOCAL_DUE_DATE, System.currentTimeMillis());
+		editor.commit();
+	}
+
 	public void updateLastSyncDate(String connId) {
 		Editor editor = pref.edit();
 		editor.putLong(KEY_LAST_SYNC_DATE + connId, System.currentTimeMillis());
@@ -294,6 +304,10 @@ public class SessionManager {
 		return pref.getBoolean(KEY_SHOW_NEW_TASK, false);
 	}
 	
+	public int getTimeNotif() {
+		return pref.getInt(KEY_TIME_NOTIF, 8);
+	}
+
 	public void setShowNewTask(boolean value) {
 		Editor editor = pref.edit();
 		editor.putBoolean(KEY_SHOW_NEW_TASK, value);
@@ -316,6 +330,12 @@ public class SessionManager {
 		editor.commit();
 	}
 
+	public void setTimeNotif(int value) {
+		Editor editor = pref.edit();
+		editor.putInt(KEY_TIME_NOTIF, value);
+		editor.commit();
+	}
+
 	public void updateLastWorkingSet(String connectionId, String workingSet) {
 		Editor editor = pref.edit();
 		SrvConnectionId id = new SrvConnectionId(connectionId);
@@ -332,6 +352,14 @@ public class SessionManager {
 
 	public Date getLastSyncDate(String connId) {
 		long l = pref.getLong(KEY_LAST_SYNC_DATE + connId, 0);
+		if (l > 0)
+			return new Date(l);
+		else
+			return null;
+	}
+
+	public Date getLastLocalDueDate() {
+		long l = pref.getLong(KEY_LOCAL_DUE_DATE, 0);
 		if (l > 0)
 			return new Date(l);
 		else

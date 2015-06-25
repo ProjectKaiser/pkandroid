@@ -10,11 +10,14 @@ import java.util.Calendar;
 
 public class ServerListData {
 	private String mName = "";
+	private String mEmail = "";
 	private String mConnId = "";
 	private SessionManager sm = null;
 
-	public ServerListData(SessionManager _sm, String _Name, String connId) {
+	public ServerListData(SessionManager _sm, String _Name, String connId,
+			String _Email) {
 		mName = _Name;
+		mEmail = _Email;
 		sm = _sm;
 		mConnId = connId;
 	}
@@ -27,16 +30,23 @@ public class ServerListData {
 		mName = value;
 	}
 
+	public String getEmail() {
+		return mEmail;
+	}
+
+	public void setEMail(String value) {
+		mEmail = value;
+	}
+
 	public String getStatus() {
 		return sm.getLastSyncStatus(mConnId);
 	}
 
-
 	public long getSyncDate() {
-		if (mConnId.isEmpty()){
+		if (mConnId.isEmpty()) {
 			return 0;
 		}
-		if (sm.getLastSyncDate(mConnId)==null){
+		if (sm.getLastSyncDate(mConnId) == null) {
 			Time now = new Time();
 			now.setToNow();
 			return now.toMillis(true);
@@ -50,7 +60,7 @@ public class ServerListData {
 		if (ctx == null)
 			return drID;
 		long ms = getSyncDate();
-		if (ms == 0){
+		if (ms == 0) {
 			drID.setText("");
 			return drID;
 		}
@@ -87,7 +97,7 @@ public class ServerListData {
 		}
 		int diffhours = eCalendar.get(Calendar.HOUR_OF_DAY)
 				- sCalendar.get(Calendar.HOUR_OF_DAY);
-		
+
 		if (diffhours > 0) {
 			drID.setText(diffhours + ctx.getString(R.string.short_hour));
 			return drID;
@@ -109,5 +119,4 @@ public class ServerListData {
 		return drID;
 
 	}
-
 }

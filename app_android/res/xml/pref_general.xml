@@ -8,19 +8,29 @@
         android:negativeButtonText="@null"
         android:positiveButtonText="@null"
         android:title="@string/pref_title_sync_frequency" />
-    
-    
-    <Preference android:title="@string/prefs_accounts" android:summary="@string/prefs_accounts_summary" >
+
+    <Preference
+        android:summary="@string/prefs_accounts_summary"
+        android:title="@string/prefs_accounts" >
         <intent
-             android:action="android.intent.action.VIEW"
-             android:targetPackage="com.projectkaiser.app_android"
-             android:targetClass="com.projectkaiser.app_android.AccountsMgmtActivity" />
+            android:action="android.intent.action.VIEW"
+            android:targetClass="com.projectkaiser.app_android.AccountsMgmtActivity"
+            android:targetPackage="com.projectkaiser.app_android" />
     </Preference>
-    
-	<CheckBoxPreference
-		android:title="@string/pref_show_new_task"
-		android:summary="@string/pref_new_task_notif"
+
+    <CheckBoxPreference
         android:defaultValue="false"
-        android:key="new_task_block" />
-    
+        android:key="new_task_block"
+        android:summary="@string/pref_new_task_notif"
+        android:title="@string/pref_show_new_task" />
+
+    <ListPreference
+        android:defaultValue="5"
+        android:entries="@array/pref_time_notif_titles"
+        android:entryValues="@array/pref_time_notif_values"
+        android:key="time_notif"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null"
+        android:title="@string/pref_time_notif" />
+
 </PreferenceScreen>

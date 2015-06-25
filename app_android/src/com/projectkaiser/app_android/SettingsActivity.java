@@ -80,6 +80,13 @@ public class SettingsActivity extends PreferenceActivity {
 		((ListPreference) pInterval).setValue(defValue);
 		pInterval.setDefaultValue(defValue);
 		bindPreferenceSummaryToValue(pInterval, defValue);
+
+		Preference pTimeNotif = findPreference(SessionManager.KEY_TIME_NOTIF);
+		String defHourNotif = String.valueOf(sm.getTimeNotif());
+		((ListPreference) pTimeNotif).setValue(defHourNotif);
+		pTimeNotif.setDefaultValue(defHourNotif);
+		bindPreferenceSummaryToValue(pTimeNotif, defHourNotif);
+
 		Preference pNewTask = findPreference(SessionManager.KEY_SHOW_NEW_TASK);
 		Boolean defBoolValue = Boolean.valueOf(sm.getShowNewTask());
 		((CheckBoxPreference) pNewTask).setChecked(false);
@@ -202,6 +209,15 @@ public class SettingsActivity extends PreferenceActivity {
 			receiver.cancelAlarm(preference.getContext());
 			if (intervalMinutes > 0)
 				receiver.setAlarm(preference.getContext());
+		} else	if (SessionManager.KEY_TIME_NOTIF.equalsIgnoreCase(preference
+					.getKey())) {
+				int hourNotif = Integer.valueOf(stringValue);
+				sm.setTimeNotif(hourNotif);
+				SyncAlarmReceiver receiver = new SyncAlarmReceiver();
+				receiver.cancelAlarm(preference.getContext());
+				if (hourNotif > 0)
+					receiver.setAlarm(preference.getContext());
+				
 		} else if (SessionManager.KEY_SHOW_NEW_TASK.equalsIgnoreCase(preference
 				.getKey())) {
 			boolean showNewTask = Boolean.valueOf(stringValue);

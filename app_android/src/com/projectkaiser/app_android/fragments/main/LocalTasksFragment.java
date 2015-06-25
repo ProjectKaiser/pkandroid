@@ -34,58 +34,63 @@ public class LocalTasksFragment extends IssuesListAbstractFragment implements
 
 	List<MIssue> m_tasks = null;
 
-
 	public static LocalTasksFragment newInstance() {
 		LocalTasksFragment fragment = new LocalTasksFragment();
 		fragment.initStateData();
 		return fragment;
 	}
-	
+
 	@Override
 	protected boolean isFiltersSupported() {
 		return true;
 	}
 
-	private class MyDismissCallbacks implements SwipeDismissListViewTouchListener.DismissCallbacks {
+	private class MyDismissCallbacks implements
+			SwipeDismissListViewTouchListener.DismissCallbacks {
 		public void onDismiss(ListView listView, int[] reverseSortedPositions) {
-			IssuesArrayAdapter adapter = new IssuesArrayAdapter(getRootView().getContext(), getIssuesList());
-        	if (m_tasks==null) return;
-            for (int position : reverseSortedPositions) {
-            	int realpos = position;
-            	if (removedItem!=null){
-                	if (realpos==removedItem.dismissPosition) return;
-                	if (realpos>removedItem.dismissPosition){
-                		realpos = realpos - 1;
-                	}
-            	}
-            	Long modif = 0L;
-            	if (realpos<=-1) {return;}
-        		MIssue m_details = m_tasks.get(realpos);
-        		if (m_details==null) return; 
-      			modif = m_details.getModified(); 
-        		CompleteItem(realpos);
-            	removedItem = new LocalRemovedItem();
-            	removedItem.dismissPosition = realpos;
-            	removedItem.Modified = modif;
-        		adapter.setremovedItem(removedItem);
-        		getListView().setAdapter(adapter);
-            }
-        }		
-		public boolean canDismiss(int position){
+			IssuesArrayAdapter adapter = new IssuesArrayAdapter(getRootView()
+					.getContext(), getIssuesList());
+			if (m_tasks == null)
+				return;
+			for (int position : reverseSortedPositions) {
+				int realpos = position;
+				if (removedItem != null) {
+					if (realpos == removedItem.dismissPosition)
+						return;
+					if (realpos > removedItem.dismissPosition) {
+						realpos = realpos - 1;
+					}
+				}
+				Long modif = 0L;
+				if (realpos <= -1) {
+					return;
+				}
+				MIssue m_details = m_tasks.get(realpos);
+				if (m_details == null)
+					return;
+				modif = m_details.getModified();
+				CompleteItem(realpos);
+				removedItem = new LocalRemovedItem();
+				removedItem.dismissPosition = realpos;
+				removedItem.Modified = modif;
+				adapter.setremovedItem(removedItem);
+				getListView().setAdapter(adapter);
+			}
+		}
+
+		public boolean canDismiss(int position) {
 			return true;
 		}
 	}
-	
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		View v = super.onCreateView(inflater, container, savedInstanceState);
 		((TextView) getRootView().findViewById(R.id.emptyText))
 				.setText(getString(R.string.no_local_issues));
-		SwipeDismissListViewTouchListener touchListener =
-		          new SwipeDismissListViewTouchListener(
-		        		  getListView(),
-		                  new MyDismissCallbacks());
+		SwipeDismissListViewTouchListener touchListener = new SwipeDismissListViewTouchListener(
+				getListView(), new MyDismissCallbacks());
 		getListView().setOnTouchListener(touchListener);
 		getListView().setOnScrollListener(touchListener.makeScrollListener());
 		return v;
@@ -105,9 +110,9 @@ public class LocalTasksFragment extends IssuesListAbstractFragment implements
 	@Override
 	protected boolean CompleteItem(int position) {
 		MIssue m_details = m_tasks.get(position);
-		
+
 		if (m_details instanceof MLocalIssue) {
-						
+
 			BL.getLocal(getActivity().getApplicationContext()).completeTask(
 					(MLocalIssue) m_details);
 			return true;
@@ -134,14 +139,16 @@ public class LocalTasksFragment extends IssuesListAbstractFragment implements
 			return null;
 		ILocalBL bl = BL.getLocal(getActivity().getApplicationContext());
 		m_tasks = new ArrayList<MIssue>();
-		for (MLocalIssue li : bl
-				.getLocalTasks(isClosedTasksSelected() ? TasksFilter.CLOSED
-						: TasksFilter.ACTIVE))
+		for (MLocalIssue li : bl.getLocalTasks(getTaskListType())){
 			m_tasks.add(li);
+		}
+/*		
 		if (!isClosedTasksSelected()) {
 			for (MRemoteNotSyncedIssue nsi : bl.getNotSyncedTasks())
 				m_tasks.add(nsi);
 		}
+*/		
+		
 		return m_tasks;
 	}
 

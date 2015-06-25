@@ -18,19 +18,21 @@
     <!--  Main Activity ****************************************************************** -->
     <string name="new_task_notif">Нажмите, чтобы создать задачу</string>
     <string name="action_newtask">Создать</string>
+    <string name="action_newlocaltask">Новая локальная задача</string>
     <string name="action_sync">Синхронизация</string>
     <string name="last_sync_time">Время синх.</string>
     <string name="action_about">О программе</string>
     <string name="action_send_log">Отправить журнал ошибок</string>
     <string name="tab_inbox_not_configured">Входящие</string>
     <string name="tab_local">Локальные</string>
-    <string name="no_local_issues">Ни одной локальной задачи.\nСоздайте задачу, используя иконку \"+\" на панели управления</string>
+    <string name="no_local_issues">Ни одной локальной задачи.\nСоздайте задачу, используя иконку \"+\" справа внизу</string>
     <string name="no_remote_issues">Вам не назначено ни одной задачи</string>
     <string name="connection_not_configured">Не настроено!</string>
     <string name="connection_not_configured_hint">Нажмите "Настроить", чтобы настроить соединение с сервером Project Kaiser</string>
     <string name="btn_configure">Настроить</string>
     <string name="filter_active">Активные</string>
     <string name="filter_closed">Закрытые</string>
+    <string name="filter_overdue">Просроченные</string>
     <string name="action_errorlog_sent">Отсылка журнала ошибок</string>
     <string name="action_errorlog_body">Во вложении</string>
     <string name="action_errorlog_caption">Журнал ошибок Project Kaiser</string>
@@ -93,6 +95,7 @@
     <string name="all_projects">Все проекты</string>
     <string name="set_local">Локальная задача</string>
     <string name="select_folder_dlg_header">Выбор папки</string>
+        <string name="no_folder">Корень проекта</string>
     
     <!--  Select User Dialog ****************************************************************** -->
     <string name="select_user_dlg_header">Выбор пользователя</string>
@@ -136,6 +139,7 @@
     <string name="prefs_accounts_summary">Управление учетными записями</string>
     <string name="pref_title_sync_frequency">Интервал синхронизации</string>
     <string name="pref_show_new_task">Уведомление \'Новая задача\'</string>
+    <string name="pref_time_notif">Время Ежедневного обзора</string>
     <string name="pref_new_task_notif">Создавать новую задачу с экрана блокировки</string>
     <string name="pref_show_due_task">Уведомление \'Просроченная задача\'</string>
     <string name="pref_due_task_notif">Показывать уведомление на экране блокировки</string>
@@ -165,11 +169,54 @@
         <item>360</item>
         <item>-1</item>
     </string-array>
+    <string-array name="pref_time_notif_titles">
+		<item>5:00</item>
+        <item>6:00</item>
+        <item>7:00</item>
+        <item>8:00</item>
+        <item>9:00</item>
+        <item>10:00</item>
+        <item>12:00</item>
+        <item>13:00</item>
+        <item>14:00</item>
+        <item>15:00</item>
+        <item>16:00</item>
+        <item>17:00</item>
+        <item>18:00</item>
+        <item>20:00</item>
+        <item>21:00</item>
+        <item>22:00</item>
+        <item>23:00</item>
+        <item>24:00</item>
+        <item>Отключить</item>
+    </string-array>
+    <string-array name="pref_time_notif_values">
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+        <item>10</item>
+        <item>12</item>
+        <item>13</item>
+        <item>14</item>
+        <item>15</item>
+        <item>16</item>
+        <item>17</item>
+        <item>18</item>
+        <item>20</item>
+        <item>21</item>
+        <item>22</item>
+        <item>23</item>
+        <item>24</item>
+        <item>-1</item>
+    </string-array>
     
     <!--  About Activity ****************************************************************** -->    
     <string name="version">Версия: %s</string>
     <string name="website">Web: http://projectkaiser.com</string>
     <string name="last_sync">Последняя синхронизация: %s</string>
+    <string name="no_last_sync">Не синхронизовано</string>
     
     <!--  Errors ****************************************************************** -->
     <string name="error_field_required">Обязательное поле</string>

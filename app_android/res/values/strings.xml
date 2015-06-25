@@ -19,19 +19,21 @@
     <!-- Main Activity ****************************************************************** -->
     <string name="new_task_notif">Click to create new task</string>
     <string name="action_newtask">New Task</string>
+    <string name="action_newlocaltask">New local task</string>
     <string name="action_sync">Sync</string>
     <string name="last_sync_time">Last sync time</string>
     <string name="action_about">About</string>
     <string name="action_send_log">Send error log</string>
     <string name="tab_inbox_not_configured">Inbox</string>
     <string name="tab_local">Local Tasks</string>
-    <string name="no_local_issues">No local issues. Create new tasks with \"+\" button on Action Bar</string>
+    <string name="no_local_issues">No local issues. Create new tasks with \"+\" button below</string>
     <string name="no_remote_issues">You have no issues assigned</string>
     <string name="connection_not_configured">Not configured!</string>
     <string name="connection_not_configured_hint">Click "Configure" to setup synchronization with Project Kaiser server</string>
     <string name="btn_configure">Configure</string>
     <string name="filter_active">Active</string>
     <string name="filter_closed">Closed</string>
+    <string name="filter_overdue">Overdue</string>
     <string name="action_errorlog_sent">Sending error log...</string>
     <string name="action_errorlog_body">In attachment</string>
     <string name="action_errorlog_caption">PK android error log</string>
@@ -94,7 +96,8 @@
     <string name="all_projects">All Projects</string>
     <string name="set_local">Local Task</string>
     <string name="select_folder_dlg_header">Select Folder</string>
-
+    <string name="no_folder">No folder</string>
+    
     <!-- Select User Dialog ****************************************************************** -->
     <string name="select_user_dlg_header">Select User</string>
     <string name="search_users">Search</string>
@@ -135,6 +138,7 @@
     <string name="prefs_accounts_summary">Add or remove PK accounts</string>
     <string name="pref_title_sync_frequency">Sync interval</string>
     <string name="pref_show_new_task">New task notification</string>
+    <string name="pref_time_notif">Daily review time</string>
     <string name="pref_new_task_notif">Create new task from block screen </string>
     <string name="pref_show_due_task">Overdue task notification</string>
     <string name="pref_due_task_notif">Show notificaction on block screen</string>
@@ -164,12 +168,55 @@
         <item>360</item>
         <item>-1</item>
     </string-array>
-
+    <string-array name="pref_time_notif_titles">
+		<item>5:00</item>
+        <item>6:00</item>
+        <item>7:00</item>
+        <item>8:00</item>
+        <item>9:00</item>
+        <item>10:00</item>
+        <item>12:00</item>
+        <item>13:00</item>
+        <item>14:00</item>
+        <item>15:00</item>
+        <item>16:00</item>
+        <item>17:00</item>
+        <item>18:00</item>
+        <item>20:00</item>
+        <item>21:00</item>
+        <item>22:00</item>
+        <item>23:00</item>
+        <item>24:00</item>
+        <item>Disabled</item>
+    </string-array>
+    <string-array name="pref_time_notif_values">
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+        <item>10</item>
+        <item>12</item>
+        <item>13</item>
+        <item>14</item>
+        <item>15</item>
+        <item>16</item>
+        <item>17</item>
+        <item>18</item>
+        <item>20</item>
+        <item>21</item>
+        <item>22</item>
+        <item>23</item>
+        <item>24</item>
+        <item>-1</item>
+    </string-array>
+    
     <!-- About Activity ****************************************************************** -->
     <string name="version">Version: %s</string>
     <string name="website">Web: http://projectkaiser.com</string>
     <string name="last_sync">Synced: %s</string>
-
+    <string name="no_last_sync">Not synced yet</string>
+    
     <!-- Errors ****************************************************************** -->
     <string name="authentication_failed">Authentication failed</string>
     <string name="network_error">Network error</string>

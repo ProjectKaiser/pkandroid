@@ -252,13 +252,16 @@ public class IssueDetailsFragment extends Fragment implements ITaskDetailsListen
 				sessionID = sm.getBaseData(connId).getSessionId();
 				webCookieManager.setCookie(sUrl, "sid = " + sessionID );
 				CookieSyncManager.getInstance().sync();
-
+				
 				webView1.getSettings().setJavaScriptEnabled(true);
 				webView1.getSettings().setDomStorageEnabled(true);
 				webView1.getSettings().setAppCacheEnabled(true);
 				webView1.getSettings().setBlockNetworkImage(false);
 				webView1.getSettings().setBlockNetworkLoads(false);
 				webView1.getSettings().setLoadsImagesAutomatically(true);
+				
+				webView1.getSettings().setUseWideViewPort(true);
+				webView1.setInitialScale(1);				
 		    
 				WebViewClient myWebClient = new WebViewClient()
 				{	
@@ -302,8 +305,10 @@ public class IssueDetailsFragment extends Fragment implements ITaskDetailsListen
 				webView1.setWebViewClient(myWebClient);
 		    	html = ParsePictures(html);
 				html = GetImageShowScript() + html;
-
+				
+				webView1.getSettings().setBuiltInZoomControls(true);
 				webView1.loadDataWithBaseURL(sUrl, html,"text/html", "UTF-8", null);
+				
 			}
 			m_rootView.findViewById(R.id.pnlDescription).setVisibility(View.GONE);
 		}

@@ -34,6 +34,16 @@
     </item>
     
     <item
+        android:id="@+id/action_overdue_tasks"
+        android:enabled="true"
+        android:checkable="true"
+        app:showAsAction="never"
+        android:title="@string/filter_overdue"
+        android:titleCondensed="@string/filter_overdue"
+        android:visible="true">
+    </item>
+    
+    <item
         android:id="@+id/action_send_log"
         android:enabled="false"
         app:showAsAction="never"

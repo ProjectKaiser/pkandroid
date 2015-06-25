@@ -2,7 +2,7 @@ package com.projectkaiser.app_android.fragments.main;
 
 public class IssueListData {
 	private int itemNumber;
-	private boolean bActiveIssue = true;
+	private int iActiveIssue = 0;
 	
 	public void setItemNumber(int value){
 		itemNumber = value;
@@ -12,12 +12,12 @@ public class IssueListData {
 		return itemNumber;
 	}
 	
-	public void setActiveIssue(boolean value){
-		bActiveIssue = value;
+	public void setActiveIssue(int value){
+		iActiveIssue = value;
 	}
 	
-	public boolean getActiveIssue(){
-		return bActiveIssue;
+	public int getActiveIssue(){
+		return iActiveIssue;
 	}
 	
 }

@@ -144,6 +144,7 @@ public class ResponseParser extends AbstractJsonParser {
 			base.setUserId(_rlong(j, "userId"));
 			base.setUserName(_rstring(j, "userName"));
 			base.setServerName(_string(j, "serverName"));
+			base.setUserEmail(_rstring(j, "serverName"));
 			
 			return base;
 

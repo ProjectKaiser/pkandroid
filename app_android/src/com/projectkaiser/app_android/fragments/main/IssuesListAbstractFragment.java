@@ -12,8 +12,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-import com.projectkaiser.app_android.misc.*;
-import com.projectkaiser.app_android.MainActivity;
 import com.projectkaiser.app_android.R;
 import com.projectkaiser.app_android.adapters.IssuesArrayAdapter;
 import com.projectkaiser.app_android.bl.events.IGlobalAppEventsListener;
@@ -22,12 +20,13 @@ import com.projectkaiser.app_android.settings.SrvConnectionId;
 import com.projectkaiser.mobile.sync.MIssue;
 import com.projectkaiser.app_android.fragments.main.IssueListData;
 import com.projectkaiser.app_android.fragments.main.IRetainedFragment;
+import com.projectkaiser.app_android.bl.local.*;
 
 public abstract class IssuesListAbstractFragment extends Fragment implements
 		IGlobalAppEventsListener, SwipeRefreshLayout.OnRefreshListener, IRetainedFragment {
 
 	private View m_rootView;
-	private PKTaskListType mTaskListType;
+	private TasksFilter mTaskListType;
 	protected LocalRemovedItem removedItem = null;
     private IssueListData statedata;
 
@@ -74,7 +73,11 @@ public abstract class IssuesListAbstractFragment extends Fragment implements
 		m_progressShown = true;
 	}
 
-	public void setTaskListType(PKTaskListType _tlType) {
+	public TasksFilter getTaskListType(){
+		return mTaskListType;
+	}
+
+	public void setTaskListType(TasksFilter _tlType) {
 		mTaskListType = _tlType;
 		refresh();
 		return;
@@ -109,10 +112,6 @@ public abstract class IssuesListAbstractFragment extends Fragment implements
 
 	protected boolean isFiltersSupported() {
 		return false;
-	}
-
-	protected boolean isClosedTasksSelected() {
-		return (mTaskListType == PKTaskListType.CLOSED);
 	}
 
 	protected abstract boolean DeleteItem(int position);

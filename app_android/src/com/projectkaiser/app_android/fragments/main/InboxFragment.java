@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.projectkaiser.app_android.R;
 import com.projectkaiser.app_android.ViewIssueActivity;
+import com.projectkaiser.app_android.bl.BL;
 import com.projectkaiser.app_android.bl.events.AppEvent;
 import com.projectkaiser.app_android.bl.events.RefreshLists;
 import com.projectkaiser.app_android.bl.events.DataSyncStarted;
@@ -20,6 +21,8 @@ import com.projectkaiser.app_android.bl.events.IGlobalAppEventsListener;
 import com.projectkaiser.app_android.settings.SessionManager;
 import com.projectkaiser.mobile.sync.MIssue;
 import com.projectkaiser.mobile.sync.MRemoteIssue;
+import com.projectkaiser.app_android.bl.local.ILocalBL;
+import com.projectkaiser.app_android.bl.obj.MRemoteNotSyncedIssue;
 import android.widget.TableRow;
 
 public class InboxFragment extends IssuesListAbstractFragment implements
@@ -85,6 +88,13 @@ public class InboxFragment extends IssuesListAbstractFragment implements
 			showSyncError(sm, this.getConnectionId());
 			for (MRemoteIssue ri : sm.getIssues(getConnectionId()).getItems())
 				m_issues.add(ri);
+
+			ILocalBL bl = BL.getLocal(getActivity().getApplicationContext());
+			for (MRemoteNotSyncedIssue nsi : bl.getNotSyncedTasks()) {
+				if (nsi.getSrvConnId().equals(this.getConnectionId())) {
+					m_issues.add(nsi);
+				}
+			}
 
 			return m_issues;
 		} catch (Exception ex) {

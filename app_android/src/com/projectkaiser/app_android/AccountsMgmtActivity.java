@@ -42,11 +42,11 @@ public class AccountsMgmtActivity extends ActionBarActivity {
 			public void onItemClick(AdapterView<?> arg0, View arg1, final int position,
 					long arg3) {
 				if (position == 0) {
+					finish();
 					Intent i = new Intent(getApplicationContext(),
 							SigninActivity.class);
 			        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 			        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-					finish();
 					getApplicationContext().startActivity(i);
 				} else {
 					new AlertDialog.Builder(_this)
@@ -64,16 +64,7 @@ public class AccountsMgmtActivity extends ActionBarActivity {
 		});
 		
 	}
-	
-	@Override
-	public void onBackPressed() {
-    	Intent i = new Intent(getApplicationContext(), MainActivity.class);
-        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        getApplicationContext().startActivity(i);
-        finish();
-	}
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);

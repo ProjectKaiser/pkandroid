@@ -3,10 +3,9 @@ package com.projectkaiser.app_android.settings;
 public class SrvConnectionBaseData {
 
 	String m_sessionId;
-
 	String m_userName;
- 
 	Long m_userId;
+	String m_userEMail;
 	
 	String m_serverName;
 
@@ -22,6 +21,10 @@ public class SrvConnectionBaseData {
 		return m_userName;
 	}
 
+	public String getUserEmail() {
+		return m_userEMail;
+	}
+
 	public void setUserName(String userName) {
 		m_userName = userName;
 	}
@@ -32,6 +35,10 @@ public class SrvConnectionBaseData {
 
 	public void setUserId(Long userId) {
 		m_userId = userId;
+	}
+
+	public void setUserEmail(String value) {
+		m_userEMail = value;
 	}
 
 	public String getServerName() {

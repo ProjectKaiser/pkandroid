@@ -8,6 +8,10 @@ package com.projectkaiser.mobile.sync;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.projectkaiser.app_android.R;
+
+import android.content.Context;
+
 public class MMyProject extends MNamedFile {
 	
 	/**
@@ -19,7 +23,16 @@ public class MMyProject extends MNamedFile {
 	
 	List<MFolder> m_folders = new ArrayList<MFolder>();
 
-	public List<MFolder> getFolders() {
+	public List<MFolder> getFolders(Context context) {
+/*		
+		List<MFolder> flds = new ArrayList<MFolder>(); 
+		MFolder p = new MFolder();
+		p.setId(-1L);
+		p.setName(context.getString(R.string.no_folder));
+		flds.add(p);
+		flds.addAll(m_folders);
+		return flds;
+*/		
 		return m_folders;
 	}
 

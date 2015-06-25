@@ -69,6 +69,7 @@ import com.projectkaiser.mobile.sync.MSynchronizeResponseEx;
 import com.projectkaiser.app_android.fragments.main.IRetainedFragment;
 import com.projectkaiser.app_android.fragments.main.IssueListData;
 import com.projectkaiser.app_android.ServerListData;
+import com.projectkaiser.app_android.bl.local.*;
 
 public class MainActivity extends ActionBarActivity implements
 		IGlobalAppEventsProvider {
@@ -76,6 +77,7 @@ public class MainActivity extends ActionBarActivity implements
 	private final Logger log = Logger.getLogger(MainActivity.class);
 
 	public static final String ALARM_TASK = "com.projectkaiser.app_android.ALARM_TASK";
+	public static final String DUE_TASK = "com.projectkaiser.app_android.DUE_TASK";
 	private static final String ID_LOCAL = "local";
 	private static final String ID_NOT_CONFIGURED = "not_configured";
 	private static final String triniforce_email = "ivvist@gmail.com";
@@ -86,6 +88,7 @@ public class MainActivity extends ActionBarActivity implements
 	private ListView mDrawerServerListView;
 	ArrayAdapter<ServerListData> ldp = null;
 	Fragment curfragment = null;
+	private boolean bNeedShowOverDue = false;
 
 	private ArrayList<ServerListData> mDrawerServers = new ArrayList<ServerListData>();
 
@@ -134,28 +137,40 @@ public class MainActivity extends ActionBarActivity implements
 	}
 
 	private void createConnections() {
+		mDrawerServers.clear();
 		m_connectionIds.clear();
+
+		mDrawerServers.add(new ServerListData(m_sessionManager, "-", "", ""));
 		m_connectionIds.add("");
 		m_connectionIds.add(ID_LOCAL);
 		mDrawerServers.add(new ServerListData(m_sessionManager,
-				getString(R.string.tab_local), ""));
+				getString(R.string.tab_local), "", ""));
 		List<String> connections = m_sessionManager.getConnections();
 
 		for (String conId : connections) {
 			SrvConnectionBaseData bd = m_sessionManager.getBaseData(conId);
 			m_connectionIds.add(conId);
 			mDrawerServers.add(new ServerListData(m_sessionManager, bd
-					.getServerName(), conId));
+					.getServerName(), conId, bd.getUserName()));
 		}
 
 		if (connections.size() == 0)
 			mDrawerServers.add(new ServerListData(m_sessionManager,
-					getString(R.string.tab_inbox_not_configured), ""));
+					getString(R.string.tab_inbox_not_configured), "", ""));
 		m_connectionIds.add(ID_NOT_CONFIGURED);
+		mDrawerServers.add(new ServerListData(m_sessionManager, "-", "", ""));
+		mDrawerServers.add(new ServerListData(m_sessionManager,
+				getString(R.string.title_activity_settings), "", ""));
+		mDrawerServers.add(new ServerListData(m_sessionManager,
+				getString(R.string.action_send_log), "", ""));
+		mDrawerServers.add(new ServerListData(m_sessionManager,
+				getString(R.string.action_about), "", ""));
+
 	}
 
 	protected void onResume() {
 		super.onResume();
+		createConnections();
 		raise(new RefreshLists());
 		if (ldp != null) {
 			ldp.notifyDataSetChanged();
@@ -188,7 +203,11 @@ public class MainActivity extends ActionBarActivity implements
 					i.putExtra("SRVNAME", "");
 					startActivity(i);
 				}
-
+			} else {
+				issue = (MIssue) intent.getSerializableExtra(DUE_TASK);
+				if (issue != null) {
+					bNeedShowOverDue = true;
+				}
 			}
 		}
 	};
@@ -202,15 +221,19 @@ public class MainActivity extends ActionBarActivity implements
 		}
 	}
 
-	private void initLocalTasks(boolean bActive) {
+	private void initLocalTasks(int iActive) {
 		if (_menu != null) {
-			_menu.getItem(1).setChecked(bActive);
-			_menu.getItem(2).setChecked(!bActive);
+			_menu.getItem(1).setChecked(iActive == 0);
+			_menu.getItem(2).setChecked(iActive == 1);
+			_menu.getItem(3).setChecked(iActive == 2);
 			String act_title = getString(R.string.tab_local) + "(";
-			if (bActive) {
+			if (iActive == 0) {
 				act_title = act_title + getString(R.string.filter_active) + ")";
-			} else {
+			} else if (iActive == 1) {
 				act_title = act_title + getString(R.string.filter_closed) + ")";
+			} else {
+				act_title = act_title + getString(R.string.filter_overdue)
+						+ ")";
 			}
 			this.setTitle(act_title);
 		}
@@ -221,6 +244,7 @@ public class MainActivity extends ActionBarActivity implements
 			return;
 		_menu.getItem(1).setVisible(bOn);
 		_menu.getItem(2).setVisible(bOn);
+		_menu.getItem(3).setVisible(bOn);
 	}
 
 	/** Swaps fragments in the main content view */
@@ -247,8 +271,8 @@ public class MainActivity extends ActionBarActivity implements
 				if (ID_LOCAL.equals(connectionId)) {
 					curfragment = LocalTasksFragment.newInstance();
 					((IRetainedFragment) curfragment).getData().setActiveIssue(
-							true);
-					initLocalTasks(true);
+							0);
+					initLocalTasks(0);
 					bShowPlusButton = true;
 				} else if (ID_NOT_CONFIGURED.equals(connectionId)) {
 					actLocalMenu(false);
@@ -308,16 +332,7 @@ public class MainActivity extends ActionBarActivity implements
 	private void createUi() {
 		setContentView(R.layout.activity_main);
 
-		mDrawerServers.add(new ServerListData(m_sessionManager, "-", ""));
 		createConnections();
-		mDrawerServers.add(new ServerListData(m_sessionManager, "-", ""));
-		mDrawerServers.add(new ServerListData(m_sessionManager,
-				getString(R.string.title_activity_settings), ""));
-		mDrawerServers.add(new ServerListData(m_sessionManager,
-				getString(R.string.action_send_log), ""));
-		mDrawerServers.add(new ServerListData(m_sessionManager,
-				getString(R.string.action_about), ""));
-
 		Drawable newTaskIcon = getResources()
 				.getDrawable(R.drawable.ic_addtask);
 		fabButton = new FloatingActionButton.Builder(this)
@@ -332,7 +347,6 @@ public class MainActivity extends ActionBarActivity implements
 				return;
 			}
 		});
-
 		if (m_sessionManager.getShowNewTask()) {
 			showNewTaskNotification();
 		}
@@ -380,6 +394,7 @@ public class MainActivity extends ActionBarActivity implements
 	public class ViewHolder {
 		public TextView textViewTitle;
 		public TextView textView;
+		public TextView textViewEmail;
 		public TextView textStatusView;
 	}
 
@@ -390,6 +405,12 @@ public class MainActivity extends ActionBarActivity implements
 				.findViewById(R.id.textDrawerView);
 		holder.textView.setText("");
 		holder.textView.setHeight(1);
+		holder.textViewEmail = (TextView) convertView
+				.findViewById(R.id.txtDrawerItememail);
+		if (holder.textViewEmail != null) {
+			holder.textViewEmail.setText("");
+			holder.textViewEmail.setHeight(1);
+		}
 		convertView.setBackgroundColor(Color.DKGRAY);
 		holder.textViewTitle = (TextView) convertView
 				.findViewById(R.id.textDrawerViewTitle);
@@ -454,15 +475,23 @@ public class MainActivity extends ActionBarActivity implements
 								R.layout.drawer_list_item_set, null);
 						holder.textView = (TextView) convertView
 								.findViewById(R.id.textDrawerView);
+						holder.textViewEmail = (TextView) convertView
+								.findViewById(R.id.txtDrawerItememail);
 					} else {
 						convertView = mInflater.inflate(
 								R.layout.drawer_list_item, null);
 						holder.textView = (TextView) convertView
 								.findViewById(R.id.textDrawerView);
+						holder.textViewEmail = (TextView) convertView
+								.findViewById(R.id.txtDrawerItememail);
 						holder.textStatusView = (TextView) convertView
 								.findViewById(R.id.textStatusDrawerView);
 						UpdateItemStatusText(holder,
 								mDrawerServers.get(position));
+						if (holder.textViewEmail != null) {
+							holder.textViewEmail.setText(mDrawerServers.get(
+									position).getEmail());
+						}
 					}
 					convertView.setTag(holder);
 				} else {
@@ -527,7 +556,7 @@ public class MainActivity extends ActionBarActivity implements
 							String srvName = ((MRemoteSyncedIssue) alarmIssue)
 									.getSrvConnId();
 							for (int i = 1; i < m_connectionIds.size(); i++) {
-								if ( srvName.equals(m_connectionIds.get(i))) {
+								if (srvName.equals(m_connectionIds.get(i))) {
 									this.selectServer(i);
 									bSrvFound = true;
 									break;
@@ -596,10 +625,14 @@ public class MainActivity extends ActionBarActivity implements
 			oldItemPosition = sData.getItemNumber();
 			if (oldItemPosition == 1) {
 				actLocalMenu(true);
-				initLocalTasks(sData.getActiveIssue());
+				if (bNeedShowOverDue) {
+					onOptionsItemSelected(this.getMenu().getItem(3));
+					bNeedShowOverDue = false;
+				} else {
+					initLocalTasks(sData.getActiveIssue());
+				}
 			} else {
 				actLocalMenu(false);
-				initLocalTasks(false);
 				this.setTitle(mDrawerServers.get(oldItemPosition).getName());
 			}
 		}
@@ -777,19 +810,26 @@ public class MainActivity extends ActionBarActivity implements
 		case R.id.action_active_tasks:
 			LocalTasksFragment curFragmentAc = (LocalTasksFragment) getVisibleFragment();
 			if (curFragmentAc != null) {
-				curFragmentAc.setTaskListType(PKTaskListType.ACTIVE);
-				((IRetainedFragment) curFragmentAc).getData().setActiveIssue(
-						true);
-				initLocalTasks(true);
+				curFragmentAc.setTaskListType(TasksFilter.ACTIVE);
+				((IRetainedFragment) curFragmentAc).getData().setActiveIssue(0);
+				initLocalTasks(0);
+			}
+			break;
+		case R.id.action_overdue_tasks:
+			LocalTasksFragment curFragmentDue = (LocalTasksFragment) getVisibleFragment();
+			if (curFragmentDue != null) {
+				curFragmentDue.setTaskListType(TasksFilter.OVERDUE);
+				((IRetainedFragment) curFragmentDue).getData()
+						.setActiveIssue(2);
+				initLocalTasks(2);
 			}
 			break;
 		case R.id.action_closed_tasks:
 			LocalTasksFragment curFragmentCl = (LocalTasksFragment) getVisibleFragment();
 			if (curFragmentCl != null) {
-				curFragmentCl.setTaskListType(PKTaskListType.CLOSED);
-				((IRetainedFragment) curFragmentCl).getData().setActiveIssue(
-						false);
-				initLocalTasks(false);
+				curFragmentCl.setTaskListType(TasksFilter.CLOSED);
+				((IRetainedFragment) curFragmentCl).getData().setActiveIssue(1);
+				initLocalTasks(1);
 			}
 			break;
 		case R.id.action_send_log:

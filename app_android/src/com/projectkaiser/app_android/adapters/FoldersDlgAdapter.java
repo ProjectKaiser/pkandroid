@@ -30,12 +30,12 @@ public class FoldersDlgAdapter extends BaseExpandableListAdapter  {
 
 	@Override
 	public Object getChild(int groupPosition, int childPosition) {
-		return m_projects.get(groupPosition).getFolders().get(childPosition);
+		return m_projects.get(groupPosition).getFolders(m_context).get(childPosition);
 	}
 
 	@Override
 	public long getChildId(int groupPosition, int childPosition) {
-		return m_projects.get(groupPosition).getFolders().get(childPosition).getId();
+		return m_projects.get(groupPosition).getFolders(m_context).get(childPosition).getId();
 	}
 
 	@Override
@@ -67,22 +67,14 @@ public class FoldersDlgAdapter extends BaseExpandableListAdapter  {
         }
 
         TextView textChild = (TextView) convertView.findViewById(R.id.lblFolderName);
-        textChild.setText(m_projects.get(groupPosition).getFolders().get(childPosition).getName());
-
-//        Button button = (Button)convertView.findViewById(R.id.buttonChild);
-//        button.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Toast.makeText(mContext,"button is pressed",5000).show();
-//            }
-//        });
+        textChild.setText(m_projects.get(groupPosition).getFolders(m_context).get(childPosition).getName());
 
         return convertView;
 	}
 
 	@Override
 	public int getChildrenCount(int groupPosition) {
-		return m_projects.get(groupPosition).getFolders().size();
+		return m_projects.get(groupPosition).getFolders(m_context).size();
 	}
 
 	@Override

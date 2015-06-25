@@ -492,17 +492,16 @@ public class EditIssueActivity extends ActionBarActivity implements
 					getBaseContext(), android.R.layout.simple_spinner_item,
 					m_priorities);
 
-			
 			cmbPriority.setOnTouchListener(new OnTouchListener() {
 
 				@Override
 				public boolean onTouch(View v, MotionEvent event) {
 					v.performClick();
 					setissue_modified();
-			        return true;
-			    }
+					return true;
+				}
 			});
-			
+
 			priorityAdapter
 					.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 			cmbPriority.setAdapter(priorityAdapter);
@@ -516,7 +515,8 @@ public class EditIssueActivity extends ActionBarActivity implements
 			setIssuesFolder(null, null);
 
 			if (this.getServerName().isEmpty()) {
-				cmbFolder.setEnabled(false);
+				cmbFolder.setVisibility(View.GONE);
+				// cmbFolder.setEnabled(false);
 			}
 			cmbFolder.setOnTouchListener(new OnTouchListener() {
 				@Override
@@ -528,7 +528,6 @@ public class EditIssueActivity extends ActionBarActivity implements
 						if (sm.getConnections().size() == 0) {
 							return true; // no connections configured
 						}
-
 						showFolderDialog();
 						return true;
 					}
@@ -730,11 +729,19 @@ public class EditIssueActivity extends ActionBarActivity implements
 			m_details = null;
 
 		if (m_details == null)
-			setTitle(R.string.action_newtask);
+			if (curServerName.isEmpty()) {
+				setTitle(R.string.action_newlocaltask);
+			} else {
+				setTitle(R.string.action_newtask);
+			}
 		else
 			setTitle(m_details.getName());
 
 		createUi();
+
+		if (!(getServerName().isEmpty())) {
+			showFolderDialog();
+		}
 	}
 
 	@Override

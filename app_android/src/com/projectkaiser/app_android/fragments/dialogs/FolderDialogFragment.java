@@ -14,6 +14,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.OnChildClickListener;
 import android.widget.LinearLayout;
@@ -239,6 +240,8 @@ public class FolderDialogFragment extends DialogFragment {
 			}
 
 		}
+		
+
 
 		FoldersDlgAdapter adp = new FoldersDlgAdapter(getActivity()
 				.getBaseContext(), wsProjects);
@@ -256,6 +259,6 @@ public class FolderDialogFragment extends DialogFragment {
 				return true;
 			}
 		});
-	}
 
+	}
 }

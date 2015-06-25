@@ -1,5 +1,6 @@
 package com.projectkaiser.app_android.bl.local;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -38,6 +39,9 @@ public class LocalBL implements ILocalBL {
 	public ArrayList<MLocalIssue> getLocalTasks(TasksFilter filter) {
 		SQLiteDatabase db = m_helper.getReadableDatabase();
 
+		if (filter == null)
+			filter = TasksFilter.ACTIVE;
+
 		String[] projection = { PkTasksDb.F_ID, PkTasksDb.F_NAME,
 				PkTasksDb.F_DESCRIPTION, PkTasksDb.F_PRIORITY,
 				PkTasksDb.F_DUE_DATE, PkTasksDb.F_CREATED,
@@ -46,19 +50,20 @@ public class LocalBL implements ILocalBL {
 		String selection = null;
 		String sortOrder = null;
 		String limit = null;
-		
+
 		switch (filter) {
 		case ACTIVE:
+		case OVERDUE:
 			selection = PkTasksDb.F_STATE + "!=" + State.TERMINATED;
 			sortOrder = PkTasksDb.F_PRIORITY + " DESC";
 			break;
 		case CLOSED:
-			selection = PkTasksDb.F_STATE + "=" + State.TERMINATED;			
+			selection = PkTasksDb.F_STATE + "=" + State.TERMINATED;
 			sortOrder = PkTasksDb.F_MODIFIED + " DESC";
 			limit = "300";
 			break;
 		}
-		
+
 		String[] selectionArgs = null;
 
 		Cursor c = db.query(PkTasksDb.T_LOCAL_TASKS, projection, // The columns
@@ -68,31 +73,39 @@ public class LocalBL implements ILocalBL {
 				null, // don't group the rows
 				null, // don't filter by row groups
 				sortOrder, // The sort order
-				limit
-				);
+				limit);
 
 		ArrayList<MLocalIssue> tasks = new ArrayList<MLocalIssue>();
 		if (c.moveToFirst())
 			do {
-				MLocalIssue task = new MLocalIssue();
-				task.setId(c.getLong(c.getColumnIndexOrThrow(PkTasksDb.F_ID)));
-				task.setName(c.getString(c
-						.getColumnIndexOrThrow(PkTasksDb.F_NAME)));
-				task.setDescription(c.getString(c
-						.getColumnIndexOrThrow(PkTasksDb.F_DESCRIPTION)));
-				task.setPriority(c.getInt(c
-						.getColumnIndexOrThrow(PkTasksDb.F_PRIORITY)));
-				task.setDueDate(c.getLong(c
-						.getColumnIndexOrThrow(PkTasksDb.F_DUE_DATE)));
-				task.setCreated(c.getLong(c
-						.getColumnIndexOrThrow(PkTasksDb.F_CREATED)));
-				task.setModified(c.getLong(c
-						.getColumnIndexOrThrow(PkTasksDb.F_MODIFIED)));
-				task.setBudget(c.getInt(c
-						.getColumnIndexOrThrow(PkTasksDb.F_BUDGET)));
-				task.setState(c.getInt(c
-						.getColumnIndexOrThrow(PkTasksDb.F_STATE)));
-				tasks.add(task);
+				Date dt = new Date();
+				Long dd = c.getLong(c
+						.getColumnIndexOrThrow(PkTasksDb.F_DUE_DATE));
+				Date dueDate = new Date(dd);
+
+				if ((filter != TasksFilter.OVERDUE)
+						|| (dd > 0 && dueDate.before(dt))) {
+					MLocalIssue task = new MLocalIssue();
+					task.setId(c.getLong(c
+							.getColumnIndexOrThrow(PkTasksDb.F_ID)));
+					task.setName(c.getString(c
+							.getColumnIndexOrThrow(PkTasksDb.F_NAME)));
+					task.setDescription(c.getString(c
+							.getColumnIndexOrThrow(PkTasksDb.F_DESCRIPTION)));
+					task.setPriority(c.getInt(c
+							.getColumnIndexOrThrow(PkTasksDb.F_PRIORITY)));
+					task.setDueDate(c.getLong(c
+							.getColumnIndexOrThrow(PkTasksDb.F_DUE_DATE)));
+					task.setCreated(c.getLong(c
+							.getColumnIndexOrThrow(PkTasksDb.F_CREATED)));
+					task.setModified(c.getLong(c
+							.getColumnIndexOrThrow(PkTasksDb.F_MODIFIED)));
+					task.setBudget(c.getInt(c
+							.getColumnIndexOrThrow(PkTasksDb.F_BUDGET)));
+					task.setState(c.getInt(c
+							.getColumnIndexOrThrow(PkTasksDb.F_STATE)));
+					tasks.add(task);
+				}
 			} while (c.moveToNext());
 
 		return tasks;
@@ -107,8 +120,9 @@ public class LocalBL implements ILocalBL {
 				PkTasksDb.F_DESCRIPTION, PkTasksDb.F_PRIORITY,
 				PkTasksDb.F_DUE_DATE, PkTasksDb.F_CREATED,
 				PkTasksDb.F_MODIFIED, PkTasksDb.F_BUDGET, PkTasksDb.F_STATE,
-				PkTasksDb.F_FOLDER_ID, PkTasksDb.F_ASSIGNEE_ID, PkTasksDb.F_FAILURE,
-				PkTasksDb.F_RESPONSIBLE_ID, PkTasksDb.F_SERVER_CONNECTION_ID };
+				PkTasksDb.F_FOLDER_ID, PkTasksDb.F_ASSIGNEE_ID,
+				PkTasksDb.F_FAILURE, PkTasksDb.F_RESPONSIBLE_ID,
+				PkTasksDb.F_SERVER_CONNECTION_ID };
 
 		String selection = PkTasksDb.F_STATE + "!=" + State.TERMINATED; // +
 																		// " AND "
@@ -220,13 +234,15 @@ public class LocalBL implements ILocalBL {
 			db.endTransaction();
 		}
 	}
-	
+
 	@Override
 	public void deleteNonSyncedTasks(String connectionId) {
 		for (MRemoteNotSyncedIssue nst : getNotSyncedTasks()) {
 			if (connectionId.equals(nst.getSrvConnId())) {
 				deleteTask(nst);
-				log.debug("Non-synced task <"+nst.getId().toString()+"> deleted when removing connection <"+connectionId+">");
+				log.debug("Non-synced task <" + nst.getId().toString()
+						+ "> deleted when removing connection <" + connectionId
+						+ ">");
 			}
 		}
 	}
@@ -259,7 +275,8 @@ public class LocalBL implements ILocalBL {
 	}
 
 	@Override
-	public MRemoteNotSyncedIssue updateTaskEx(MRemoteNotSyncedIssue task, long time) {
+	public MRemoteNotSyncedIssue updateTaskEx(MRemoteNotSyncedIssue task,
+			long time) {
 		SQLiteDatabase db = m_helper.getWritableDatabase();
 		db.beginTransaction();
 		try {
@@ -276,7 +293,7 @@ public class LocalBL implements ILocalBL {
 			values.put(PkTasksDb.F_ASSIGNEE_ID, task.getAssigneeId());
 			values.put(PkTasksDb.F_RESPONSIBLE_ID, task.getResponsibleId());
 			values.put(PkTasksDb.F_SERVER_CONNECTION_ID, task.getSrvConnId());
-			values.put(PkTasksDb.F_FAILURE, (String)null);
+			values.put(PkTasksDb.F_FAILURE, (String) null);
 
 			db.update(PkTasksDb.T_NOT_SYNCED_TASKS, values, "id=?",
 					new String[] { task.getId().toString() });
@@ -294,7 +311,9 @@ public class LocalBL implements ILocalBL {
 		db.beginTransaction();
 		try {
 			ContentValues values = new ContentValues();
-			values.put(PkTasksDb.F_STATE, task.getState()==State.TERMINATED?State.RUNNING:State.TERMINATED);
+			values.put(PkTasksDb.F_STATE,
+					task.getState() == State.TERMINATED ? State.RUNNING
+							: State.TERMINATED);
 			db.update(PkTasksDb.T_LOCAL_TASKS, values, "id=?",
 					new String[] { task.getId().toString() });
 			db.setTransactionSuccessful();
@@ -302,19 +321,20 @@ public class LocalBL implements ILocalBL {
 			db.endTransaction();
 		}
 	}
-	
+
 	@Override
-	public void handleCreateResult(MCreateRequestEx request, List<Object> commentsRes, List<Object> tasksRes) {
-		for (int i=0; i<request.getNewComments().size(); i++) {
-			MNewComment c = request.getNewComments().get(i); 
+	public void handleCreateResult(MCreateRequestEx request,
+			List<Object> commentsRes, List<Object> tasksRes) {
+		for (int i = 0; i < request.getNewComments().size(); i++) {
+			MNewComment c = request.getNewComments().get(i);
 			Object o = commentsRes.get(i);
 			if (o instanceof Long || o instanceof Integer)
 				deleteNewComment(c);
 			else
 				setCommentFailure(c, o.toString());
 		}
-		
-		for (int i=0; i<request.getNewIssues().size(); i++) {
+
+		for (int i = 0; i < request.getNewIssues().size(); i++) {
 			MRemoteNotSyncedIssue task = request.getNewIssues().get(i);
 			Object o = tasksRes.get(i);
 			if (o instanceof Long || o instanceof Integer)
@@ -322,7 +342,7 @@ public class LocalBL implements ILocalBL {
 			else
 				setTaskFailure(task, o.toString());
 		}
-		
+
 	}
 
 	public void deleteNewComment(MNewComment comment) {
@@ -338,13 +358,13 @@ public class LocalBL implements ILocalBL {
 			db.endTransaction();
 		}
 	}
-	
+
 	public void deleteNewTask(MRemoteNotSyncedIssue task) {
 		SQLiteDatabase db = m_helper.getWritableDatabase();
 		db.beginTransaction();
 		try {
-			db.delete(PkTasksDb.T_NOT_SYNCED_TASKS, "id=?",
-					new String[] { task.getId().toString() });
+			db.delete(PkTasksDb.T_NOT_SYNCED_TASKS, "id=?", new String[] { task
+					.getId().toString() });
 			log.debug("New task <" + task.getId()
 					+ "> deleted after successful sync");
 			db.setTransactionSuccessful();
@@ -385,13 +405,12 @@ public class LocalBL implements ILocalBL {
 		long time = (new Date()).getTime();
 		return updateTaskEx(task, time);
 	}
-	
+
 	@Override
 	public MLocalIssue updateTaskEx(MLocalIssue task, long time) {
 		SQLiteDatabase db = m_helper.getWritableDatabase();
 		db.beginTransaction();
 		try {
-
 
 			ContentValues values = new ContentValues();
 			values.put(PkTasksDb.F_NAME, task.getName());
@@ -411,7 +430,7 @@ public class LocalBL implements ILocalBL {
 		}
 		return task;
 	}
-	
+
 	public void setCommentFailure(MNewComment comment, String failure) {
 		SQLiteDatabase db = m_helper.getWritableDatabase();
 		db.beginTransaction();
@@ -428,7 +447,7 @@ public class LocalBL implements ILocalBL {
 			db.endTransaction();
 		}
 	}
-	
+
 	public void setTaskFailure(MRemoteNotSyncedIssue task, String failure) {
 		SQLiteDatabase db = m_helper.getWritableDatabase();
 		db.beginTransaction();

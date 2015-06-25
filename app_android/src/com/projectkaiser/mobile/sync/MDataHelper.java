@@ -7,11 +7,13 @@ import com.projectkaiser.app_android.settings.SessionManager;
 public class MDataHelper {
 	
 	SessionManager m_sm;
+	Context m_ctx;
 	
 	String m_connId;
 	
 	public MDataHelper(Context ctx, String connId) {
 		m_sm = SessionManager.get(ctx);
+		m_ctx = ctx;
 		m_connId = connId;
 	}
 
@@ -24,7 +26,7 @@ public class MDataHelper {
 	
 	public MMyProject findProjectByFolder(Long id) {
 		for (MMyProject p:m_sm.getMyProjects(m_connId).getItems()) {
-			for (MFolder f:p.getFolders())
+			for (MFolder f:p.getFolders(m_ctx))
 				if (id.equals(f.getId()))
 					return p;
 		}
@@ -39,7 +41,7 @@ public class MDataHelper {
 	}
 	
 	public MFolder findFolder(Long id, MMyProject p) {
-		for (MFolder f:p.getFolders())
+		for (MFolder f:p.getFolders(m_ctx))
 			if (id.equals(f.getId()))
 				return f;
 		return null;
