@@ -739,7 +739,7 @@ public class EditIssueActivity extends ActionBarActivity implements
 
 		createUi();
 
-		if (!(getServerName().isEmpty())) {
+		if (!(getServerName().isEmpty()) && savedInstanceState==null) {
 			showFolderDialog();
 		}
 	}
