@@ -19,7 +19,6 @@ import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -67,6 +66,8 @@ public class EditIssueActivity extends ActionBarActivity implements
 	boolean missue_modified = false;
 	TextWatcher anyEditTextWatcher = null;
 	boolean mIgnoreModified = false;
+	String lastConId = null;
+	long lastid = 0L;
 
 	ArrayList<CharSequence> m_priorities = new ArrayList<CharSequence>();
 
@@ -99,6 +100,9 @@ public class EditIssueActivity extends ActionBarActivity implements
 		m_currentFolder.clear();
 		SelectedIssuesFolder folder = new SelectedIssuesFolder(connectionId);
 
+		lastConId = connectionId;
+		if (id != null)
+			lastid = id;
 		if (id == null || id.equals(0L)) {
 			folder.setId(0L);
 			folder.setName(getString(R.string.set_local));
@@ -717,6 +721,21 @@ public class EditIssueActivity extends ActionBarActivity implements
 	}
 
 	@Override
+	public void onRestoreInstanceState(Bundle savedInstanceState) {
+		super.onRestoreInstanceState(savedInstanceState);
+		lastid = savedInstanceState.getLong("lastid");
+		lastConId = savedInstanceState.getString("lastConId");
+		setIssuesFolder(lastConId, lastid);
+	}
+
+	@Override
+	public void onSaveInstanceState(Bundle savedInstanceState) {
+		super.onSaveInstanceState(savedInstanceState);
+		savedInstanceState.putLong("lastid", lastid);
+		savedInstanceState.putString("lastConId", lastConId);
+	}
+
+	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
@@ -739,8 +758,17 @@ public class EditIssueActivity extends ActionBarActivity implements
 
 		createUi();
 
-		if (!(getServerName().isEmpty()) && savedInstanceState==null) {
-			showFolderDialog();
+		if (!(getServerName().isEmpty())) {
+			FolderDialogFragment fr = (FolderDialogFragment) getSupportFragmentManager()
+					.findFragmentByTag("folder");
+			if (fr != null) {
+				fr.dismiss();
+				showFolderDialog();
+			} else {
+				if (savedInstanceState == null) {
+					showFolderDialog();
+				}
+			}
 		}
 	}
 
