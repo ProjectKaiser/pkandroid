@@ -543,6 +543,12 @@ public class MainActivity extends ActionBarActivity implements
 					.getSupportFragmentManager();
 			curfragment = fragmentManager.findFragmentByTag("data");
 			if (curfragment != null) {
+				IssueListData sData = ((IRetainedFragment) curfragment).getData();
+				oldItemPosition = 1;
+				if (sData != null) {
+					oldItemPosition = sData.getItemNumber();
+				}
+				selectServer(oldItemPosition);
 				InitFragmentData();
 			} else {
 				oldItemPosition = 1;
@@ -612,7 +618,6 @@ public class MainActivity extends ActionBarActivity implements
 		_menu = menu;
 
 		if (curfragment != null) {
-			IssueListData sData = ((IRetainedFragment) curfragment).getData();
 			InitFragmentData();
 		}
 
@@ -805,7 +810,6 @@ public class MainActivity extends ActionBarActivity implements
 		if (mDrawerToggle.onOptionsItemSelected(item)) {
 			return true;
 		}
-
 		switch (item.getItemId()) {
 		case R.id.action_active_tasks:
 			LocalTasksFragment curFragmentAc = (LocalTasksFragment) getVisibleFragment();
