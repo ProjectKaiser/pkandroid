@@ -54,20 +54,25 @@ public class IssuesArrayAdapter extends ArrayAdapter<MIssue> {
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		View rowView = null;
 		int disPos = -1;
-		if (m_tasks==null) {return rowView;}
+		if (m_tasks == null) {
+			return rowView;
+		}
 		if (adapterRemovedItem != null) {
 			disPos = adapterRemovedItem.dismissPosition;
 		}
 		if (disPos == position) {
-			rowView = inflater.inflate(R.layout.inbox_dismiss_row, parent,	false);
+			rowView = inflater.inflate(R.layout.inbox_dismiss_row, parent,
+					false);
 			rowView.setTag(m_ctx.getString(R.string.NOT_SWIPING_ITEM));
 			TextView lblTaskName = (TextView) rowView
 					.findViewById(R.id.lblDismissIssue);
 			TextView txtRestoreIssue = (TextView) rowView
 					.findViewById(R.id.txtRestoreIssue);
 			MIssue task = m_tasks.get(position);
-			if (task==null) {return rowView;}
-			
+			if (task == null) {
+				return rowView;
+			}
+
 			txtRestoreIssue.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View view) {
@@ -80,7 +85,7 @@ public class IssuesArrayAdapter extends ArrayAdapter<MIssue> {
 						BL.getLocal(m_ctx).updateTaskEx(
 								(MLocalIssue) m_details, time);
 						MainActivity myAct = (MainActivity) m_ctx;
-						myAct.RefreshItemList();
+						myAct.RefreshItemRevert(adapterRemovedItem.dismissPosition);
 					}
 					return;
 				}
@@ -125,9 +130,19 @@ public class IssuesArrayAdapter extends ArrayAdapter<MIssue> {
 			}
 
 			if (task.getDueDate() != null && task.getDueDate() > 0) {
-				SimpleDateFormat df = new SimpleDateFormat(
-						m_ctx.getString(R.string.short_date),
-						Locale.getDefault());
+				boolean nullDueTime;
+				Calendar cdt = Calendar.getInstance();
+				cdt.setTime(new Date(task.getDueDate()));
+				nullDueTime = (cdt.get(Calendar.HOUR_OF_DAY)) == 0;
+				SimpleDateFormat df;
+				if (!nullDueTime)
+					df = new SimpleDateFormat(
+							m_ctx.getString(R.string.short_date_time),
+							Locale.getDefault());
+				else
+					df = new SimpleDateFormat(
+							m_ctx.getString(R.string.short_date),
+							Locale.getDefault());
 				lblTaskDue.setText(m_ctx.getString(R.string.issue_due_date,
 						df.format(new Date(task.getDueDate()))));
 				Calendar now = new GregorianCalendar(Locale.getDefault());

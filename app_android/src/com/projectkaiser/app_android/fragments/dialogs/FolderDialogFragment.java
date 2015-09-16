@@ -14,6 +14,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ExpandableListView.OnGroupClickListener;
 import android.widget.ListView;
 import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.OnChildClickListener;
@@ -21,7 +22,6 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 
 import com.projectkaiser.app_android.*;
-import com.projectkaiser.app_android.R;
 import com.projectkaiser.app_android.adapters.FoldersDlgAdapter;
 import com.projectkaiser.app_android.settings.SessionManager;
 import com.projectkaiser.app_android.settings.SrvConnectionBaseData;
@@ -37,6 +37,8 @@ public class FolderDialogFragment extends DialogFragment {
 
 	public interface FolderListener {
 		void onLocalSelected();
+
+		void onProjectSelected(String connectionId, Long projectId);
 
 		void onFolderSelected(String connectionId, Long projectId, Long folderId);
 	}
@@ -84,19 +86,19 @@ public class FolderDialogFragment extends DialogFragment {
 		int selectedIndex = 0;
 		String lastConId = sm.getLatestFolderDlgConnectionId();
 
-		int idx  = 0;
+		int idx = 0;
 		for (String connId : sm.getConnections()) {
 			SrvConnectionBaseData base = sm.getBaseData(connId);
 			m_connectionIds.add(connId);
 			arrCons.add(base.getServerName());
 			EditIssueActivity mainActivity = (EditIssueActivity) getActivity();
-			if (connId.equals(mainActivity.getServerName())){
-//			if (lastConId != null && lastConId.equals(connId))
+			if (connId.equals(mainActivity.getServerName())) {
+				// if (lastConId != null && lastConId.equals(connId))
 				selectedIndex = idx;
 			}
 			idx = idx + 1;
 		}
-		
+
 		ArrayAdapter<CharSequence> adptCons = new ArrayAdapter<CharSequence>(
 				getActivity().getBaseContext(),
 				android.R.layout.simple_spinner_item, arrCons);
@@ -119,7 +121,7 @@ public class FolderDialogFragment extends DialogFragment {
 		cmbConnections.setSelection(selectedIndex);
 		showWorkingSets(selectedIndex);
 
-//		if (adptCons.getCount() == 1)
+		// if (adptCons.getCount() == 1)
 		cmbConnections.setVisibility(View.GONE);
 
 		// ////////////////////////////////////////////////////
@@ -240,14 +242,31 @@ public class FolderDialogFragment extends DialogFragment {
 			}
 
 		}
-		
-
 
 		FoldersDlgAdapter adp = new FoldersDlgAdapter(getActivity()
 				.getBaseContext(), wsProjects);
 		elvFolders.setAdapter(adp);
 		if (adp.getGroupCount() > 0)
 			elvFolders.expandGroup(0);
+		elvFolders.setOnGroupClickListener(new OnGroupClickListener() {
+
+			@Override
+			public boolean onGroupClick(ExpandableListView parent, View v,
+					int groupPosition, long id) {
+				if (m_listener != null) {
+					MDataHelper hlp = new MDataHelper(getActivity()
+							.getApplicationContext(), conId);
+					if (!hlp.projectHasFolders(wsProjects.get(groupPosition)
+							.getId())) {
+						m_listener.onProjectSelected(conId, wsProjects.get(groupPosition).getId());
+						getDialog().dismiss();
+						return true;
+					}
+				}
+				return false;
+			}
+
+		});
 		elvFolders.setOnChildClickListener(new OnChildClickListener() {
 			@Override
 			public boolean onChildClick(ExpandableListView parent, View v,

@@ -14,14 +14,10 @@ import com.projectkaiser.app_android.EditIssueActivity;
 import com.projectkaiser.app_android.R;
 import com.projectkaiser.app_android.adapters.IssuesArrayAdapter;
 import com.projectkaiser.app_android.bl.BL;
-import com.projectkaiser.app_android.bl.events.AppEvent;
-import com.projectkaiser.app_android.bl.events.DataSyncStarted;
-import com.projectkaiser.app_android.bl.events.IGlobalAppEventsListener;
-import com.projectkaiser.app_android.bl.events.LocalTaskAdded;
-import com.projectkaiser.app_android.bl.events.RefreshLists;
+import com.projectkaiser.app_android.bl.events.*;
 import com.projectkaiser.app_android.bl.local.ILocalBL;
-import com.projectkaiser.app_android.bl.local.TasksFilter;
 import com.projectkaiser.app_android.bl.obj.MRemoteNotSyncedIssue;
+import com.projectkaiser.app_android.consts.ActivityReq;
 import com.projectkaiser.mobile.sync.MIssue;
 import com.projectkaiser.mobile.sync.MLocalIssue;
 import com.projectkaiser.app_android.misc.SwipeDismissListViewTouchListener;
@@ -45,9 +41,23 @@ public class LocalTasksFragment extends IssuesListAbstractFragment implements
 		return true;
 	}
 
+	public View getViewByPosition(int pos, ListView listView) {
+		final int firstListItemPosition = listView.getFirstVisiblePosition();
+		final int lastListItemPosition = firstListItemPosition
+				+ listView.getChildCount() - 1;
+
+		if (pos < firstListItemPosition || pos > lastListItemPosition) {
+			return listView.getAdapter().getView(pos, null, listView);
+		} else {
+			final int childIndex = pos - firstListItemPosition;
+			return listView.getChildAt(childIndex);
+		}
+	}
+
 	private class MyDismissCallbacks implements
 			SwipeDismissListViewTouchListener.DismissCallbacks {
 		public void onDismiss(ListView listView, int[] reverseSortedPositions) {
+
 			IssuesArrayAdapter adapter = new IssuesArrayAdapter(getRootView()
 					.getContext(), getIssuesList());
 			if (m_tasks == null)
@@ -65,6 +75,12 @@ public class LocalTasksFragment extends IssuesListAbstractFragment implements
 				if (realpos <= -1) {
 					return;
 				}
+				View v = getViewByPosition(realpos, listView);
+				int itemHeight = getViewByPosition(listView.getFirstVisiblePosition(), listView).getHeight();
+				int top = (v == null) ? 0 : (v.getTop() - listView
+						.getPaddingTop());
+
+				if (m_tasks.size()<=realpos) return;
 				MIssue m_details = m_tasks.get(realpos);
 				if (m_details == null)
 					return;
@@ -75,6 +91,10 @@ public class LocalTasksFragment extends IssuesListAbstractFragment implements
 				removedItem.Modified = modif;
 				adapter.setremovedItem(removedItem);
 				getListView().setAdapter(adapter);
+				// getListView().setSelection(realpos);
+				if (top > listView.getBottom() - itemHeight)
+					top = listView.getBottom() - itemHeight - 32;
+				listView.setSelectionFromTop(realpos, top);
 			}
 		}
 
@@ -103,8 +123,17 @@ public class LocalTasksFragment extends IssuesListAbstractFragment implements
 		} else if (event instanceof RefreshLists) {
 			hideProgress();
 			refresh();
-		} else if (event instanceof LocalTaskAdded)
+		} else if (event instanceof LocalTaskAdded) {
 			refresh();
+		} else if (event instanceof LocalTaskRevert) {
+			int pos = ((LocalTaskRevert) event).getPosition();
+			View v = getViewByPosition(pos, getListView());
+			int top = (v == null) ? 0 : (v.getTop() - getListView()
+					.getPaddingTop());
+			refresh();
+			getListView().setSelectionFromTop(pos, top);
+		}
+
 	}
 
 	@Override
@@ -139,16 +168,9 @@ public class LocalTasksFragment extends IssuesListAbstractFragment implements
 			return null;
 		ILocalBL bl = BL.getLocal(getActivity().getApplicationContext());
 		m_tasks = new ArrayList<MIssue>();
-		for (MLocalIssue li : bl.getLocalTasks(getTaskListType())){
+		for (MLocalIssue li : bl.getLocalTasks(getTaskListType())) {
 			m_tasks.add(li);
 		}
-/*		
-		if (!isClosedTasksSelected()) {
-			for (MRemoteNotSyncedIssue nsi : bl.getNotSyncedTasks())
-				m_tasks.add(nsi);
-		}
-*/		
-		
 		return m_tasks;
 	}
 
@@ -156,7 +178,7 @@ public class LocalTasksFragment extends IssuesListAbstractFragment implements
 	protected void onIssueClick(int position) {
 		Intent i = new Intent(getRootView().getContext(),
 				EditIssueActivity.class);
-		i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//		i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		i.putExtra(MIssue.class.getName(), m_tasks.get(position));
 		i.putExtra("SRVNAME", "");
 		startActivity(i);

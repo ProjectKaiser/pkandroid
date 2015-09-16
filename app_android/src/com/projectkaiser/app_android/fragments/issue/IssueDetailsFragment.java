@@ -1,6 +1,7 @@
 package com.projectkaiser.app_android.fragments.issue;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
@@ -146,11 +147,22 @@ public class IssueDetailsFragment extends Fragment implements ITaskDetailsListen
 		
 		TextView lblDueDate = (TextView)m_rootView.findViewById(R.id.lblDueDate); 
 		if (details.getDueDate()!=null && details.getDueDate()>0) {
-			SimpleDateFormat df = new SimpleDateFormat(getString(R.string.short_date), Locale.getDefault());
+
+			Calendar cdt = Calendar.getInstance();
+			cdt.setTime(new Date(details.getDueDate()));
+			boolean nullDueTime = (cdt.get(Calendar.HOUR_OF_DAY)) == 0;
+
+			SimpleDateFormat df;
+			if (!nullDueTime)
+			  df = new SimpleDateFormat(getString(R.string.short_date_time), Locale.getDefault());
+			else
+			  df = new SimpleDateFormat(getString(R.string.short_date), Locale.getDefault());
+
 			String due = df.format(new Date(details.getDueDate()));
 			lblDueDate.setText(getString(R.string.issue_due_date, due));
 		} else 
 			m_rootView.findViewById(R.id.lblDueDate).setVisibility(View.GONE);
+
 
 		/////////////////////////////////////////////////////
 		//  Budget
@@ -259,9 +271,13 @@ public class IssueDetailsFragment extends Fragment implements ITaskDetailsListen
 				webView1.getSettings().setBlockNetworkImage(false);
 				webView1.getSettings().setBlockNetworkLoads(false);
 				webView1.getSettings().setLoadsImagesAutomatically(true);
-				
+								
+				webView1.getSettings().setLoadWithOverviewMode(true);
 				webView1.getSettings().setUseWideViewPort(true);
-				webView1.setInitialScale(1);				
+				webView1.getSettings().setSupportZoom(true);
+				webView1.getSettings().setBuiltInZoomControls(true);
+				
+				webView1.setInitialScale(300);				
 		    
 				WebViewClient myWebClient = new WebViewClient()
 				{	
@@ -306,8 +322,8 @@ public class IssueDetailsFragment extends Fragment implements ITaskDetailsListen
 		    	html = ParsePictures(html);
 				html = GetImageShowScript() + html;
 				
-				webView1.getSettings().setBuiltInZoomControls(true);
-				webView1.loadDataWithBaseURL(sUrl, html,"text/html", "UTF-8", null);
+	//			webView1.getSettings().setBuiltInZoomControls(true);
+				webView1.loadDataWithBaseURL(sUrl, html ,"text/html", "UTF-8", null);
 				
 			}
 			m_rootView.findViewById(R.id.pnlDescription).setVisibility(View.GONE);

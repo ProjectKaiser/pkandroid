@@ -20,17 +20,21 @@
         android:layout_height="match_parent"
         android:layout_weight="0.02"
         android:gravity="left|center_vertical"
+        android:lines="2"
+        android:minLines="1"
         android:text="svasdfvdafvsdfb"
         android:textColor="#66CCFF"
         android:textSize="16dp" >
+
     </TextView>
 
     <TextView
         android:id="@+id/txtRestoreIssue"
-        android:layout_width="wrap_content"
+        android:layout_width="200dp"
         android:layout_height="match_parent"
         android:layout_weight="0.02"
         android:gravity="right|center_vertical"
+        android:lines="1"
         android:text="vxbnd "
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textColor="#66CCFF"

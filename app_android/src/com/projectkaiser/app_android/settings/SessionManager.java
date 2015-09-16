@@ -301,7 +301,7 @@ public class SessionManager {
 	}
 
 	public boolean getShowNewTask() {
-		return pref.getBoolean(KEY_SHOW_NEW_TASK, false);
+		return pref.getBoolean(KEY_SHOW_NEW_TASK, true);
 	}
 	
 	public int getTimeNotif() {

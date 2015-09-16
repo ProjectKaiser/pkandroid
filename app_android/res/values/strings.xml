@@ -10,8 +10,9 @@
     <string name="save">Save</string>
 
     <!-- Format ****************************************************************** -->
+    <string name="short_date_time">dd.MM.yyyy HH:mm</string>
     <string name="short_date">dd.MM.yyyy</string>
-    <string name="short_date_time">dd.MM.yyyy hh:mm</string>
+    <string name="short_time">HH:mm</string>
     <string name="hrs_pattern">%d h</string>
     <string name="mins_pattern">%d min</string>
     <string name="NOT_SWIPING_ITEM">NOT_SWIPING_ITEM</string>
@@ -64,11 +65,15 @@
     <!-- View / Edit Issue  ****************************************************************** -->
     <string name="assignee_not_specified">Assignee not specified</string>
     <string name="responsible_not_specified">Responsible not specified</string>
-    <string name="due_date_short_label">Due:</string>
+    <string name="due_date_short_label">Date:</string>
+    <string name="due_time_short_label">Time:</string>
     <string name="issue_priority">%s Priority</string>
-    <string name="issue_due_date">Due %s</string>
-    <string name="issue_due_date_label">Due Date</string>
+    <string name="issue_due_date">Date %s</string>
+    <string name="issue_due_time">Time %s</string>
+    <string name="issue_due_date_label">Due date</string>
+    <string name="issue_due_time_label">Due time</string>
     <string name="issue_click_to_assign_due_date">Assign Due Date</string>
+    <string name="issue_click_to_assign_due_time">Assign Due time</string>
     <string name="issue_clear_due_date">Clear</string>
     <string name="issue_budget">Budget: %s</string>
     <string name="issue_budget_label">Budget</string>
@@ -139,7 +144,7 @@
     <string name="pref_title_sync_frequency">Sync interval</string>
     <string name="pref_show_new_task">New task notification</string>
     <string name="pref_time_notif">Daily review time</string>
-    <string name="pref_new_task_notif">Create new task from block screen </string>
+    <string name="pref_new_task_notif">Task from block screen </string>
     <string name="pref_show_due_task">Overdue task notification</string>
     <string name="pref_due_task_notif">Show notificaction on block screen</string>
     

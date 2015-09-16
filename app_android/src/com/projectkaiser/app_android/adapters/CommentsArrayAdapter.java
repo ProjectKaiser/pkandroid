@@ -35,7 +35,7 @@ public class CommentsArrayAdapter extends ArrayAdapter<MComment> {
 		LayoutInflater inflater = (LayoutInflater) m_ctx
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-		SimpleDateFormat df = new SimpleDateFormat(m_ctx.getString(R.string.short_date_time), Locale.getDefault());
+		SimpleDateFormat df = new SimpleDateFormat(m_ctx.getString(R.string.short_time), Locale.getDefault());
 		
 		View rowView = inflater.inflate(R.layout.comments_row, parent, false);
 		TextView lblCommentCreator = (TextView) rowView.findViewById(R.id.lblCommentCreator);

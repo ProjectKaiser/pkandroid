@@ -1,14 +1,20 @@
 package com.projectkaiser.app_android;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 
+import java.util.List;
+import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
@@ -28,29 +34,35 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.content.ComponentName;
 
 import com.projectkaiser.app_android.adapters.IssueFoldersAdapter;
 import com.projectkaiser.app_android.bl.BL;
 import com.projectkaiser.app_android.bl.local.ILocalBL;
 import com.projectkaiser.app_android.bl.obj.MRemoteNotSyncedIssue;
 import com.projectkaiser.app_android.bl.obj.SelectedIssuesFolder;
+import com.projectkaiser.app_android.consts.ActivityReq;
 import com.projectkaiser.app_android.consts.Priority;
 import com.projectkaiser.app_android.consts.State;
 import com.projectkaiser.app_android.fragments.DatePickerFragment;
 import com.projectkaiser.app_android.fragments.IChangeDateListener;
 import com.projectkaiser.app_android.fragments.dialogs.FolderDialogFragment;
 import com.projectkaiser.app_android.fragments.dialogs.FolderDialogFragment.FolderListener;
-import com.projectkaiser.app_android.fragments.dialogs.SelectUserDialogFragment;
 import com.projectkaiser.app_android.fragments.dialogs.SelectUserDialogFragment.UsersListener;
+import com.projectkaiser.app_android.fragments.dialogs.SelectUserDialogFragment;
 import com.projectkaiser.app_android.misc.Time;
 import com.projectkaiser.app_android.services.PkAlarmManager;
 import com.projectkaiser.app_android.settings.SessionManager;
 import com.projectkaiser.mobile.sync.MDataHelper;
+import com.projectkaiser.mobile.sync.MDigestedArray;
 import com.projectkaiser.mobile.sync.MFolder;
 import com.projectkaiser.mobile.sync.MIssue;
 import com.projectkaiser.mobile.sync.MLocalIssue;
 import com.projectkaiser.mobile.sync.MMyProject;
 import com.projectkaiser.mobile.sync.MTeamMember;
+import com.projectkaiser.mobile.sync.MWorkingSet;
+import com.projectkaiser.mobile.sync.MWorkingSets;
+import com.projectkaiser.app_android.fragments.TimePickerFragment;
 
 public class EditIssueActivity extends ActionBarActivity implements
 		IChangeDateListener {
@@ -59,6 +71,7 @@ public class EditIssueActivity extends ActionBarActivity implements
 
 	Calendar m_dueDate;
 
+	boolean nullDueTime = true;
 	MTeamMember m_assignee = null;
 	MTeamMember m_responsible = null;
 	MIssue m_details;
@@ -79,12 +92,46 @@ public class EditIssueActivity extends ActionBarActivity implements
 	}
 
 	@Override
-	public void onDateSet(int year, int month, int day) {
+	public Calendar getDueDate() {
+		return m_dueDate;
+	}
+
+	@Override
+	public void onNewDateSet(int year, int month, int day) {
 		m_dueDate = Calendar.getInstance();
+
+		Date dt = new Date();
+		m_dueDate.setTime(dt);
 		m_dueDate.set(Calendar.YEAR, year);
 		m_dueDate.set(Calendar.MONTH, month);
 		m_dueDate.set(Calendar.DAY_OF_MONTH, day);
 		setDueDate(m_dueDate);
+	}
+
+	@Override
+	public void onNewTimeSet(int hour, int minute, int second) {
+		int y = 0;
+		int m = 0;
+		int d = 0;
+		if (m_dueDate != null) {
+			y = m_dueDate.get(Calendar.YEAR);
+			m = m_dueDate.get(Calendar.MONTH);
+			d = m_dueDate.get(Calendar.DAY_OF_MONTH);
+		}
+		m_dueDate = Calendar.getInstance();
+		Date dt = new Date();
+		m_dueDate.setTime(dt);
+
+		if (y > 0) {
+			m_dueDate.set(Calendar.YEAR, y);
+			m_dueDate.set(Calendar.MONTH, m);
+			m_dueDate.set(Calendar.DAY_OF_MONTH, d);
+		}
+
+		m_dueDate.set(Calendar.HOUR_OF_DAY, hour);
+		m_dueDate.set(Calendar.MINUTE, minute);
+		m_dueDate.set(Calendar.SECOND, second);
+		setDueTime(m_dueDate);
 	}
 
 	SelectedIssuesFolder getSelectedFolder() {
@@ -95,40 +142,45 @@ public class EditIssueActivity extends ActionBarActivity implements
 		return null;
 	}
 
-	void setIssuesFolder(String connectionId, Long id) {
+	void setIssuesFolder(String connectionId, Long id_folder) {
 		final Spinner cmbFolder = (Spinner) findViewById(R.id.cmbFolder);
 		m_currentFolder.clear();
 		SelectedIssuesFolder folder = new SelectedIssuesFolder(connectionId);
-
 		lastConId = connectionId;
-		if (id != null)
-			lastid = id;
-		if (id == null || id.equals(0L)) {
+		if (id_folder != null)
+			lastid = id_folder;
+		if (id_folder == null || id_folder.equals(0L)) {
 			folder.setId(0L);
 			folder.setName(getString(R.string.set_local));
 			folder.setProject(null);
 		} else {
 			MDataHelper hlp = new MDataHelper(getApplicationContext(),
 					connectionId);
-			MMyProject p = hlp.findProjectByFolder(id);
+			MMyProject p = hlp.findProjectByFolder(id_folder);
 			MFolder f = null;
-			folder.setId(id);
+			folder.setId(id_folder);
 			folder.setProject(p);
 			if (p != null)
-				f = hlp.findFolder(id, p);
+				f = hlp.findFolder(id_folder, p);
 			if (f != null)
 				folder.setName(f.getName());
-			else
+			else {
 				folder.setName("?");
+				if (p != null) {
+					folder.setName(p.getName());
+				}
+			}
 		}
 		m_currentFolder.add(folder);
 
-		IssueFoldersAdapter adapterFolders = new IssueFoldersAdapter(
-				getBaseContext(), m_currentFolder);
-		cmbFolder.setAdapter(adapterFolders);
-		cmbFolder.setSelection(0);
-
-		updateTeamCombos();
+		// if (id_folder != null)
+		{
+			IssueFoldersAdapter adapterFolders = new IssueFoldersAdapter(
+					getBaseContext(), m_currentFolder);
+			cmbFolder.setAdapter(adapterFolders);
+			cmbFolder.setSelection(0);
+			updateTeamCombos();
+		}
 		updateMoreSettingsCombo();
 		setissue_modified();
 	}
@@ -150,6 +202,9 @@ public class EditIssueActivity extends ActionBarActivity implements
 
 		if (!isPanelVisible(R.id.pnlDueDate))
 			arrMoreSettings.add(getString(R.string.issue_due_date_label));
+
+		if (!isPanelVisible(R.id.pnlDueTime))
+			arrMoreSettings.add(getString(R.string.issue_due_time_label));
 
 		if (!isPanelVisible(R.id.pnlBudget))
 			arrMoreSettings.add(getString(R.string.issue_budget_label));
@@ -185,6 +240,11 @@ public class EditIssueActivity extends ActionBarActivity implements
 					switchPanel(cmbMoreSettings, adapterMoreSettings,
 							selected.toString(), R.id.pnlDueDate);
 					showSelectDateDlg();
+				} else if (selected.toString().equals(
+						getString(R.string.issue_due_time_label))) {
+					switchPanel(cmbMoreSettings, adapterMoreSettings,
+							selected.toString(), R.id.pnlDueTime);
+					showSelectTimeDlg();
 				} else if (selected.toString().equals(
 						getString(R.string.issue_budget_label))) {
 					switchPanel(cmbMoreSettings, adapterMoreSettings,
@@ -223,6 +283,13 @@ public class EditIssueActivity extends ActionBarActivity implements
 	private void showSelectDateDlg() {
 		DialogFragment newFragment = new DatePickerFragment();
 		newFragment.show(getSupportFragmentManager(), "datePicker");
+		return;
+	}
+
+	private void showSelectTimeDlg() {
+		DialogFragment newFragment = new TimePickerFragment();
+		newFragment.show(getSupportFragmentManager(), "timePicker");
+		return;
 	}
 
 	private void setDueDate(Calendar dueDate) {
@@ -236,9 +303,11 @@ public class EditIssueActivity extends ActionBarActivity implements
 			arr.add(getString(R.string.issue_click_to_assign_due_date));
 			btnClearDueDate.setVisibility(View.GONE);
 			lblDue.setVisibility(View.GONE);
+			nullDueTime = true;
 		} else {
-			arr.add(Time.formatDate(getApplicationContext(),
-					m_dueDate.getTimeInMillis()));
+			SimpleDateFormat df = new SimpleDateFormat(getApplicationContext()
+					.getString(R.string.short_date), Locale.getDefault());
+			arr.add(df.format(m_dueDate.getTime()));
 			btnClearDueDate.setVisibility(View.VISIBLE);
 			lblDue.setVisibility(View.VISIBLE);
 		}
@@ -251,6 +320,39 @@ public class EditIssueActivity extends ActionBarActivity implements
 		final Spinner cmbDueDate = (Spinner) findViewById(R.id.cmbDueDate);
 		cmbDueDate.setAdapter(adapter);
 		cmbDueDate.setSelection(0);
+		setissue_modified();
+		if (nullDueTime)
+			setDueTime(null);
+	}
+
+	private void setDueTime(Calendar dueTime) {
+
+		nullDueTime = false;
+		Button btnClearDueTime = (Button) findViewById(R.id.btnClearDueTime);
+		TextView lblDueTime = (TextView) findViewById(R.id.lblDueTime);
+
+		ArrayList<CharSequence> arr = new ArrayList<CharSequence>();
+		if (dueTime == null) {
+			nullDueTime = true;
+			arr.add(getString(R.string.issue_click_to_assign_due_time));
+			btnClearDueTime.setVisibility(View.GONE);
+			lblDueTime.setVisibility(View.GONE);
+		} else {
+			SimpleDateFormat df = new SimpleDateFormat(getApplicationContext()
+					.getString(R.string.short_time), Locale.getDefault());
+			arr.add(df.format(m_dueDate.getTime()));
+			btnClearDueTime.setVisibility(View.VISIBLE);
+			lblDueTime.setVisibility(View.VISIBLE);
+		}
+
+		ArrayAdapter<CharSequence> adapter = new ArrayAdapter<CharSequence>(
+				getBaseContext(), android.R.layout.simple_spinner_item, arr);
+
+		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+		final Spinner cmbDueTime = (Spinner) findViewById(R.id.cmbDueTime);
+		cmbDueTime.setAdapter(adapter);
+		cmbDueTime.setSelection(0);
 		setissue_modified();
 	}
 
@@ -419,6 +521,21 @@ public class EditIssueActivity extends ActionBarActivity implements
 					Long folderId) {
 				setIssuesFolder(connectionId, folderId);
 			}
+
+			@Override
+			public void onProjectSelected(String connectionId, Long projectId) {
+				setIssuesFolder(connectionId, projectId);
+				MDataHelper hlp = new MDataHelper(getApplicationContext(),
+						connectionId);
+				MMyProject p = hlp.findProjectByFolder(projectId);
+				if (p.getTeam() != null) {
+					if (p.getTeam().size() == 1) {
+						setAssignee(p.getTeam().get(0).getId());
+						findViewById(R.id.cmbAssignee).setVisibility(
+								View.VISIBLE);
+					}
+				}
+			}
 		});
 
 		dialog.show(getSupportFragmentManager(), "folder");
@@ -562,6 +679,28 @@ public class EditIssueActivity extends ActionBarActivity implements
 			});
 
 			// ////////////////////////////////////////////////////////
+			// Due Time
+			//
+			final Spinner cmbDueTime = (Spinner) findViewById(R.id.cmbDueTime);
+			final Button btnClearDueTime = (Button) findViewById(R.id.btnClearDueTime);
+			btnClearDueTime.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View arg0) {
+					setDueTime(null);
+				}
+			});
+			cmbDueTime.setOnTouchListener(new OnTouchListener() {
+				@Override
+				public boolean onTouch(View v, MotionEvent event) {
+					if (event.getAction() == MotionEvent.ACTION_UP) {
+						showSelectTimeDlg();
+						return true;
+					}
+					return false;
+				}
+			});
+
+			// ////////////////////////////////////////////////////////
 			// Assignee
 			//
 			final Spinner cmbAssignee = (Spinner) findViewById(R.id.cmbAssignee);
@@ -637,13 +776,22 @@ public class EditIssueActivity extends ActionBarActivity implements
 							"View doesn't support this kind of Issue");
 
 				// due date
+				nullDueTime = true;
 				if (m_details.getDueDate() != null
 						&& m_details.getDueDate() > 0) {
+
 					Calendar c = Calendar.getInstance();
 					c.setTimeInMillis(m_details.getDueDate());
-					onDateSet(c.get(Calendar.YEAR), c.get(Calendar.MONTH),
+					onNewDateSet(c.get(Calendar.YEAR), c.get(Calendar.MONTH),
 							c.get(Calendar.DAY_OF_MONTH));
+					onNewTimeSet(c.get(Calendar.HOUR_OF_DAY),
+							c.get(Calendar.MINUTE), c.get(Calendar.SECOND));
+					nullDueTime = (m_dueDate.get(Calendar.HOUR_OF_DAY) == 0);
 					findViewById(R.id.pnlDueDate).setVisibility(View.VISIBLE);
+					if (!nullDueTime) {
+						findViewById(R.id.pnlDueTime).setVisibility(
+								View.VISIBLE);
+					}
 				}
 
 				// budget
@@ -759,6 +907,33 @@ public class EditIssueActivity extends ActionBarActivity implements
 		createUi();
 
 		if (!(getServerName().isEmpty())) {
+
+			SessionManager sm = SessionManager.get(EditIssueActivity.this);
+			if (sm.getConnections().size() > 0) {
+				String conid = sm.getConnections().get(0);
+
+				MDigestedArray<MMyProject> prs = sm.getMyProjects(conid);
+				MDataHelper hlp = new MDataHelper(getApplicationContext(),
+						conid);
+				if (prs.getItems().size() == 1) {
+					
+					MMyProject p = hlp.findProject(prs.getItems().get(0).getId());
+					if (p != null) {
+						if(!hlp.projectHasFolders(p.getId())){
+							setIssuesFolder(conid, p.getId());
+							if (p.getTeam() != null) {
+								if (p.getTeam().size() == 1) {
+									setAssignee(p.getTeam().get(0).getId());
+									findViewById(R.id.cmbAssignee).setVisibility(
+											View.VISIBLE);
+								}
+							}
+							return;
+						}
+					}
+					
+				}
+			}
 			FolderDialogFragment fr = (FolderDialogFragment) getSupportFragmentManager()
 					.findFragmentByTag("folder");
 			if (fr != null) {
@@ -769,6 +944,7 @@ public class EditIssueActivity extends ActionBarActivity implements
 					showFolderDialog();
 				}
 			}
+
 		}
 	}
 
@@ -836,10 +1012,16 @@ public class EditIssueActivity extends ActionBarActivity implements
 		// ////////////////////////////////////////////////////////
 		// / Validate due date
 		// /
-		if (m_dueDate != null)
+		if (m_dueDate != null) {
+			if (nullDueTime) {
+				m_dueDate.set(Calendar.HOUR_OF_DAY, 0);
+				m_dueDate.set(Calendar.MINUTE, 0);
+				m_dueDate.set(Calendar.SECOND, 0);
+			}
 			t.setDueDate(m_dueDate.getTimeInMillis());
-		else
+		} else {
 			t.setDueDate(0L);
+		}
 
 		// ////////////////////////////////////////////////////////
 		// / Validate budget
@@ -931,7 +1113,7 @@ public class EditIssueActivity extends ActionBarActivity implements
 											.deleteTask(
 													(MRemoteNotSyncedIssue) m_details);
 								setResult(RESULT_OK);
-								finish();
+								onBackPressed();
 							}
 						}).setNegativeButton(R.string.no, null).show();
 	}
@@ -940,7 +1122,34 @@ public class EditIssueActivity extends ActionBarActivity implements
 		if (m_details instanceof MLocalIssue)
 			BL.getLocal(getApplicationContext()).completeTask(
 					(MLocalIssue) m_details);
-		finish();
+		onBackPressed();
+	}
+
+	private void restartApp() {
+
+		ActivityManager manager = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
+		List<ActivityManager.RunningTaskInfo> task = manager.getRunningTasks(1);
+		ComponentName componentInfo = task.get(0).baseActivity;
+		if (!componentInfo.getClassName().contains("MainActivity")) {
+
+			Intent i = getBaseContext().getPackageManager()
+					.getLaunchIntentForPackage(
+							getBaseContext().getPackageName());
+			i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+			i.setAction(Intent.ACTION_MAIN);
+			startActivity(i);
+		}
+	}
+
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+	}
+
+	@Override
+	public void onBackPressed() {
+		super.onBackPressed();
+		restartApp();
 	}
 
 	void saveChanges() {
@@ -972,12 +1181,12 @@ public class EditIssueActivity extends ActionBarActivity implements
 			Intent intent = new Intent();
 			intent.putExtra("task", task);
 			setResult(RESULT_OK, intent);
-			finish();
+			onBackPressed();
 		}
 	}
 
 	void cancelEditing() {
-		finish();
+		onBackPressed();
 	}
 
 	@Override
@@ -996,6 +1205,9 @@ public class EditIssueActivity extends ActionBarActivity implements
 			break;
 		case R.id.action_task_delete:
 			deleteTask();
+			break;
+		default:
+			onBackPressed();
 			break;
 		}
 		return super.onOptionsItemSelected(item);

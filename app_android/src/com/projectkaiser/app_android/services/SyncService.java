@@ -256,6 +256,7 @@ public class SyncService extends IntentService {
 		ArrayList<MIssue> m_localtasks = new ArrayList<MIssue>();
 		for (MLocalIssue li : bl.getLocalTasks(TasksFilter.ACTIVE)) {
 			Date duedate = new Date(li.getDueDate());
+			duedate.setTime(0);
 			Calendar cl = Calendar.getInstance();
 			cl.set(2000, 1, 1);
 			Date dt = cl.getTime();

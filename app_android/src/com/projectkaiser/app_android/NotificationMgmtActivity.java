@@ -45,7 +45,7 @@ public class NotificationMgmtActivity extends ActionBarActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		m_sessionManager = SessionManager.get(this);
-		setContentView(R.layout.notification_settings_activity);
+//		setContentView(R.layout.notification_settings_activity);
 		update();
 	}
 

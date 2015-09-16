@@ -23,25 +23,26 @@ import com.projectkaiser.app_android.fragments.main.IRetainedFragment;
 import com.projectkaiser.app_android.bl.local.*;
 
 public abstract class IssuesListAbstractFragment extends Fragment implements
-		IGlobalAppEventsListener, SwipeRefreshLayout.OnRefreshListener, IRetainedFragment {
+		IGlobalAppEventsListener, SwipeRefreshLayout.OnRefreshListener,
+		IRetainedFragment {
 
 	private View m_rootView;
 	private TasksFilter mTaskListType;
 	protected LocalRemovedItem removedItem = null;
-    private IssueListData statedata;
+	private IssueListData statedata;
 
-    public void initStateData(){
-    	statedata = new  IssueListData();   	
-    }
-    
+	public void initStateData() {
+		statedata = new IssueListData();
+	}
+
 	@Override
 	public IssueListData getData() {
-        return statedata;
-    }
+		return statedata;
+	}
 
 	protected final void refresh() {
 		ListView lv = getListView();
-		if (lv == null || getIssuesList()==null)
+		if (lv == null || getIssuesList() == null)
 			return;
 		IssuesArrayAdapter adapter = new IssuesArrayAdapter(getRootView()
 				.getContext(), getIssuesList());
@@ -49,12 +50,17 @@ public abstract class IssuesListAbstractFragment extends Fragment implements
 		lv.setAdapter(adapter);
 	}
 
-	
 	protected abstract List<MIssue> getIssuesList();
+
 	boolean m_progressShown = false;
 
 	protected String getConnectionId() {
-		return getArguments().getString(SrvConnectionId.ARG);
+		if (getArguments() != null) {
+			return getArguments().getString(SrvConnectionId.ARG);
+		} else {
+			return null;
+		}
+
 	}
 
 	protected final void showProgress() {
@@ -73,7 +79,7 @@ public abstract class IssuesListAbstractFragment extends Fragment implements
 		m_progressShown = true;
 	}
 
-	public TasksFilter getTaskListType(){
+	public TasksFilter getTaskListType() {
 		return mTaskListType;
 	}
 
@@ -119,18 +125,18 @@ public abstract class IssuesListAbstractFragment extends Fragment implements
 	protected abstract boolean CompleteItem(int position);
 
 	@Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        // retain this fragment
-        setRetainInstance(true);
-    }
-	
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		// retain this fragment
+		setRetainInstance(true);
+	}
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		m_rootView = inflater.inflate(R.layout.fragment_issues, container,
 				false);
-		
+
 		getProgressLayout().setOnRefreshListener(this);
 		try {
 			if (getActivity() != null) {
@@ -166,7 +172,8 @@ public abstract class IssuesListAbstractFragment extends Fragment implements
 	@Override
 	public void onRefresh() {
 		if (getActivity() != null) {
-			((IGlobalAppEventsProvider) getActivity()).syncRequested();
+			((IGlobalAppEventsProvider) getActivity())
+					.syncRequested(getConnectionId());
 		}
 	}
 }

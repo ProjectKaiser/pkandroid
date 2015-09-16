@@ -19,19 +19,21 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical" >
-            
+
             <TextView
                 android:id="@+id/lblSyncError"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Small Text"
+                android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textColor="#ff0000"
-                android:visibility="gone"
-                android:textAppearance="?android:attr/textAppearanceSmall" />
+                android:visibility="gone" />
 
             <LinearLayout
-    			android:focusable="true" android:focusableInTouchMode="true"
-    			android:layout_width="0px" android:layout_height="0px"/>
+                android:layout_width="0px"
+                android:layout_height="0px"
+                android:focusable="true"
+                android:focusableInTouchMode="true" />
 
             <EditText
                 android:id="@+id/edtIssueName"
@@ -40,9 +42,9 @@
                 android:layout_marginBottom="12dp"
                 android:ems="10"
                 android:inputType="text"
-                android:nextFocusUp="@id/edtIssueName"
-                android:nextFocusLeft="@id/edtIssueName"
                 android:nextFocusDown="@+id/cmbFolder"
+                android:nextFocusLeft="@id/edtIssueName"
+                android:nextFocusUp="@id/edtIssueName"
                 android:selectAllOnFocus="true" />
 
             <Spinner
@@ -91,6 +93,44 @@
 
                 <Button
                     android:id="@+id/btnClearDueDate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginLeft="8dp"
+                    android:text="@string/issue_clear_due_date"
+                    android:textSize="14sp" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/pnlDueTime"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:visibility="gone" >
+
+                <TextView
+                    android:id="@+id/lblDueTime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBaseline="@+id/btnClearDueTime"
+                    android:layout_alignBottom="@+id/btnClearDueTime"
+                    android:layout_alignParentBottom="false"
+                    android:layout_alignParentLeft="true"
+                    android:layout_marginLeft="8dp"
+                    android:text="@string/due_time_short_label"
+                    android:textSize="16sp" />
+
+                <Spinner
+                    android:id="@+id/cmbDueTime"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_toLeftOf="@+id/btnClearDueTime"
+                    android:layout_toRightOf="@+id/lblDueTime"
+                    tools:listitem="@android:layout/simple_spinner_dropdown_item" />
+
+                <Button
+                    android:id="@+id/btnClearDueTime"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_alignParentRight="true"
@@ -200,7 +240,6 @@
             android:layout_alignParentTop="true"
             android:background="?attr/selectableItemBackground"
             android:text="@string/save" />
-
     </RelativeLayout>
 
 </RelativeLayout>

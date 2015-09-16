@@ -48,7 +48,7 @@ public class Time {
 	}
 
 	public static String formatDate(Context ctx, Date date) {
-		SimpleDateFormat df = new SimpleDateFormat(ctx.getString(R.string.short_date), Locale.getDefault());
+		SimpleDateFormat df = new SimpleDateFormat(ctx.getString(R.string.short_date_time), Locale.getDefault());
 		return df.format(date);
 	}
 }

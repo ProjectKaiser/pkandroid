@@ -30,7 +30,7 @@ public class InfoActivity extends ActionBarActivity {
 			lblVersion.setText("error");
 		}
 		
-		SimpleDateFormat df = new SimpleDateFormat(getString(R.string.short_date_time), Locale.getDefault());
+		SimpleDateFormat df = new SimpleDateFormat(getString(R.string.short_time), Locale.getDefault());
 		Date lastSyncDate = sm.getCommonLastSyncDate();
 		if (lastSyncDate != null){
 			SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");

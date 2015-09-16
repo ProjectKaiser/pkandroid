@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-
+import android.preference.PreferenceManager;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -33,6 +33,10 @@ import android.net.Uri;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.view.Gravity;
+import android.app.ActivityManager;
+import android.content.ComponentName;
+import android.app.AlarmManager;
+
 import java.net.UnknownHostException;
 import com.projectkaiser.mobile.sync.MLocalIssue;
 
@@ -40,12 +44,7 @@ import com.projectkaiser.app_android.jsonrpc.errors.*;
 import com.projectkaiser.app_android.misc.*;
 import com.projectkaiser.app_android.async.AsyncCallback;
 import com.projectkaiser.app_android.bl.BL;
-import com.projectkaiser.app_android.bl.events.AppEvent;
-import com.projectkaiser.app_android.bl.events.DataSyncStarted;
-import com.projectkaiser.app_android.bl.events.IGlobalAppEventsListener;
-import com.projectkaiser.app_android.bl.events.IGlobalAppEventsProvider;
-import com.projectkaiser.app_android.bl.events.LocalTaskAdded;
-import com.projectkaiser.app_android.bl.events.RefreshLists;
+import com.projectkaiser.app_android.bl.events.*;
 import com.projectkaiser.app_android.bl.local.ILocalBL;
 import com.projectkaiser.app_android.bl.obj.MNewComment;
 import com.projectkaiser.app_android.bl.obj.MRemoteNotSyncedIssue;
@@ -89,6 +88,7 @@ public class MainActivity extends ActionBarActivity implements
 	ArrayAdapter<ServerListData> ldp = null;
 	Fragment curfragment = null;
 	private boolean bNeedShowOverDue = false;
+	private boolean bOnCreated = false;
 
 	private ArrayList<ServerListData> mDrawerServers = new ArrayList<ServerListData>();
 
@@ -182,10 +182,8 @@ public class MainActivity extends ActionBarActivity implements
 			MIssue issue = (MIssue) intent.getSerializableExtra(ALARM_TASK);
 			if (issue != null) {
 				MIssue alarmIssue = null;
-				String srvName;
 				if (issue instanceof MRemoteSyncedIssue) {
 					alarmIssue = (MRemoteSyncedIssue) issue;
-					srvName = ((MRemoteSyncedIssue) alarmIssue).getSrvConnId();
 					Intent openIssueIntent = new Intent(
 							getApplicationContext(), ViewIssueActivity.class);
 					openIssueIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -194,7 +192,6 @@ public class MainActivity extends ActionBarActivity implements
 					startActivity(openIssueIntent);
 				} else {
 					alarmIssue = (MLocalIssue) issue;
-					srvName = ID_LOCAL;
 					this.selectServer(1);
 					Intent i = new Intent(getApplicationContext(),
 							EditIssueActivity.class);
@@ -204,10 +201,23 @@ public class MainActivity extends ActionBarActivity implements
 					startActivity(i);
 				}
 			} else {
+				if (bOnCreated) {
+					if (intent.getExtras() != null) {
+						if (intent.getExtras().get("action") != null) {
+							String str_action = intent.getExtras()
+									.get("action").toString();
+							if (str_action.equals("newLocalIssue")) {
+								intent.removeExtra("action");
+								createNewIssue();
+							}
+						}
+					}
+				}
 				issue = (MIssue) intent.getSerializableExtra(DUE_TASK);
 				if (issue != null) {
 					bNeedShowOverDue = true;
 				}
+
 			}
 		}
 	};
@@ -354,23 +364,31 @@ public class MainActivity extends ActionBarActivity implements
 
 	public void showNewTaskNotification() {
 
-		Intent i = new Intent(getApplicationContext(), EditIssueActivity.class);
-		PendingIntent contentIntent = PendingIntent.getActivity(this, 0, i,
+		
+		Intent i = new Intent(getApplicationContext(),EditIssueActivity.class);
+		
+		
+		//Intent i = new Intent(getApplicationContext(), MainActivity.class);
+		//i.putExtra("action", "newLocalIssue");
+		PendingIntent contentIntent = PendingIntent.getActivity(
+				getApplicationContext(), (int) System.currentTimeMillis(), i,
 				PendingIntent.FLAG_UPDATE_CURRENT);
-
+		 
 		Bitmap bm = BitmapFactory.decodeResource(getResources(),
 				R.drawable.ic_addtask_red_xxx);
 		NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(
-				this).setSmallIcon(R.drawable.ic_newtasks_notification)
+				getApplicationContext())
+				.setSmallIcon(R.drawable.ic_newtasks_notification)
 				.setContentTitle(getString(R.string.app_name))
 				.setContentText(getString(R.string.new_task_notif))
 				.setAutoCancel(false).setOngoing(true);
 
 		mBuilder.setContentIntent(contentIntent);
+
 		Notification notif = mBuilder.build();
 		notif.contentView.setImageViewBitmap(android.R.id.icon, bm);
-		// setImageViewResource(android.R.id.icon, R.drawable.ic_addtask_red);
-		NotificationManager mNotificationManager = (NotificationManager) this
+		
+		NotificationManager mNotificationManager = (NotificationManager) getApplicationContext()
 				.getSystemService(Context.NOTIFICATION_SERVICE);
 		mNotificationManager.notify(SessionManager.NEW_TASK_ACTIVITY_ID, notif);
 	}
@@ -429,9 +447,11 @@ public class MainActivity extends ActionBarActivity implements
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		bOnCreated = false;
 
 		m_sessionManager = SessionManager.get(this);
 
+		PreferenceManager.setDefaultValues(this, R.xml.pref_general, true);
 		// set a custom shadow that overlays the main content when the drawer
 		// opens
 		SyncAlarmReceiver receiver = new SyncAlarmReceiver();
@@ -543,7 +563,8 @@ public class MainActivity extends ActionBarActivity implements
 					.getSupportFragmentManager();
 			curfragment = fragmentManager.findFragmentByTag("data");
 			if (curfragment != null) {
-				IssueListData sData = ((IRetainedFragment) curfragment).getData();
+				IssueListData sData = ((IRetainedFragment) curfragment)
+						.getData();
 				oldItemPosition = 1;
 				if (sData != null) {
 					oldItemPosition = sData.getItemNumber();
@@ -573,6 +594,18 @@ public class MainActivity extends ActionBarActivity implements
 				}
 				if (!bSrvFound) {
 					selectServer(oldItemPosition);
+				}
+			}
+		}
+		bOnCreated = true;
+
+		if (getIntent() != null && getIntent().getExtras() != null) {
+			if (getIntent().getExtras().get("action") != null) {
+				String str_action = getIntent().getExtras().get("action")
+						.toString();
+				if (str_action.equals("newLocalIssue")) {
+					getIntent().removeExtra("action");
+					createNewIssue();
 				}
 			}
 		}
@@ -721,59 +754,64 @@ public class MainActivity extends ActionBarActivity implements
 		}
 	}
 
-	protected void syncronize() {
+	protected void syncronize(String _connId) {
 
+		if (_connId == null) {
+			raise(new RefreshLists());
+			return;
+		}
 		if (m_syncingIds.size() > 0)
 			return; // Sync in progress
 
 		for (final String connId : m_sessionManager.getConnections()) {
+			if (_connId.equals(connId)) {
+				syncronize(connId, new AsyncCallback<String>() {
 
-			syncronize(connId, new AsyncCallback<String>() {
-
-				@Override
-				public void onSuccess(String data) {
-					syncFinishedForCon(connId);
-					UpdateServerListSuccess(connId);
-				}
-
-				@Override
-				public void onFailure(Throwable e) {
-					log.error(e);
-					syncFinishedForCon(connId);
-					if (e instanceof EAuthError) {
-						Toast.makeText(getApplicationContext(),
-								getString(R.string.authentication_failed),
-								Toast.LENGTH_LONG).show();
-						UpdateServerListError(connId,
-								getString(R.string.authentication_failed),
-								false);
-					} else if (e instanceof EServerOutDate) {
-						String newmsg = ((EServerOutDate) e)
-								.GetErrorText(getApplicationContext());
-						Toast.makeText(getApplicationContext(), newmsg,
-								Toast.LENGTH_LONG).show();
-						UpdateServerListError(connId, newmsg, false);
-					} else if (e instanceof EAppSyncWarning) {
-						String newmsg = ((EAppSyncWarning) e)
-								.GetErrorText(getApplicationContext());
-						Toast.makeText(getApplicationContext(), newmsg,
-								Toast.LENGTH_LONG).show();
-						UpdateServerListError(connId, newmsg, true);
-					} else if (e.getCause() instanceof UnknownHostException) {
-						Toast.makeText(getApplicationContext(),
-								getString(R.string.network_error),
-								Toast.LENGTH_LONG).show();
-						UpdateServerListError(connId,
-								getString(R.string.network_error), false);
-					} else {
-						Toast.makeText(getApplicationContext(),
-								getString(R.string.network_error),
-								Toast.LENGTH_LONG).show();
-						UpdateServerListError(connId, e.getMessage(), false);
+					@Override
+					public void onSuccess(String data) {
+						syncFinishedForCon(connId);
+						UpdateServerListSuccess(connId);
 					}
-				}
-			});
-			m_syncingIds.add(connId);
+
+					@Override
+					public void onFailure(Throwable e) {
+						log.error(e);
+						syncFinishedForCon(connId);
+						if (e instanceof EAuthError) {
+							Toast.makeText(getApplicationContext(),
+									getString(R.string.authentication_failed),
+									Toast.LENGTH_LONG).show();
+							UpdateServerListError(connId,
+									getString(R.string.authentication_failed),
+									false);
+						} else if (e instanceof EServerOutDate) {
+							String newmsg = ((EServerOutDate) e)
+									.GetErrorText(getApplicationContext());
+							Toast.makeText(getApplicationContext(), newmsg,
+									Toast.LENGTH_LONG).show();
+							UpdateServerListError(connId, newmsg, false);
+						} else if (e instanceof EAppSyncWarning) {
+							String newmsg = ((EAppSyncWarning) e)
+									.GetErrorText(getApplicationContext());
+							Toast.makeText(getApplicationContext(), newmsg,
+									Toast.LENGTH_LONG).show();
+							UpdateServerListError(connId, newmsg, true);
+						} else if (e.getCause() instanceof UnknownHostException) {
+							Toast.makeText(getApplicationContext(),
+									getString(R.string.network_error),
+									Toast.LENGTH_LONG).show();
+							UpdateServerListError(connId,
+									getString(R.string.network_error), false);
+						} else {
+							Toast.makeText(getApplicationContext(),
+									getString(R.string.network_error),
+									Toast.LENGTH_LONG).show();
+							UpdateServerListError(connId, e.getMessage(), false);
+						}
+					}
+				});
+				m_syncingIds.add(connId);
+			}
 		}
 
 		if (m_sessionManager.getConnections().size() > 0)
@@ -844,9 +882,16 @@ public class MainActivity extends ActionBarActivity implements
 	}
 
 	public void createNewIssue() {
-		Intent i = new Intent(getApplicationContext(), EditIssueActivity.class);
-		i.putExtra("SRVNAME", curServerName);
-		startActivityForResult(i, ActivityReq.NEW_ISSUE);
+		ActivityManager manager = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
+		List<ActivityManager.RunningTaskInfo> task = manager.getRunningTasks(1);
+		ComponentName componentInfo = task.get(0).topActivity;
+
+		if (!componentInfo.getClassName().contains("EditIssueActivity")) {
+			Intent i = new Intent(getApplicationContext(),
+					EditIssueActivity.class);
+			i.putExtra("SRVNAME", curServerName);
+			startActivityForResult(i, ActivityReq.NEW_ISSUE);
+		}
 	}
 
 	public void SendErrorLog() {
@@ -904,6 +949,10 @@ public class MainActivity extends ActionBarActivity implements
 		raise(new LocalTaskAdded());
 	}
 
+	public void RefreshItemRevert(int position) {
+		raise(new LocalTaskRevert(position));
+	}
+
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (resultCode == RESULT_OK) {
@@ -920,8 +969,8 @@ public class MainActivity extends ActionBarActivity implements
 	}
 
 	@Override
-	public void syncRequested() {
-		syncronize();
+	public void syncRequested(String connId) {
+		syncronize(connId);
 	}
 
 }
