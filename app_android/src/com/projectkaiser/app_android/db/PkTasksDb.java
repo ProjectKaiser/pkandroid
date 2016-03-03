@@ -32,8 +32,6 @@ public class PkTasksDb {
 
 	public final static String F_FOLDER_ID = "folder_id";
 
-//	public final static String F_IS_ACTIVE = "is_active";
-
 	public final static String F_DESCRIPTION = "description";
 
 	public final static String F_PRIORITY = "priority";
@@ -51,6 +49,8 @@ public class PkTasksDb {
 	public final static String F_RESPONSIBLE_ID = "responsible_id";
 
 	public final static String F_STATE = "state";
+
+	//public final static String F_UNREAD = "unread";
 
 	public static void execVersion(SQLiteDatabase db, int version) {
 		switch (version) {
@@ -81,6 +81,7 @@ public class PkTasksDb {
         	s.append(F_MODIFIED + " integer, ");
         	s.append(F_BUDGET + " integer, ");
         	s.append(F_STATE + " integer); ");
+        	//s.append(F_UNREAD + " integer); ");
         	db.execSQL(s.toString());
         	
         	////////////////////////////////////////////
@@ -120,6 +121,7 @@ public class PkTasksDb {
         	s.append(F_SERVER_CONNECTION_ID + " text, ");
         	s.append(F_FAILURE + " text, ");
         	s.append(F_STATE + " integer); ");
+        	//s.append(F_UNREAD + " integer); ");
         	db.execSQL(s.toString());
         	
         	////////////////////////////////////////////

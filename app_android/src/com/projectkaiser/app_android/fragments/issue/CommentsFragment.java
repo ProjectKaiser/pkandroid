@@ -78,7 +78,8 @@ public class CommentsFragment extends Fragment implements ITaskDetailsListener, 
 		else
 			throw new RuntimeException("Issue type not supported");
 		
-		CommentsArrayAdapter adapter = new CommentsArrayAdapter(m_rootView.getContext(), comments);
+		CommentsArrayAdapter adapter = new CommentsArrayAdapter(m_rootView.getContext(), 
+					comments, m_details);
 		listView.setAdapter(adapter);
 	}
 	

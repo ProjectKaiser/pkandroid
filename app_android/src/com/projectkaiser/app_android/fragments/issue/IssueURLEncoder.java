@@ -16,7 +16,10 @@ public class IssueURLEncoder implements IUrlEncoder {
 				 return str;
 			 }
 			 
-			 s = "{/-" + str + "-/}";
+			 if (!str.contains("http:")){
+				 s = "{/-" + str + "-/}";
+			 }
+
 		} catch (Exception e){
 		}
 		return s;

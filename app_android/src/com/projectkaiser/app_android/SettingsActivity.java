@@ -183,7 +183,7 @@ public class SettingsActivity extends PreferenceActivity {
 				PendingIntent.FLAG_UPDATE_CURRENT);
 
 		Bitmap bm = BitmapFactory.decodeResource(getResources(),
-				R.drawable.ic_addtask_red_xxx);
+				R.drawable.ic_addtask_white_xxx);
 
 		NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(
 				this).setSmallIcon(R.drawable.ic_newtasks_notification)

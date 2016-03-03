@@ -45,7 +45,7 @@ public class LocalBL implements ILocalBL {
 		String[] projection = { PkTasksDb.F_ID, PkTasksDb.F_NAME,
 				PkTasksDb.F_DESCRIPTION, PkTasksDb.F_PRIORITY,
 				PkTasksDb.F_DUE_DATE, PkTasksDb.F_CREATED,
-				PkTasksDb.F_MODIFIED, PkTasksDb.F_BUDGET, PkTasksDb.F_STATE };
+				PkTasksDb.F_MODIFIED, PkTasksDb.F_BUDGET, PkTasksDb.F_STATE};
 
 		String selection = null;
 		String sortOrder = null;

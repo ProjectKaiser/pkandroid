@@ -28,8 +28,11 @@ public class MIssue extends MNamedFile implements Serializable {
 	
 	Long m_modified;
 	
+	
 	int m_state;
 	
+	//int m_unread;
+
 	public int getState() {
 		return m_state;
 	}
@@ -37,7 +40,15 @@ public class MIssue extends MNamedFile implements Serializable {
 	public void setState(int state) {
 		m_state = state;
 	}
+/*
+	public int getUnread() {
+		return m_unread;
+	}
 
+	public void setUnread(int unread) {
+		m_unread = unread;
+	}
+*/
 	public Long getCreated() {
 		return m_created;
 	}

@@ -15,7 +15,6 @@ import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ExpandableListView.OnGroupClickListener;
-import android.widget.ListView;
 import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.OnChildClickListener;
 import android.widget.LinearLayout;
@@ -30,6 +29,7 @@ import com.projectkaiser.mobile.sync.MDigestedArray;
 import com.projectkaiser.mobile.sync.MMyProject;
 import com.projectkaiser.mobile.sync.MWorkingSet;
 import com.projectkaiser.mobile.sync.MWorkingSets;
+import com.projectkaiser.app_android.services.PkAlarmManager;
 
 public class FolderDialogFragment extends DialogFragment {
 
@@ -84,8 +84,6 @@ public class FolderDialogFragment extends DialogFragment {
 		ArrayList<CharSequence> arrCons = new ArrayList<CharSequence>();
 
 		int selectedIndex = 0;
-		String lastConId = sm.getLatestFolderDlgConnectionId();
-
 		int idx = 0;
 		for (String connId : sm.getConnections()) {
 			SrvConnectionBaseData base = sm.getBaseData(connId);
@@ -93,7 +91,6 @@ public class FolderDialogFragment extends DialogFragment {
 			arrCons.add(base.getServerName());
 			EditIssueActivity mainActivity = (EditIssueActivity) getActivity();
 			if (connId.equals(mainActivity.getServerName())) {
-				// if (lastConId != null && lastConId.equals(connId))
 				selectedIndex = idx;
 			}
 			idx = idx + 1;
@@ -225,6 +222,7 @@ public class FolderDialogFragment extends DialogFragment {
 			MDigestedArray<MMyProject> projects = getSessionManager()
 					.getMyProjects(conId);
 			for (MMyProject p : projects.getItems()) {
+				p.setName(PkAlarmManager.GetFolderName(p.getName()));
 				wsProjects.add(p);
 			}
 
@@ -237,8 +235,9 @@ public class FolderDialogFragment extends DialogFragment {
 					.getApplicationContext(), conId);
 			for (Long projectId : ws.getProjects()) {
 				MMyProject p = hlp.findProject(projectId);
-				if (p != null)
+				if (p != null){
 					wsProjects.add(p);
+				}
 			}
 
 		}

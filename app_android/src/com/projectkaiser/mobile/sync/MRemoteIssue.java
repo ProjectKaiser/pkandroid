@@ -1,17 +1,17 @@
 package com.projectkaiser.mobile.sync;
 
 public class MRemoteIssue extends MIssue {
-	
+
 	private static final long serialVersionUID = -942063667023193523L;
 
 	String m_path;
-	
+
 	String m_assigneeName;
-	
+
 	String m_responsibleName;
-	
+
 	String m_statusName;
-	
+
 	Long m_modifier;
 
 	public Long getModifier() {

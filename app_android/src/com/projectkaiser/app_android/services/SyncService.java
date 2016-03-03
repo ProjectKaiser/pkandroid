@@ -20,11 +20,8 @@ import android.graphics.BitmapFactory;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.PowerManager;
-import android.preference.ListPreference;
-import android.preference.Preference;
 import android.support.v4.app.NotificationCompat;
 
-import com.projectkaiser.app_android.EditIssueActivity;
 import com.projectkaiser.app_android.MainActivity;
 import com.projectkaiser.app_android.R;
 import com.projectkaiser.app_android.bl.BL;
@@ -33,7 +30,6 @@ import com.projectkaiser.app_android.bl.local.TasksFilter;
 import com.projectkaiser.app_android.bl.obj.MNewComment;
 import com.projectkaiser.app_android.bl.obj.MRemoteNotSyncedIssue;
 import com.projectkaiser.app_android.bl.obj.MRemoteSyncedIssue;
-import com.projectkaiser.app_android.consts.ActivityReq;
 import com.projectkaiser.app_android.jsonapi.parser.ResponseParser;
 import com.projectkaiser.app_android.jsonrpc.JsonRPC;
 import com.projectkaiser.app_android.jsonrpc.auth.SessionAuthScheme;
@@ -246,7 +242,11 @@ public class SyncService extends IntentService {
 
 		Date lastCheckDate = sm.getLastLocalDueDate();
 		if (lastCheckDate != null) {
-			if (lastCheckDate.getDate() == curDT.getDate()) {
+			Calendar calLast = Calendar.getInstance();
+			calLast.setTime(lastCheckDate);
+			if (calLast.get(Calendar.DATE) == calendar.get(Calendar.DATE) 
+					&& calLast.get(Calendar.YEAR) == calendar.get(Calendar.YEAR)
+					&& calLast.get(Calendar.MONTH) == calendar.get(Calendar.MONTH)) {
 				return;
 			}
 		}
@@ -256,16 +256,9 @@ public class SyncService extends IntentService {
 		ArrayList<MIssue> m_localtasks = new ArrayList<MIssue>();
 		for (MLocalIssue li : bl.getLocalTasks(TasksFilter.ACTIVE)) {
 			Date duedate = new Date(li.getDueDate());
-			duedate.setTime(0);
-			Calendar cl = Calendar.getInstance();
-			cl.set(2000, 1, 1);
-			Date dt = cl.getTime();
-			if (duedate.before(new Date()) && duedate.after(dt)
-					&& !sm.isLocalIssueNotified(li)) {
-				if (!sm.isLocalIssueNotified(li)) {
-					m_localtasks.add(li);
-					sm.setLocalIssueNotified(li);
-				}
+			if (duedate.before(new Date()) && !sm.isLocalIssueNotified(li)) {
+				m_localtasks.add(li);
+				sm.setLocalIssueNotified(li);
 			}
 		}
 

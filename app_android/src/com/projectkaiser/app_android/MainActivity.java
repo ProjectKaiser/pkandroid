@@ -137,6 +137,70 @@ public class MainActivity extends ActionBarActivity implements
 	}
 
 	private void createConnections() {
+
+		
+
+		mDrawerServerListView = (ListView) findViewById(R.id.left_drawer_servers);
+		ldp = new ArrayAdapter<ServerListData>(this, R.layout.drawer_list_item,
+				mDrawerServers) {
+			@Override
+			public boolean isEnabled(int position) {
+
+				return (position > 0)
+						&& (position != mDrawerServers.size() - 4);
+			}
+
+			@Override
+			public View getView(int position, View convertView, ViewGroup parent) {
+				ViewHolder holder = null;
+				if (convertView == null) {
+					holder = new ViewHolder();
+					if (position == mDrawerServers.size() - 4) {
+						convertView = drawTitleItem(holder,
+								getString(R.string.group_mngr));
+					} else if (position == 0) {
+						convertView = drawTitleItem(holder,
+								getString(R.string.group_srv));
+					} else if (position == 1
+							|| position > mDrawerServers.size() - 4) {
+						convertView = mInflater.inflate(
+								R.layout.drawer_list_item_set, null);
+						holder.textView = (TextView) convertView
+								.findViewById(R.id.textDrawerView);
+						holder.textViewEmail = (TextView) convertView
+								.findViewById(R.id.txtDrawerItememail);
+					} else {
+						convertView = mInflater.inflate(
+								R.layout.drawer_list_item, null);
+						holder.textView = (TextView) convertView
+								.findViewById(R.id.textDrawerView);
+						holder.textViewEmail = (TextView) convertView
+								.findViewById(R.id.txtDrawerItememail);
+						holder.textStatusView = (TextView) convertView
+								.findViewById(R.id.textStatusDrawerView);
+						UpdateItemStatusText(holder,
+								mDrawerServers.get(position));
+						if (holder.textViewEmail != null) {
+							holder.textViewEmail.setText(mDrawerServers.get(
+									position).getEmail());
+						}
+					}
+					convertView.setTag(holder);
+				} else {
+					holder = (ViewHolder) convertView.getTag();
+					if (position > 1 && position < mDrawerServers.size() - 4) {
+						UpdateItemStatusText(holder,
+								mDrawerServers.get(position));
+					}
+				}
+				holder.textView.setText(mDrawerServers.get(position).getName());
+				return convertView;
+			}
+		};
+		mDrawerServerListView.setAdapter(ldp);
+		mDrawerServerListView
+		.setOnItemClickListener(new DrawerItemClickListener());
+
 		mDrawerServers.clear();
 		m_connectionIds.clear();
 
@@ -260,7 +324,8 @@ public class MainActivity extends ActionBarActivity implements
 	/** Swaps fragments in the main content view */
 	private void selectServer(int position) {
 		Intent i = null;
-
+		
+		if (position <=0) position = 1;
 		if (position < mDrawerServers.size() - 4) {
 
 			curServerName = "";
@@ -363,19 +428,16 @@ public class MainActivity extends ActionBarActivity implements
 	}
 
 	public void showNewTaskNotification() {
-
 		
 		Intent i = new Intent(getApplicationContext(),EditIssueActivity.class);
 		
 		
-		//Intent i = new Intent(getApplicationContext(), MainActivity.class);
-		//i.putExtra("action", "newLocalIssue");
 		PendingIntent contentIntent = PendingIntent.getActivity(
 				getApplicationContext(), (int) System.currentTimeMillis(), i,
 				PendingIntent.FLAG_UPDATE_CURRENT);
 		 
 		Bitmap bm = BitmapFactory.decodeResource(getResources(),
-				R.drawable.ic_addtask_red_xxx);
+				R.drawable.ic_addtask_white_xxx);
 		NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(
 				getApplicationContext())
 				.setSmallIcon(R.drawable.ic_newtasks_notification)
@@ -468,74 +530,13 @@ public class MainActivity extends ActionBarActivity implements
 				GravityCompat.START);
 
 		mInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		mDrawerServerListView = (ListView) findViewById(R.id.left_drawer_servers);
-		ldp = new ArrayAdapter<ServerListData>(this, R.layout.drawer_list_item,
-				mDrawerServers) {
-			@Override
-			public boolean isEnabled(int position) {
-
-				return (position > 0)
-						&& (position != mDrawerServers.size() - 4);
-			}
-
-			@Override
-			public View getView(int position, View convertView, ViewGroup parent) {
-				ViewHolder holder = null;
-				if (convertView == null) {
-					holder = new ViewHolder();
-					if (position == mDrawerServers.size() - 4) {
-						convertView = drawTitleItem(holder,
-								getString(R.string.group_mngr));
-					} else if (position == 0) {
-						convertView = drawTitleItem(holder,
-								getString(R.string.group_srv));
-					} else if (position == 1
-							|| position > mDrawerServers.size() - 4) {
-						convertView = mInflater.inflate(
-								R.layout.drawer_list_item_set, null);
-						holder.textView = (TextView) convertView
-								.findViewById(R.id.textDrawerView);
-						holder.textViewEmail = (TextView) convertView
-								.findViewById(R.id.txtDrawerItememail);
-					} else {
-						convertView = mInflater.inflate(
-								R.layout.drawer_list_item, null);
-						holder.textView = (TextView) convertView
-								.findViewById(R.id.textDrawerView);
-						holder.textViewEmail = (TextView) convertView
-								.findViewById(R.id.txtDrawerItememail);
-						holder.textStatusView = (TextView) convertView
-								.findViewById(R.id.textStatusDrawerView);
-						UpdateItemStatusText(holder,
-								mDrawerServers.get(position));
-						if (holder.textViewEmail != null) {
-							holder.textViewEmail.setText(mDrawerServers.get(
-									position).getEmail());
-						}
-					}
-					convertView.setTag(holder);
-				} else {
-					holder = (ViewHolder) convertView.getTag();
-					if (position > 1 && position < mDrawerServers.size() - 4) {
-						UpdateItemStatusText(holder,
-								mDrawerServers.get(position));
-					}
-				}
-				holder.textView.setText(mDrawerServers.get(position).getName());
-				return convertView;
-			}
-		};
-
-		mDrawerServerListView.setAdapter(ldp);
-
+		
 		Intent cIntent = getIntent();
 		if (cIntent != null)
 			onNewIntent(cIntent); // we need to call this for the case when
 									// Activity is started for the first
 									// time
 
-		mDrawerServerListView
-				.setOnItemClickListener(new DrawerItemClickListener());
 
 		// enable ActionBar app icon to behave as action to toggle nav drawer
 		getActionBar().setDisplayHomeAsUpEnabled(true);

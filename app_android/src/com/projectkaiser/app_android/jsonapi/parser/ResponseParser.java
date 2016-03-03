@@ -118,6 +118,7 @@ public class ResponseParser extends AbstractJsonParser {
 			p.setState(_int(o, "state"));
 			p.setStatusName(_string(o, "statusName"));	
 			p.setSrvConnId(srvConnId);
+			//p.setUnread(_int(o, "unread"));
 			
 			p.setComments(parseComments(_rarray(o, "comments")));
 			

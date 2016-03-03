@@ -14,7 +14,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
@@ -27,6 +26,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -41,7 +41,6 @@ import com.projectkaiser.app_android.bl.BL;
 import com.projectkaiser.app_android.bl.local.ILocalBL;
 import com.projectkaiser.app_android.bl.obj.MRemoteNotSyncedIssue;
 import com.projectkaiser.app_android.bl.obj.SelectedIssuesFolder;
-import com.projectkaiser.app_android.consts.ActivityReq;
 import com.projectkaiser.app_android.consts.Priority;
 import com.projectkaiser.app_android.consts.State;
 import com.projectkaiser.app_android.fragments.DatePickerFragment;
@@ -70,7 +69,6 @@ public class EditIssueActivity extends ActionBarActivity implements
 	ArrayList<SelectedIssuesFolder> m_currentFolder = new ArrayList<SelectedIssuesFolder>();
 
 	Calendar m_dueDate;
-
 	boolean nullDueTime = true;
 	MTeamMember m_assignee = null;
 	MTeamMember m_responsible = null;
@@ -81,6 +79,7 @@ public class EditIssueActivity extends ActionBarActivity implements
 	boolean mIgnoreModified = false;
 	String lastConId = null;
 	long lastid = 0L;
+	boolean bRegNew = false;
 
 	ArrayList<CharSequence> m_priorities = new ArrayList<CharSequence>();
 
@@ -167,7 +166,7 @@ public class EditIssueActivity extends ActionBarActivity implements
 			else {
 				folder.setName("?");
 				if (p != null) {
-					folder.setName(p.getName());
+					folder.setName(PkAlarmManager.GetFolderName(p.getName()));
 				}
 			}
 		}
@@ -422,6 +421,8 @@ public class EditIssueActivity extends ActionBarActivity implements
 			return;
 
 		SelectUserDialogFragment dialog = new SelectUserDialogFragment(folder);
+		dialog.setTitle(getApplicationContext().getString( R.string.issue_assignee_label));  
+		
 		dialog.setListener(new UsersListener() {
 			@Override
 			public void userSelected(Long userId) {
@@ -441,6 +442,7 @@ public class EditIssueActivity extends ActionBarActivity implements
 		if (folder == null)
 			return;
 		SelectUserDialogFragment dialog = new SelectUserDialogFragment(folder);
+		dialog.setTitle(getApplicationContext().getString(R.string.issue_responsible_label));  
 		dialog.setListener(new UsersListener() {
 			@Override
 			public void userSelected(Long userId) {
@@ -910,28 +912,29 @@ public class EditIssueActivity extends ActionBarActivity implements
 
 			SessionManager sm = SessionManager.get(EditIssueActivity.this);
 			if (sm.getConnections().size() > 0) {
-				String conid = sm.getConnections().get(0);
+				String conid = curServerName;
 
 				MDigestedArray<MMyProject> prs = sm.getMyProjects(conid);
 				MDataHelper hlp = new MDataHelper(getApplicationContext(),
 						conid);
 				if (prs.getItems().size() == 1) {
-					
-					MMyProject p = hlp.findProject(prs.getItems().get(0).getId());
+
+					MMyProject p = hlp.findProject(prs.getItems().get(0)
+							.getId());
 					if (p != null) {
-						if(!hlp.projectHasFolders(p.getId())){
+						if (!hlp.projectHasFolders(p.getId())) {
 							setIssuesFolder(conid, p.getId());
 							if (p.getTeam() != null) {
 								if (p.getTeam().size() == 1) {
 									setAssignee(p.getTeam().get(0).getId());
-									findViewById(R.id.cmbAssignee).setVisibility(
-											View.VISIBLE);
+									findViewById(R.id.cmbAssignee)
+											.setVisibility(View.VISIBLE);
 								}
 							}
 							return;
 						}
 					}
-					
+
 				}
 			}
 			FolderDialogFragment fr = (FolderDialogFragment) getSupportFragmentManager()
@@ -946,6 +949,16 @@ public class EditIssueActivity extends ActionBarActivity implements
 			}
 
 		}
+
+		if (PkAlarmManager.bNewEditActivity) {
+			this.finish();
+			return;
+		}
+		if (curServerName.isEmpty() && (m_details == null)) {
+			PkAlarmManager.NewEditStarted();
+			bRegNew = true;
+		}
+		
 	}
 
 	@Override
@@ -1142,11 +1155,6 @@ public class EditIssueActivity extends ActionBarActivity implements
 	}
 
 	@Override
-	public void onDestroy() {
-		super.onDestroy();
-	}
-
-	@Override
 	public void onBackPressed() {
 		super.onBackPressed();
 		restartApp();
@@ -1215,8 +1223,8 @@ public class EditIssueActivity extends ActionBarActivity implements
 
 	@Override
 	protected void onStart() {
-		PkAlarmManager.activityStarted(getApplicationContext());
 		super.onStart();
+		PkAlarmManager.activityStarted(getApplicationContext());
 	}
 
 	@Override
@@ -1224,4 +1232,14 @@ public class EditIssueActivity extends ActionBarActivity implements
 		PkAlarmManager.activityStopped(getApplicationContext());
 		super.onStop();
 	}
+
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		if (bRegNew) {
+			PkAlarmManager.NewEditStopped();
+		}
+	}
+
+	
 }

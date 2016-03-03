@@ -19,6 +19,7 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.projectkaiser.app_android.R;
 import com.projectkaiser.app_android.adapters.TeamMembersAdapter;
@@ -29,9 +30,16 @@ import com.projectkaiser.mobile.sync.MTeamMember;
 public class SelectUserDialogFragment extends DialogFragment {
 	
 	SelectedIssuesFolder m_folder;
-	
+	private String m_title = null;
 	View m_view;
 
+	public void setTitle( String newTitle ) {
+		if (!newTitle.isEmpty()) {
+			m_title = newTitle;
+		}
+		return;
+	}
+	
 	public interface UsersListener {
 		void nobodySelected();
 		void userSelected(Long userUId);
@@ -85,6 +93,8 @@ public class SelectUserDialogFragment extends DialogFragment {
 		
 		m_view = inflater.inflate(R.layout.dialog_user, container, false);
 		final ListView list = (ListView)m_view.findViewById(R.id.lvUsers);		
+		TextView txtTitle = (TextView)m_view.findViewById(R.id.txtSelectUserTitle);
+		if (!m_title.isEmpty()) txtTitle.setText(m_title);
 
 		updateList();
 
