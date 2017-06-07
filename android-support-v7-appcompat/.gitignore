@@ -1,0 +1,42 @@
+-/gen
+-/bin
+
++# built application files
++*.apk
++*.ap_
++*.jar
++ 
++# lint folder
++lint
++ 
++# files for the dex VM
++*.dex
++ 
++# Java class files
++*.class
++ 
++# generated files
++bin/
++gen/
++classes/
++gen-external-apklibs/
++ 
++# Local configuration file (sdk path, etc)
++local.properties
++ 
++# Eclipse project files
++.classpath
++.project
++.metadata
++.settings
++
++ 
++# vi swap files
++*.swp
++ 
++# backup files
++*.bak
++ 
++# gradle directory
++.gradle
++build/
