@@ -1,1 +1,5 @@
 bin
+/.metadata
+/google-play-services_lib/gen
+/google-play-services_lib/assets
+/google-play-services_lib/bin
